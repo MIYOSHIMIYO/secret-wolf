@@ -29,7 +29,7 @@ preview_id = "6ff286ad2f7f449093a7077ea642b577"
 
 # 本番環境設定
 [env.prod]
-vars = { ENVIRONMENT = "production", ALLOWED_ORIGINS = "https://secret-werewolf-prod.qmdg2pmnw6.workers.dev,https://secret-werewolf.com,https://www.secret-werewolf.com,http://localhost:8080,capacitor://localhost", RATE_AUTO_PER_MIN = "30", RATE_REPORT_PER_5MIN = "60", LOG_LEVEL = "warn", ENABLE_RATE_LIMIT = "true" }
+vars = { ENVIRONMENT = "production", ALLOWED_ORIGINS = "https://secret-werewolf-prod.qmdg2pmnw6.workers.dev,https://secret-werewolf.com,https://www.secret-werewolf.com,https://secret-wolf-client.vercel.app,https://secret-wolf-client-git-main-miyoshimiyos-projects.vercel.app,http://localhost:8080,capacitor://localhost", RATE_AUTO_PER_MIN = "30", RATE_REPORT_PER_5MIN = "60", LOG_LEVEL = "warn", ENABLE_RATE_LIMIT = "true" }
 
 [env.prod.durable_objects]
 bindings = [{ name = "DO_ROOMS", class_name = "RoomDO" }]
