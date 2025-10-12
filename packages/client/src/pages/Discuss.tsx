@@ -192,7 +192,7 @@ export default function Discuss() {
           {/* 右カラム：チャットエリア + 入力欄（約80%） */}
           <div className="flex-1 flex flex-col xl:min-h-0 xl:gap-2 xl:pb-2">
             {/* チャット（縦幅を小さくし、トップ位置を下げる） */}
-            <section className="overflow-hidden flex flex-col min-h-0" style={{ height: "calc(100vh - 360px)" }}>
+            <section className="overflow-hidden flex flex-col min-h-0" style={{ height: "calc(100vh - 200px)" }}>
               <div ref={listRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain rounded-xl ring-1 ring-white/10 bg-white/5 p-3 space-y-2">
                 {chats.map((c) => {
                   const isMine = c.senderId === myId;
@@ -254,8 +254,8 @@ export default function Discuss() {
 
           {/* チャット要素（メッセージ + 入力欄） */}
           <div className="flex-1 flex flex-col min-h-0">
-            {/* チャットメッセージ表示エリア（タブレット用に縦幅を拡張） */}
-            <div ref={listRef} className="overflow-y-auto overscroll-contain rounded-2xl ring-1 ring-white/10 bg-white/5 p-3 space-y-2 flex-shrink-0" style={{ height: "600px" }}>
+            {/* チャットメッセージ表示エリア（スマホサイズでは短く、タブレット以上では通常サイズ） */}
+            <div ref={listRef} className="overflow-y-auto overscroll-contain rounded-2xl ring-1 ring-white/10 bg-white/5 p-3 space-y-2 flex-shrink-0" style={{ height: "clamp(300px, 50vh, 600px)" }}>
               {chats.map((c) => {
                 const isMine = c.senderId === myId;
                 const color = playerColorMap.get(c.senderId) ?? PLAYER_COLORS[0];
