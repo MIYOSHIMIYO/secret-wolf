@@ -154,6 +154,12 @@ export class PWAManager {
       return false;
     }
 
+    // 一時的にService Workerを無効化（MIMEタイプ問題のため）
+    console.log('[PWA] Service Worker temporarily disabled due to MIME type issues');
+    return false;
+
+    // 以下のコードは後で有効化する
+    /*
     try {
       // Service Workerファイルの存在確認
       const response = await fetch('/sw.js', { method: 'HEAD' });
@@ -186,6 +192,7 @@ export class PWAManager {
       console.error('[PWA] Service Worker registration failed:', error);
       return false;
     }
+    */
   }
 
   /**
