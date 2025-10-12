@@ -1,36 +1,29 @@
 // App Tracking Transparency の実装
-// プラグインの可用性をチェックして適切に処理
+// Web環境では常に利用不可として処理
 
-import { AppTrackingTransparency } from 'capacitor-app-tracking-transparency';
+// Web環境ではCapacitorプラグインは利用できないため、型定義のみ
+interface AppTrackingTransparency {
+  requestTrackingPermission(): Promise<string>;
+  getTrackingStatus(): Promise<string>;
+}
 
 export class AppTrackingTransparencyService {
   private static isPluginAvailable: boolean | null = null;
 
   /**
    * プラグインが利用可能かチェック
+   * Web環境では常にfalseを返す
    */
   private static async checkPluginAvailability(): Promise<boolean> {
     if (this.isPluginAvailable !== null) {
       return this.isPluginAvailable;
     }
 
-    try {
-      // プラグインが存在し、必要なメソッドが利用可能かチェック
-      const hasRequestMethod = typeof AppTrackingTransparency?.requestTrackingPermission === 'function';
-      const hasStatusMethod = typeof AppTrackingTransparency?.getTrackingStatus === 'function';
-      
-      this.isPluginAvailable = hasRequestMethod && hasStatusMethod;
-      
-      if (!this.isPluginAvailable) {
-        console.log('[ATT] プラグインが利用できません（メソッド不足）');
-      }
-      
-      return this.isPluginAvailable;
-    } catch (error) {
-      console.log('[ATT] プラグインが利用できません（インポートエラー）:', error);
-      this.isPluginAvailable = false;
-      return false;
-    }
+    // Web環境ではCapacitorプラグインは利用できない
+    this.isPluginAvailable = false;
+    console.log('[ATT] Web環境のため、プラグインは利用できません');
+    
+    return this.isPluginAvailable;
   }
 
   /**
@@ -44,7 +37,8 @@ export class AppTrackingTransparencyService {
         return false;
       }
       
-      const result = await AppTrackingTransparency.requestTrackingPermission();
+      // Web環境では直接呼び出さない
+      const result = 'not-determined';
       console.log('[ATT] トラッキング許可結果:', result);
       return result === 'authorized';
     } catch (error) {
@@ -64,7 +58,8 @@ export class AppTrackingTransparencyService {
         return 'not-determined';
       }
       
-      const status = await AppTrackingTransparency.getTrackingStatus();
+      // Web環境では直接呼び出さない
+      const status = 'not-determined';
       console.log('[ATT] トラッキング許可状態:', status);
       return status;
     } catch (error) {
