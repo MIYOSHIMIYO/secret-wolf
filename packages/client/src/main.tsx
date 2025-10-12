@@ -26,7 +26,6 @@ import Legal from "./pages/Legal";
 import ValidationTest from "./pages/ValidationTest";
 import { AppTrackingTransparencyService } from "./plugins/AppTrackingTransparency";
 import { initializePWA } from "./utils/pwa";
-import { initializeUnifiedStripe } from "./utils/stripe";
 import "./styles.css";
 import "./styles/viewport-scale.css";
 
@@ -78,12 +77,11 @@ setTimeout(async () => {
     console.log('[Main] Starting service initialization...');
     const results = await Promise.allSettled([
       AppTrackingTransparencyService.requestTrackingPermission(),
-      initializePWA(),
-      initializeUnifiedStripe()
+      initializePWA()
     ]);
     
     results.forEach((result, index) => {
-      const serviceNames = ['AppTrackingTransparency', 'PWA', 'Stripe'];
+      const serviceNames = ['AppTrackingTransparency', 'PWA'];
       if (result.status === 'rejected') {
         console.error(`[Main] Service ${serviceNames[index]} initialization failed:`, result.reason);
       } else {
