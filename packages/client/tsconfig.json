@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { 
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/lib/*": ["src/lib/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/state/*": ["src/state/*"],
+      "@/types/*": ["src/types/*"],
+      "@/assets/*": ["src/assets/*"],
+      "@secret/shared/*": ["../shared/src/*"]
+    },
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*", "vite.config.ts", "tailwind.config.ts"],
+  "exclude": ["node_modules", "dist"]
+} 

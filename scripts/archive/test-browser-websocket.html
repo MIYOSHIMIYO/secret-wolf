@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket接続テスト</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .log { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .connect { background: #4caf50; color: white; }
+        .disconnect { background: #f44336; color: white; }
+        .send { background: #2196f3; color: white; }
+    </style>
+</head>
+<body>
+    <h1>WebSocket接続テスト</h1>
+    
+    <div>
+        <button class="connect" onclick="connect()">接続</button>
+        <button class="disconnect" onclick="disconnect()">切断</button>
+        <button class="send" onclick="sendJoin()">参加</button>
+        <button class="send" onclick="sendDisband()">解散</button>
+    </div>
+    
+    <div id="status" class="log">未接続</div>
+    <div id="logs"></div>
+
+    <script>
+        let ws = null;
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+
+        function log(message, type = '') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logsDiv.appendChild(div);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function connect() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                log('既に接続済みです', 'error');
+                return;
+            }
+
+            const url = 'ws://localhost:8787/ws/room/TEST123';
+            log(`接続開始: ${url}`);
+            
+            ws = new WebSocket(url);
+            
+            ws.onopen = () => {
+                log('WebSocket接続成功', 'success');
+                statusDiv.textContent = '接続済み';
+                statusDiv.className = 'log success';
+            };
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    log(`メッセージ受信: ${JSON.stringify(data, null, 2)}`);
+                } catch (error) {
+                    log(`メッセージ解析エラー: ${error.message}`, 'error');
+                }
+            };
+            
+            ws.onerror = (error) => {
+                log(`WebSocketエラー: ${error}`, 'error');
+            };
+            
+            ws.onclose = (event) => {
+                log(`接続終了: code=${event.code}, reason=${event.reason}, wasClean=${event.wasClean}`);
+                statusDiv.textContent = '切断済み';
+                statusDiv.className = 'log';
+            };
+        }
+
+        function disconnect() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+        }
+
+        function sendJoin() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('WebSocketが接続されていません', 'error');
+                return;
+            }
+
+            const message = {
+                t: 'join',
+                p: {
+                    roomId: 'TEST123',
+                    nick: 'テストユーザー',
+                    installId: 'test-install-id'
+                }
+            };
+
+            log(`参加メッセージ送信: ${JSON.stringify(message)}`);
+            ws.send(JSON.stringify(message));
+        }
+
+        function sendDisband() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('WebSocketが接続されていません', 'error');
+                return;
+            }
+
+            const message = {
+                t: 'disband',
+                p: {}
+            };
+
+            log(`解散メッセージ送信: ${JSON.stringify(message)}`);
+            ws.send(JSON.stringify(message));
+        }
+    </script>
+</body>
+</html>

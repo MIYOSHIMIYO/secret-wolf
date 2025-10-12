@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>秘密人狼 機能テスト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .test-section {
+            background-color: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        .test-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        .test-button:hover {
+            background-color: #45a049;
+        }
+        .test-button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .log {
+            background-color: #f8f9fa;
+            color: #212529;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 秘密人狼 機能テスト</h1>
+    
+    <div class="test-section">
+        <h2>テスト1: 知り合いと遊ぶ - ルーム作成</h2>
+        <p>「知り合いと遊ぶ」ボタンをクリックして、ルーム作成画面に遷移し、即座にルーム待機シーンに移行するかテストします。</p>
+        <button class="test-button" onclick="testRoomCreation()">ルーム作成テスト実行</button>
+        <div id="room-creation-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テスト2: 解散機能</h2>
+        <p>ルーム待機画面で解散ボタンをクリックして、即座に解散モーダルが表示され、メニューシーンに移行するかテストします。</p>
+        <button class="test-button" onclick="testDisband()">解散テスト実行</button>
+        <div id="disband-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テスト3: 知らない誰かと - マッチング</h2>
+        <p>「知らない誰かと」ボタンをクリックして、マッチングシーンで自身がプレイヤー一覧に適切に表示されるかテストします。</p>
+        <button class="test-button" onclick="testAutoMatching()">マッチングテスト実行</button>
+        <div id="auto-matching-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テスト4: 繰り返し実行</h2>
+        <p>上記のテストを複数回実行して、問題が発生しないかテストします。</p>
+        <button class="test-button" onclick="testRepeatedExecution()">繰り返しテスト実行</button>
+        <div id="repeated-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>全テスト実行</h2>
+        <p>全てのテストを順次実行します。</p>
+        <button class="test-button" onclick="runAllTests()">全テスト実行</button>
+        <div id="all-tests-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テストログ</h2>
+        <div id="test-log" class="log"></div>
+        <button class="test-button" onclick="clearLog()">ログクリア</button>
+    </div>
+
+    <script>
+        let testResults = {
+            roomCreation: null,
+            disband: null,
+            autoMatching: null,
+            repeated: null
+        };
+        
+        function log(message) {
+            const logElement = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearLog() {
+            document.getElementById('test-log').textContent = '';
+        }
+        
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+        
+        async function testRoomCreation() {
+            log('=== テスト1: ルーム作成テスト開始 ===');
+            showResult('room-creation-result', 'テスト実行中...', 'info');
+            
+            try {
+                // メニュー画面に移動
+                if (window.location.pathname !== '/menu' && window.location.pathname !== '/') {
+                    window.location.href = '/menu';
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+                
+                // 知り合いと遊ぶボタンを探す
+                const friendsButton = document.querySelector('img[alt="知り合いと遊ぶ"]')?.closest('button');
+                if (!friendsButton) {
+                    throw new Error('知り合いと遊ぶボタンが見つかりません');
+                }
+                
+                log('知り合いと遊ぶボタンをクリック');
+                friendsButton.click();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // ルーム作成画面で作成ボタンを探す
+                const createButton = Array.from(document.querySelectorAll('button')).find(btn => 
+                    btn.textContent.includes('作成') && !btn.disabled
+                );
+                if (!createButton) {
+                    throw new Error('ルーム作成ボタンが見つかりません');
+                }
+                
+                log('ルーム作成ボタンをクリック');
+                const startTime = Date.now();
+                createButton.click();
+                
+                // ルーム待機画面に遷移するまで待機
+                let lobbyFound = false;
+                for (let i = 0; i < 100; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    if (window.location.pathname.includes('/lobby/')) {
+                        lobbyFound = true;
+                        break;
+                    }
+                }
+                
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                
+                if (lobbyFound) {
+                    log(`✅ ルーム待機画面への遷移成功 (${duration}ms)`);
+                    showResult('room-creation-result', `✅ 成功！遷移時間: ${duration}ms`, 'success');
+                    testResults.roomCreation = { success: true, duration };
+                } else {
+                    log('❌ ルーム待機画面への遷移失敗');
+                    showResult('room-creation-result', '❌ 失敗: ルーム待機画面への遷移ができませんでした', 'error');
+                    testResults.roomCreation = { success: false };
+                }
+                
+            } catch (error) {
+                log(`❌ エラー: ${error.message}`);
+                showResult('room-creation-result', `❌ エラー: ${error.message}`, 'error');
+                testResults.roomCreation = { success: false, error: error.message };
+            }
+        }
+        
+        async function testDisband() {
+            log('=== テスト2: 解散テスト開始 ===');
+            showResult('disband-result', 'テスト実行中...', 'info');
+            
+            try {
+                // 解散ボタンを探す
+                const disbandButton = Array.from(document.querySelectorAll('button')).find(btn => 
+                    btn.textContent.includes('解散')
+                );
+                if (!disbandButton) {
+                    throw new Error('解散ボタンが見つかりません');
+                }
+                
+                log('解散ボタンをクリック');
+                const startTime = Date.now();
+                disbandButton.click();
+                
+                // 解散確認モーダルを待機
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // はいボタンを探す
+                const confirmButton = Array.from(document.querySelectorAll('button')).find(btn => 
+                    btn.textContent.includes('はい')
+                );
+                if (!confirmButton) {
+                    throw new Error('解散確認ボタンが見つかりません');
+                }
+                
+                log('解散確認ボタンをクリック');
+                confirmButton.click();
+                
+                // メニュー画面に遷移するまで待機
+                let menuFound = false;
+                for (let i = 0; i < 50; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    if (window.location.pathname === '/menu' || window.location.pathname === '/') {
+                        menuFound = true;
+                        break;
+                    }
+                }
+                
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                
+                if (menuFound) {
+                    log(`✅ メニュー画面への遷移成功 (${duration}ms)`);
+                    showResult('disband-result', `✅ 成功！遷移時間: ${duration}ms`, 'success');
+                    testResults.disband = { success: true, duration };
+                } else {
+                    log('❌ メニュー画面への遷移失敗');
+                    showResult('disband-result', '❌ 失敗: メニュー画面への遷移ができませんでした', 'error');
+                    testResults.disband = { success: false };
+                }
+                
+            } catch (error) {
+                log(`❌ エラー: ${error.message}`);
+                showResult('disband-result', `❌ エラー: ${error.message}`, 'error');
+                testResults.disband = { success: false, error: error.message };
+            }
+        }
+        
+        async function testAutoMatching() {
+            log('=== テスト3: 自動マッチングテスト開始 ===');
+            showResult('auto-matching-result', 'テスト実行中...', 'info');
+            
+            try {
+                // 知らない誰かとボタンを探す
+                const randomButton = document.querySelector('img[alt="知らない誰かと"]')?.closest('button');
+                if (!randomButton) {
+                    throw new Error('知らない誰かとボタンが見つかりません');
+                }
+                
+                log('知らない誰かとボタンをクリック');
+                randomButton.click();
+                
+                // マッチング画面に遷移するまで待機
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // プレイヤー一覧を確認
+                const playerList = document.querySelector('.space-y-3') || 
+                                  document.querySelector('[class*="space-y-3"]');
+                
+                if (!playerList) {
+                    throw new Error('プレイヤー一覧が見つかりません');
+                }
+                
+                const players = playerList.querySelectorAll('[class*="bg-white/5"]');
+                log(`プレイヤー一覧が見つかりました (${players.length}人)`);
+                
+                // 自身がプレイヤー一覧に表示されているか確認
+                const hasSelf = Array.from(players).some(player => 
+                    player.textContent.includes('参加済み') || 
+                    player.querySelector('.animate-pulse')
+                );
+                
+                if (hasSelf) {
+                    log('✅ 自身がプレイヤー一覧に表示されています');
+                    showResult('auto-matching-result', `✅ 成功！プレイヤー数: ${players.length}人`, 'success');
+                    testResults.autoMatching = { success: true, playerCount: players.length };
+                } else {
+                    log('❌ 自身がプレイヤー一覧に表示されていません');
+                    showResult('auto-matching-result', `❌ 失敗: 自身がプレイヤー一覧に表示されていません`, 'error');
+                    testResults.autoMatching = { success: false, playerCount: players.length };
+                }
+                
+            } catch (error) {
+                log(`❌ エラー: ${error.message}`);
+                showResult('auto-matching-result', `❌ エラー: ${error.message}`, 'error');
+                testResults.autoMatching = { success: false, error: error.message };
+            }
+        }
+        
+        async function testRepeatedExecution() {
+            log('=== テスト4: 繰り返し実行テスト開始 ===');
+            showResult('repeated-result', 'テスト実行中...', 'info');
+            
+            const results = [];
+            const testCount = 3;
+            
+            for (let i = 1; i <= testCount; i++) {
+                log(`\n--- 繰り返しテスト ${i}/${testCount} ---`);
+                
+                // メニューに戻る
+                if (window.location.pathname !== '/menu' && window.location.pathname !== '/') {
+                    window.location.href = '/menu';
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+                
+                // ルーム作成テスト
+                const roomResult = await testRoomCreation();
+                results.push({ test: 'room_creation', iteration: i, success: roomResult.success });
+                
+                if (roomResult.success) {
+                    // 解散テスト
+                    const disbandResult = await testDisband();
+                    results.push({ test: 'disband', iteration: i, success: disbandResult.success });
+                }
+            }
+            
+            // 結果の集計
+            const roomCreationSuccess = results.filter(r => r.test === 'room_creation' && r.success).length;
+            const disbandSuccess = results.filter(r => r.test === 'disband' && r.success).length;
+            
+            log(`\n--- 繰り返しテスト結果 ---`);
+            log(`ルーム作成成功: ${roomCreationSuccess}/${testCount}`);
+            log(`解散成功: ${disbandSuccess}/${testCount}`);
+            
+            const allSuccessful = roomCreationSuccess === testCount && disbandSuccess === testCount;
+            
+            if (allSuccessful) {
+                showResult('repeated-result', `✅ 成功！全${testCount}回のテストが成功しました`, 'success');
+                testResults.repeated = { success: true, roomCreationSuccess, disbandSuccess };
+            } else {
+                showResult('repeated-result', `❌ 失敗: ルーム作成${roomCreationSuccess}/${testCount}, 解散${disbandSuccess}/${testCount}`, 'error');
+                testResults.repeated = { success: false, roomCreationSuccess, disbandSuccess };
+            }
+        }
+        
+        async function runAllTests() {
+            log('=== 全テスト実行開始 ===');
+            showResult('all-tests-result', '全テスト実行中...', 'info');
+            
+            // テスト1: ルーム作成
+            await testRoomCreation();
+            
+            // テスト2: 解散（ルーム作成が成功した場合のみ）
+            if (testResults.roomCreation?.success) {
+                await testDisband();
+            }
+            
+            // テスト3: 自動マッチング
+            await testAutoMatching();
+            
+            // テスト4: 繰り返し実行
+            await testRepeatedExecution();
+            
+            // 結果サマリー
+            const summary = `
+                <h3>テスト結果サマリー</h3>
+                <p>1. ルーム作成: ${testResults.roomCreation?.success ? '✅' : '❌'} ${testResults.roomCreation?.duration ? `(${testResults.roomCreation.duration}ms)` : ''}</p>
+                <p>2. 解散: ${testResults.disband?.success ? '✅' : '❌'} ${testResults.disband?.duration ? `(${testResults.disband.duration}ms)` : ''}</p>
+                <p>3. 自動マッチング: ${testResults.autoMatching?.success ? '✅' : '❌'} ${testResults.autoMatching?.playerCount ? `(${testResults.autoMatching.playerCount}人)` : ''}</p>
+                <p>4. 繰り返し実行: ${testResults.repeated?.success ? '✅' : '❌'}</p>
+            `;
+            
+            showResult('all-tests-result', summary, 'info');
+            log('=== 全テスト完了 ===');
+        }
+        
+        // ページ読み込み時の初期化
+        window.addEventListener('load', () => {
+            log('テストページが読み込まれました');
+            log('各テストボタンをクリックしてテストを実行してください');
+        });
+    </script>
+</body>
+</html>

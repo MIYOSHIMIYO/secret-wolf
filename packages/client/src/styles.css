@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* カスタムアニメーション */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+html, body, #root { 
+  height: 100%; 
+  overflow: hidden; /* スクロールを無効化 */
+  touch-action: none; /* タッチスクロールを無効化 */
+  overscroll-behavior: none; /* オーバースクロールを無効化 */
+}
+body { 
+  margin: 0; 
+  background: #0b0b0b; 
+  color: white; 
+  position: fixed; /* スクロールを完全に無効化 */
+  width: 100%;
+  height: 100%;
+  /* Safe Area対応 */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* iPhone SE 等の極小幅でメニューを自動縮小 */
+/* 標準〜大型端末もわずかに縮小（視覚的余白を確保） */
+/* 通常スマホ（iPhone 14 など 376–767px）: ほんの少し縮小 */
+@media (min-width: 376px) and (max-width: 767px) {
+  .menu-scale { transform: scale(0.92); transform-origin: top center; }
+}
+@media (min-width: 768px) {
+  .menu-scale { transform: scale(0.92); transform-origin: top center; }
+}
+
+@media (min-width: 1024px) {
+  .menu-scale { transform: scale(0.9); }
+}
+
+/* iPhone 14 相当（幅376–430px程度）でモード選択の余白を活用して軽く拡大 */
+@media (min-width: 376px) and (max-width: 480px) {
+  .mode-select-scale { transform: scale(1.12); transform-origin: top center; }
+}
+
+/* iPad 相当（768–1024px）: transform を使わず md: クラスで拡大（左右の切れ防止） */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .roomcreate-ipad-scale { transform: none; width: auto; }
+  .lobby-ipad-scale { transform: none; width: auto; }
+  /* iPad ではメニューもスケールしない（左右の余白/仕切りを回避） */
+  .menu-scale { transform: none; }
+  /* Support は左右のカットが出やすいためスケールは使わず、mdクラスで拡大 */
+  .support-ipad-scale { transform: none; }
+  /* Input（秘密入力）・Vote（投票）・Judge（判定）・Result（結果）は
+     スケールではなくmdクラスの拡大量で対応し、左右の切れや疑似仕切りを防止 */
+  .input-ipad-scale { transform: none; width: auto; }
+  .vote-ipad-scale { transform: none; width: auto; }
+  .judge-ipad-scale { transform: none; width: auto; }
+  .result-ipad-scale { transform: none; width: auto; }
+}
+
+
+/* 375px以下で軽く縮小（iPhone SE 第2/3世代を含む） */
+@media (max-width: 375px) {
+  .menu-scale {
+    transform: scale(0.76);
+    transform-origin: top center;
+  }
+  /* ルール画面全体をSEで少し縮小 */
+  .rules-se-scale {
+    transform: scale(0.89); /* 表示欄サイズは維持 */
+    transform-origin: top center;
+    padding-bottom: 10px;
+  }
+  /* ルール画面: SE 専用の微調整（他デバイス非該当） */
+  /* 表示欄縮小に合わせて文字サイズも少し縮小（比率維持） */
+  .rule-card { padding: 13px 13px 22px; }
+  .rule-title { font-size: 1.18rem !important; }
+  .rule-item { font-size: 1.06rem !important; line-height: 1.20rem !important; }
+  .rules-progress { margin-top: 8px; }
+  .rules-topics-btn { padding: 10px 14px; font-size: 0.88rem; }
+  .rules-chevron { width: 2.25rem; height: 2.25rem; bottom: 5rem; }
+}
+
+/* 340px以下でさらに縮小（極端に小さい画面向け） */
+@media (max-width: 340px) {
+  .menu-scale {
+    transform: scale(0.6);
+  }
+}
+
+/* 320px以下でさらに縮小（最小端末想定） */
+@media (max-width: 320px) {
+  .menu-scale {
+    transform: scale(0.56);
+  }
+}
+
+/* Safe Area対応のユーティリティクラス */
+.safe-area-top {
+  padding-top: max(env(safe-area-inset-top), 20px);
+}
+
+.safe-area-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 20px);
+}
+
+.safe-area-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* 画面の縦比率を制限 */
+.screen-content {
+  max-height: 80vh;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal-line {
+  opacity: 0;
+  animation: fadeInUp 1.2s ease forwards;
+} 
+
+@keyframes pieSliceAppear {
+  from { 
+    opacity: 0; 
+    transform: scale(0.8); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+.pie-slice-animation {
+  animation: pieSliceAppear 0.3s ease-out both;
+} 

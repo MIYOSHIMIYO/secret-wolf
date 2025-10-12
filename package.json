@@ -1,0 +1,58 @@
+{
+  "name": "secret-werewolf",
+  "version": "1.0.0",
+  "description": "秘密人狼 - リアルタイム多人数ゲーム",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm -C packages/worker dev\" \"pnpm -C packages/client dev\"",
+    "build": "pnpm -C packages/shared build && pnpm -C packages/worker build && pnpm -C packages/client build",
+    "typecheck": "pnpm -C packages/shared typecheck && pnpm -C packages/worker typecheck && pnpm -C packages/client typecheck",
+    "lint": "pnpm -C packages/shared lint && pnpm -C packages/worker lint && pnpm -C packages/client lint",
+    "test": "pnpm -C packages/shared test && pnpm -C packages/worker test && pnpm -C packages/client test",
+    "test:all": "node scripts/test-runner.js",
+    "test:network": "node scripts/network-audit.js dev",
+    "test:network:prod": "node scripts/network-audit.js prod",
+    "test:ci": "./scripts/ci-test.sh",
+    "doc:sync": "node scripts/doc-sync.js",
+    "doc:watch": "node scripts/doc-sync.js --watch",
+    "diagnose": "node scripts/diagnose-connection.js",
+    "clean": "pnpm -C packages/shared clean && pnpm -C packages/worker clean && pnpm -C packages/client clean",
+    "deploy:dev": "pnpm -C packages/worker wrangler deploy --env dev",
+    "deploy:prod": "pnpm -C packages/worker wrangler deploy --env prod",
+    "deploy:full:prod": "pnpm build && pnpm deploy:prod && pnpm -C packages/client build:production",
+    "deploy:full:dev": "pnpm build && pnpm deploy:dev",
+    "build:web": "pnpm -C packages/client build",
+    "build:web:prod": "pnpm -C packages/client build:production",
+    "preview": "pnpm -C packages/client preview",
+    "test:validation": "pnpm -C packages/client test:validation"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "chokidar": "^3.5.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "keywords": [
+    "game",
+    "werewolf",
+    "real-time",
+    "websocket",
+    "react",
+    "typescript"
+  ],
+  "author": "Yuudai Miyoshi",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuudai/secret-werewolf.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuudai/secret-werewolf/issues"
+  },
+  "homepage": "https://github.com/yuudai/secret-werewolf#readme"
+}

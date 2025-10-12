@@ -1,0 +1,190 @@
+/* ビューポートスケーリング用のCSSカスタムプロパティ */
+
+:root {
+  --viewport-scale: 1;
+  --viewport-width: 390px;
+  --viewport-height: 844px;
+}
+
+/* スケーリング用のユーティリティクラス */
+
+/* フォントサイズのスケーリング */
+.text-scale-xs { font-size: calc(0.75rem * var(--viewport-scale)); }
+.text-scale-sm { font-size: calc(0.875rem * var(--viewport-scale)); }
+.text-scale-base { font-size: calc(1rem * var(--viewport-scale)); }
+.text-scale-lg { font-size: calc(1.125rem * var(--viewport-scale)); }
+.text-scale-xl { font-size: calc(1.25rem * var(--viewport-scale)); }
+.text-scale-2xl { font-size: calc(1.5rem * var(--viewport-scale)); }
+.text-scale-3xl { font-size: calc(1.875rem * var(--viewport-scale)); }
+.text-scale-4xl { font-size: calc(2.25rem * var(--viewport-scale)); }
+
+/* パディング・マージンのスケーリング */
+.p-scale-1 { padding: calc(0.25rem * var(--viewport-scale)); }
+.p-scale-2 { padding: calc(0.5rem * var(--viewport-scale)); }
+.p-scale-3 { padding: calc(0.75rem * var(--viewport-scale)); }
+.p-scale-4 { padding: calc(1rem * var(--viewport-scale)); }
+.p-scale-5 { padding: calc(1.25rem * var(--viewport-scale)); }
+.p-scale-6 { padding: calc(1.5rem * var(--viewport-scale)); }
+.p-scale-8 { padding: calc(2rem * var(--viewport-scale)); }
+.p-scale-10 { padding: calc(2.5rem * var(--viewport-scale)); }
+.p-scale-12 { padding: calc(3rem * var(--viewport-scale)); }
+.p-scale-16 { padding: calc(4rem * var(--viewport-scale)); }
+.p-scale-20 { padding: calc(5rem * var(--viewport-scale)); }
+
+.px-scale-1 { padding-left: calc(0.25rem * var(--viewport-scale)); padding-right: calc(0.25rem * var(--viewport-scale)); }
+.px-scale-2 { padding-left: calc(0.5rem * var(--viewport-scale)); padding-right: calc(0.5rem * var(--viewport-scale)); }
+.px-scale-3 { padding-left: calc(0.75rem * var(--viewport-scale)); padding-right: calc(0.75rem * var(--viewport-scale)); }
+.px-scale-4 { padding-left: calc(1rem * var(--viewport-scale)); padding-right: calc(1rem * var(--viewport-scale)); }
+.px-scale-5 { padding-left: calc(1.25rem * var(--viewport-scale)); padding-right: calc(1.25rem * var(--viewport-scale)); }
+.px-scale-6 { padding-left: calc(1.5rem * var(--viewport-scale)); padding-right: calc(1.5rem * var(--viewport-scale)); }
+.px-scale-8 { padding-left: calc(2rem * var(--viewport-scale)); padding-right: calc(2rem * var(--viewport-scale)); }
+.px-scale-10 { padding-left: calc(2.5rem * var(--viewport-scale)); padding-right: calc(2.5rem * var(--viewport-scale)); }
+.px-scale-12 { padding-left: calc(3rem * var(--viewport-scale)); padding-right: calc(3rem * var(--viewport-scale)); }
+.px-scale-16 { padding-left: calc(4rem * var(--viewport-scale)); padding-right: calc(4rem * var(--viewport-scale)); }
+.px-scale-20 { padding-left: calc(5rem * var(--viewport-scale)); padding-right: calc(5rem * var(--viewport-scale)); }
+
+.py-scale-1 { padding-top: calc(0.25rem * var(--viewport-scale)); padding-bottom: calc(0.25rem * var(--viewport-scale)); }
+.py-scale-2 { padding-top: calc(0.5rem * var(--viewport-scale)); padding-bottom: calc(0.5rem * var(--viewport-scale)); }
+.py-scale-3 { padding-top: calc(0.75rem * var(--viewport-scale)); padding-bottom: calc(0.75rem * var(--viewport-scale)); }
+.py-scale-4 { padding-top: calc(1rem * var(--viewport-scale)); padding-bottom: calc(1rem * var(--viewport-scale)); }
+.py-scale-5 { padding-top: calc(1.25rem * var(--viewport-scale)); padding-bottom: calc(1.25rem * var(--viewport-scale)); }
+.py-scale-6 { padding-top: calc(1.5rem * var(--viewport-scale)); padding-bottom: calc(1.5rem * var(--viewport-scale)); }
+.py-scale-8 { padding-top: calc(2rem * var(--viewport-scale)); padding-bottom: calc(2rem * var(--viewport-scale)); }
+.py-scale-10 { padding-top: calc(2.5rem * var(--viewport-scale)); padding-bottom: calc(2.5rem * var(--viewport-scale)); }
+.py-scale-12 { padding-top: calc(3rem * var(--viewport-scale)); padding-bottom: calc(3rem * var(--viewport-scale)); }
+.py-scale-16 { padding-top: calc(4rem * var(--viewport-scale)); padding-bottom: calc(4rem * var(--viewport-scale)); }
+.py-scale-20 { padding-top: calc(5rem * var(--viewport-scale)); padding-bottom: calc(5rem * var(--viewport-scale)); }
+
+.pt-scale-1 { padding-top: calc(0.25rem * var(--viewport-scale)); }
+.pt-scale-2 { padding-top: calc(0.5rem * var(--viewport-scale)); }
+.pt-scale-3 { padding-top: calc(0.75rem * var(--viewport-scale)); }
+.pt-scale-4 { padding-top: calc(1rem * var(--viewport-scale)); }
+.pt-scale-5 { padding-top: calc(1.25rem * var(--viewport-scale)); }
+.pt-scale-6 { padding-top: calc(1.5rem * var(--viewport-scale)); }
+.pt-scale-8 { padding-top: calc(2rem * var(--viewport-scale)); }
+.pt-scale-10 { padding-top: calc(2.5rem * var(--viewport-scale)); }
+.pt-scale-12 { padding-top: calc(3rem * var(--viewport-scale)); }
+.pt-scale-16 { padding-top: calc(4rem * var(--viewport-scale)); }
+.pt-scale-20 { padding-top: calc(5rem * var(--viewport-scale)); }
+
+.pb-scale-1 { padding-bottom: calc(0.25rem * var(--viewport-scale)); }
+.pb-scale-2 { padding-bottom: calc(0.5rem * var(--viewport-scale)); }
+.pb-scale-3 { padding-bottom: calc(0.75rem * var(--viewport-scale)); }
+.pb-scale-4 { padding-bottom: calc(1rem * var(--viewport-scale)); }
+.pb-scale-5 { padding-bottom: calc(1.25rem * var(--viewport-scale)); }
+.pb-scale-6 { padding-bottom: calc(1.5rem * var(--viewport-scale)); }
+.pb-scale-8 { padding-bottom: calc(2rem * var(--viewport-scale)); }
+.pb-scale-10 { padding-bottom: calc(2.5rem * var(--viewport-scale)); }
+.pb-scale-12 { padding-bottom: calc(3rem * var(--viewport-scale)); }
+.pb-scale-16 { padding-bottom: calc(4rem * var(--viewport-scale)); }
+.pb-scale-20 { padding-bottom: calc(5rem * var(--viewport-scale)); }
+
+/* マージンのスケーリング */
+.m-scale-1 { margin: calc(0.25rem * var(--viewport-scale)); }
+.m-scale-2 { margin: calc(0.5rem * var(--viewport-scale)); }
+.m-scale-3 { margin: calc(0.75rem * var(--viewport-scale)); }
+.m-scale-4 { margin: calc(1rem * var(--viewport-scale)); }
+.m-scale-5 { margin: calc(1.25rem * var(--viewport-scale)); }
+.m-scale-6 { margin: calc(1.5rem * var(--viewport-scale)); }
+.m-scale-8 { margin: calc(2rem * var(--viewport-scale)); }
+.m-scale-10 { margin: calc(2.5rem * var(--viewport-scale)); }
+.m-scale-12 { margin: calc(3rem * var(--viewport-scale)); }
+.m-scale-16 { margin: calc(4rem * var(--viewport-scale)); }
+.m-scale-20 { margin: calc(5rem * var(--viewport-scale)); }
+
+.mb-scale-1 { margin-bottom: calc(0.25rem * var(--viewport-scale)); }
+.mb-scale-2 { margin-bottom: calc(0.5rem * var(--viewport-scale)); }
+.mb-scale-3 { margin-bottom: calc(0.75rem * var(--viewport-scale)); }
+.mb-scale-4 { margin-bottom: calc(1rem * var(--viewport-scale)); }
+.mb-scale-5 { margin-bottom: calc(1.25rem * var(--viewport-scale)); }
+.mb-scale-6 { margin-bottom: calc(1.5rem * var(--viewport-scale)); }
+.mb-scale-8 { margin-bottom: calc(2rem * var(--viewport-scale)); }
+.mb-scale-10 { margin-bottom: calc(2.5rem * var(--viewport-scale)); }
+.mb-scale-12 { margin-bottom: calc(3rem * var(--viewport-scale)); }
+.mb-scale-16 { margin-bottom: calc(4rem * var(--viewport-scale)); }
+.mb-scale-20 { margin-bottom: calc(5rem * var(--viewport-scale)); }
+
+.mt-scale-1 { margin-top: calc(0.25rem * var(--viewport-scale)); }
+.mt-scale-2 { margin-top: calc(0.5rem * var(--viewport-scale)); }
+.mt-scale-3 { margin-top: calc(0.75rem * var(--viewport-scale)); }
+.mt-scale-4 { margin-top: calc(1rem * var(--viewport-scale)); }
+.mt-scale-5 { margin-top: calc(1.25rem * var(--viewport-scale)); }
+.mt-scale-6 { margin-top: calc(1.5rem * var(--viewport-scale)); }
+.mt-scale-8 { margin-top: calc(2rem * var(--viewport-scale)); }
+.mt-scale-10 { margin-top: calc(2.5rem * var(--viewport-scale)); }
+.mt-scale-12 { margin-top: calc(3rem * var(--viewport-scale)); }
+.mt-scale-16 { margin-top: calc(4rem * var(--viewport-scale)); }
+.mt-scale-20 { margin-top: calc(5rem * var(--viewport-scale)); }
+
+/* 幅・高さのスケーリング */
+.w-scale-1 { width: calc(0.25rem * var(--viewport-scale)); }
+.w-scale-2 { width: calc(0.5rem * var(--viewport-scale)); }
+.w-scale-3 { width: calc(0.75rem * var(--viewport-scale)); }
+.w-scale-4 { width: calc(1rem * var(--viewport-scale)); }
+.w-scale-5 { width: calc(1.25rem * var(--viewport-scale)); }
+.w-scale-6 { width: calc(1.5rem * var(--viewport-scale)); }
+.w-scale-8 { width: calc(2rem * var(--viewport-scale)); }
+.w-scale-10 { width: calc(2.5rem * var(--viewport-scale)); }
+.w-scale-12 { width: calc(3rem * var(--viewport-scale)); }
+.w-scale-16 { width: calc(4rem * var(--viewport-scale)); }
+.w-scale-20 { width: calc(5rem * var(--viewport-scale)); }
+
+.h-scale-1 { height: calc(0.25rem * var(--viewport-scale)); }
+.h-scale-2 { height: calc(0.5rem * var(--viewport-scale)); }
+.h-scale-3 { height: calc(0.75rem * var(--viewport-scale)); }
+.h-scale-4 { height: calc(1rem * var(--viewport-scale)); }
+.h-scale-5 { height: calc(1.25rem * var(--viewport-scale)); }
+.h-scale-6 { height: calc(1.5rem * var(--viewport-scale)); }
+.h-scale-8 { height: calc(2rem * var(--viewport-scale)); }
+.h-scale-10 { height: calc(2.5rem * var(--viewport-scale)); }
+.h-scale-12 { height: calc(3rem * var(--viewport-scale)); }
+.h-scale-16 { height: calc(4rem * var(--viewport-scale)); }
+.h-scale-20 { height: calc(5rem * var(--viewport-scale)); }
+
+/* 最大幅・最大高さのスケーリング */
+.max-w-scale-1 { max-width: calc(0.25rem * var(--viewport-scale)); }
+.max-w-scale-2 { max-width: calc(0.5rem * var(--viewport-scale)); }
+.max-w-scale-3 { max-width: calc(0.75rem * var(--viewport-scale)); }
+.max-w-scale-4 { max-width: calc(1rem * var(--viewport-scale)); }
+.max-w-scale-5 { max-width: calc(1.25rem * var(--viewport-scale)); }
+.max-w-scale-6 { max-width: calc(1.5rem * var(--viewport-scale)); }
+.max-w-scale-8 { max-width: calc(2rem * var(--viewport-scale)); }
+.max-w-scale-10 { max-width: calc(2.5rem * var(--viewport-scale)); }
+.max-w-scale-12 { max-width: calc(3rem * var(--viewport-scale)); }
+.max-w-scale-16 { max-width: calc(4rem * var(--viewport-scale)); }
+.max-w-scale-20 { max-width: calc(5rem * var(--viewport-scale)); }
+
+/* 特定のサイズ値のスケーリング */
+.max-w-scale-90 { max-width: calc(90px * var(--viewport-scale)); }
+.max-w-scale-100 { max-width: calc(100px * var(--viewport-scale)); }
+.max-w-scale-110 { max-width: calc(110px * var(--viewport-scale)); }
+.max-w-scale-140 { max-width: calc(140px * var(--viewport-scale)); }
+.max-w-scale-150 { max-width: calc(150px * var(--viewport-scale)); }
+.max-w-scale-160 { max-width: calc(160px * var(--viewport-scale)); }
+.max-w-scale-170 { max-width: calc(170px * var(--viewport-scale)); }
+.max-w-scale-180 { max-width: calc(180px * var(--viewport-scale)); }
+.max-w-scale-190 { max-width: calc(190px * var(--viewport-scale)); }
+.max-w-scale-200 { max-width: calc(200px * var(--viewport-scale)); }
+.max-w-scale-210 { max-width: calc(210px * var(--viewport-scale)); }
+
+/* ギャップのスケーリング */
+.gap-scale-1 { gap: calc(0.25rem * var(--viewport-scale)); }
+.gap-scale-2 { gap: calc(0.5rem * var(--viewport-scale)); }
+.gap-scale-3 { gap: calc(0.75rem * var(--viewport-scale)); }
+.gap-scale-4 { gap: calc(1rem * var(--viewport-scale)); }
+.gap-scale-5 { gap: calc(1.25rem * var(--viewport-scale)); }
+.gap-scale-6 { gap: calc(1.5rem * var(--viewport-scale)); }
+.gap-scale-8 { gap: calc(2rem * var(--viewport-scale)); }
+.gap-scale-10 { gap: calc(2.5rem * var(--viewport-scale)); }
+.gap-scale-12 { gap: calc(3rem * var(--viewport-scale)); }
+.gap-scale-16 { gap: calc(4rem * var(--viewport-scale)); }
+.gap-scale-20 { gap: calc(5rem * var(--viewport-scale)); }
+
+/* ボーダーラディウスのスケーリング */
+.rounded-scale-sm { border-radius: calc(0.125rem * var(--viewport-scale)); }
+.rounded-scale { border-radius: calc(0.25rem * var(--viewport-scale)); }
+.rounded-scale-md { border-radius: calc(0.375rem * var(--viewport-scale)); }
+.rounded-scale-lg { border-radius: calc(0.5rem * var(--viewport-scale)); }
+.rounded-scale-xl { border-radius: calc(0.75rem * var(--viewport-scale)); }
+.rounded-scale-2xl { border-radius: calc(1rem * var(--viewport-scale)); }
+.rounded-scale-3xl { border-radius: calc(1.5rem * var(--viewport-scale)); }

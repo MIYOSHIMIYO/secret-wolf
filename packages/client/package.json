@@ -1,0 +1,40 @@
+{
+  "name": "@secret/client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:production": "vite build --mode production",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint . --ext .ts,.tsx",
+    "test:validation": "vite build && echo 'Validation test build completed'",
+    "deploy:preview": "vite build --mode production && echo 'Preview build completed'",
+    "deploy:production": "vite build --mode production && echo 'Production build completed'"
+  },
+  "dependencies": {
+    "@secret/shared": "workspace:*",
+    "class-variance-authority": "^0.7.0",
+    "framer-motion": "^11.2.10",
+    "grapheme-splitter": "^1.0.4",
+    "lucide-react": "^0.446.0",
+    "nanoid": "^5.0.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1",
+    "zustand": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react-swc": "^3.7.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10",
+    "terser": "^5.44.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
+  }
+}

@@ -1,0 +1,124 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * *'  # 毎日午前2時（JST 11時）
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 9
+        
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+          
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+      
+    - name: Type check
+      run: pnpm typecheck
+      
+    - name: Lint
+      run: pnpm lint
+      
+    - name: Build
+      run: pnpm build
+      
+    - name: Test (Development)
+      run: |
+        # 開発環境でのテスト
+        pnpm -C packages/worker dev &
+        WORKER_PID=$!
+        
+        # ワーカーが起動するまで待機
+        sleep 10
+        
+        # ネットワークテスト実行
+        node scripts/network-audit.js dev
+        
+        # ワーカーを停止
+        kill $WORKER_PID
+        
+    - name: Test (Production)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        # 本番環境でのテスト
+        node scripts/network-audit.js prod
+        
+    - name: Integration Tests
+      run: node scripts/test-runner.js
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          test-results/
+          *.log
+          
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 9
+        
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+      
+    - name: Security audit
+      run: pnpm audit --audit-level moderate
+      
+    - name: Check for known vulnerabilities
+      run: |
+        # 依存関係の脆弱性チェック
+        pnpm audit --json > audit-results.json || true
+        
+    - name: Upload security results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-results
+        path: audit-results.json

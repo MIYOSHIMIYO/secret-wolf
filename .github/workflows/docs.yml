@@ -1,0 +1,91 @@
+name: Documentation Sync
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'packages/**/*.ts'
+      - 'packages/**/*.tsx'
+      - 'packages/**/*.js'
+      - 'packages/**/*.jsx'
+      - 'packages/**/*.toml'
+      - 'packages/**/*.json'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'packages/**/*.ts'
+      - 'packages/**/*.tsx'
+      - 'packages/**/*.js'
+      - 'packages/**/*.jsx'
+      - 'packages/**/*.toml'
+      - 'packages/**/*.json'
+  schedule:
+    - cron: '0 3 * * *'  # 毎日午前3時（JST 12時）
+
+jobs:
+  sync-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 9
+        
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+          
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+      
+    - name: Generate documentation
+      run: pnpm doc:sync
+      
+    - name: Check for changes
+      id: verify-changed-files
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "changed=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Commit changes
+      if: steps.verify-changed-files.outputs.changed == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/generated/
+        git commit -m "docs: auto-update generated documentation [skip ci]"
+        
+    - name: Push changes
+      if: steps.verify-changed-files.outputs.changed == 'true'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref_name }}
+        
+    - name: Upload documentation
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-docs
+        path: docs/generated/
+        retention-days: 30

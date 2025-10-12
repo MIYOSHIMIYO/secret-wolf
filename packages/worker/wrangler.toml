@@ -1,0 +1,54 @@
+name = "secret-werewolf"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+# デフォルト環境変数（開発環境）
+[vars]
+ENVIRONMENT = "development"
+ALLOWED_ORIGINS = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173,capacitor://localhost,http://192.168.11.4:5173"
+# SECRET_PEPPER は Cloudflare ダッシュボードで管理
+# STRIPE_SECRET_KEY は Cloudflare ダッシュボードで管理
+# MONITORING_AUTH_TOKEN は Cloudflare ダッシュボードで管理
+# MONITORING_ALLOWED_IPS は Cloudflare ダッシュボードで管理
+RATE_AUTO_PER_MIN = "30"
+RATE_REPORT_PER_5MIN = "60"
+LOG_LEVEL = "debug"
+ENABLE_RATE_LIMIT = "true"
+
+[durable_objects]
+bindings = [{ name = "DO_ROOMS", class_name = "RoomDO" }]
+
+[[migrations]]
+tag = "v001_roomdo"
+new_sqlite_classes = ["RoomDO"]
+
+[[kv_namespaces]]
+binding = "MOD_KV"
+id = "f280c513a4e949928667be409844d782"
+preview_id = "6ff286ad2f7f449093a7077ea642b577"
+
+# 本番環境設定
+[env.prod]
+vars = { ENVIRONMENT = "production", ALLOWED_ORIGINS = "https://secret-werewolf-prod.qmdg2pmnw6.workers.dev,https://secret-werewolf.com,https://www.secret-werewolf.com,http://localhost:8080,capacitor://localhost", RATE_AUTO_PER_MIN = "30", RATE_REPORT_PER_5MIN = "60", LOG_LEVEL = "warn", ENABLE_RATE_LIMIT = "true" }
+
+[env.prod.durable_objects]
+bindings = [{ name = "DO_ROOMS", class_name = "RoomDO" }]
+
+[[env.prod.migrations]]
+tag = "v001_roomdo_prod"
+new_sqlite_classes = ["RoomDO"]
+
+[[env.prod.kv_namespaces]]
+binding = "MOD_KV"
+id = "f280c513a4e949928667be409844d782"
+
+# 開発環境設定
+[env.dev]
+vars = { ENVIRONMENT = "development", ALLOWED_ORIGINS = "http://localhost:5173,http://127.0.0.1:5173,http://192.168.11.4:5173", RATE_AUTO_PER_MIN = "30", RATE_REPORT_PER_5MIN = "60", LOG_LEVEL = "debug", ENABLE_RATE_LIMIT = "true" }
+
+[env.dev.durable_objects]
+bindings = [{ name = "DO_ROOMS", class_name = "RoomDO" }]
+
+[[env.dev.kv_namespaces]]
+binding = "MOD_KV"
+id = "6ff286ad2f7f449093a7077ea642b577" 
