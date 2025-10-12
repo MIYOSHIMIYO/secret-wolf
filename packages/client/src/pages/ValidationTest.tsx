@@ -11,7 +11,6 @@ import Panel from '@/components/Panel';
 import { PrimaryBtn, SecondaryBtn } from '@/components/Buttons';
 import { runWebSocketPerformanceTest } from '@/utils/websocket-performance-test';
 import { pwaManager } from '@/utils/pwa';
-import { stripePaymentManager } from '@/utils/stripe';
 
 interface TestResult {
   name: string;
@@ -51,16 +50,6 @@ export default function ValidationTest() {
             canInstall,
             isInstalled
           }
-        };
-      }
-    },
-    {
-      name: 'Stripe初期化検証',
-      test: async () => {
-        const initialized = await stripePaymentManager.initialize();
-        return {
-          message: initialized ? 'Stripe初期化成功' : 'Stripe初期化失敗',
-          details: { initialized }
         };
       }
     },
