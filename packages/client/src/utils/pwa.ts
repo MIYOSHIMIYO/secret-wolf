@@ -155,6 +155,13 @@ export class PWAManager {
     }
 
     try {
+      // Service Workerファイルの存在確認
+      const response = await fetch('/sw.js', { method: 'HEAD' });
+      if (!response.ok || !response.headers.get('content-type')?.includes('javascript')) {
+        console.log('[PWA] Service Worker file not available or wrong MIME type');
+        return false;
+      }
+
       const registration = await navigator.serviceWorker.register('/sw.js', {
         scope: '/'
       });
