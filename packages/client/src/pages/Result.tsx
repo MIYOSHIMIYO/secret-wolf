@@ -142,7 +142,7 @@ export default function Result() {
 
   return (
     <Screen bannerHeight={0} contentScrollable={true} fullBleed={true} maxWidth={9999}>
-      <div className="result-ipad-scale min-h-screen px-4 md:px-8 pt-4 md:pt-8 pb-32 sm:pb-8 flex flex-col gap-2 md:gap-3">
+      <div className="result-ipad-scale min-h-screen px-4 md:px-8 pt-4 md:pt-8 pb-48 sm:pb-8 flex flex-col gap-2 md:gap-3">
         {/* ヘッダー（固定位置） */}
         <div className="relative mb-6 md:mb-8">
           <h1 className="text-3xl md:text-5xl font-bold text-white text-center">結果</h1>
@@ -286,7 +286,7 @@ export default function Result() {
           </div>
           
           {/* ボタン群（固定位置） */}
-          <div className="mt-3 md:mt-6 flex gap-3 md:gap-4 justify-center pb-20 sm:pb-2">
+          <div className="mt-8 md:mt-10 flex gap-3 md:gap-4 justify-center pb-40 sm:pb-6">
             {/* 知り合いと遊ぶ（通常ルーム）の場合のみボタンを表示 */}
             {!room?.isAutoRoom && (
               isHost ? (

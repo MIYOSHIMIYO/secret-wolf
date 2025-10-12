@@ -255,7 +255,7 @@ export default function Discuss() {
           {/* チャット要素（メッセージ + 入力欄） */}
           <div className="flex-1 flex flex-col min-h-0">
             {/* チャットメッセージ表示エリア（スマホサイズでは短く、タブレット以上では通常サイズ） */}
-            <div ref={listRef} className="overflow-y-auto overscroll-contain rounded-2xl ring-1 ring-white/10 bg-white/5 p-3 space-y-2 flex-shrink-0" style={{ height: "clamp(300px, 50vh, 600px)" }}>
+            <div ref={listRef} className="overflow-y-auto overscroll-contain rounded-2xl ring-1 ring-white/10 bg-white/5 p-3 space-y-2 flex-shrink-0" style={{ height: "clamp(200px, 40vh, 600px)" }}>
               {chats.map((c) => {
                 const isMine = c.senderId === myId;
                 const color = playerColorMap.get(c.senderId) ?? PLAYER_COLORS[0];
