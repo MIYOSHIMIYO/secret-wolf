@@ -192,7 +192,7 @@ export default function Discuss() {
           {/* 右カラム：チャットエリア + 入力欄（約80%） */}
           <div className="flex-1 flex flex-col xl:min-h-0 xl:gap-2 xl:pb-2">
             {/* チャット（縦幅を小さくし、トップ位置を下げる） */}
-            <section className="overflow-hidden flex flex-col min-h-0" style={{ height: "calc(100vh - 280px)" }}>
+            <section className="overflow-hidden flex flex-col min-h-0" style={{ height: "calc(100vh - 360px)" }}>
               <div ref={listRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain rounded-xl ring-1 ring-white/10 bg-white/5 p-3 space-y-2">
                 {chats.map((c) => {
                   const isMine = c.senderId === myId;
@@ -243,7 +243,7 @@ export default function Discuss() {
         </div>
 
         {/* モバイル・タブレット用レイアウト（xl未満） */}
-        <div className="xl:hidden flex-1 flex flex-col gap-2 md:gap-3 pb-6 md:pb-8">
+        <div className="xl:hidden flex-1 flex flex-col gap-2 md:gap-3 pb-20 sm:pb-8">
           {/* 公開された秘密（モバイル・タブレット用） */}
           <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 md:p-6 flex-shrink-0">
             <p className="text-[12px] md:text-lg leading-5 text-white/60 mb-1 md:mb-2">公開された秘密</p>
