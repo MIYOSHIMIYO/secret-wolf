@@ -192,7 +192,7 @@ export default function Discuss() {
           {/* 右カラム：チャットエリア + 入力欄（約80%） */}
           <div className="flex-1 flex flex-col xl:min-h-0 xl:gap-2 xl:pb-2">
             {/* チャット（縦幅を小さくし、トップ位置を下げる） */}
-            <section className="overflow-hidden flex flex-col min-h-0" style={{ height: "calc(100vh - 200px)" }}>
+            <section className="overflow-hidden flex flex-col min-h-0" style={{ height: "calc(100vh - 280px)" }}>
               <div ref={listRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain rounded-xl ring-1 ring-white/10 bg-white/5 p-3 space-y-2">
                 {chats.map((c) => {
                   const isMine = c.senderId === myId;

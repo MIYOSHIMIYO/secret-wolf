@@ -109,7 +109,7 @@ export default function About() {
         </div>
 
         {/* 戻るボタン */}
-        <div className="px-2 sm:px-3 md:px-4 lg:px-0 pb-2 sm:pb-3 md:pb-4 lg:pb-0">
+        <div className="px-2 sm:px-3 md:px-4 lg:px-0 pb-20 sm:pb-4 lg:pb-0">
           <Link to="/menu" className="block">
             <div className="h-12 rounded-xl text-white font-semibold text-center flex items-center justify-center active:scale-[0.98] transition-transform bg-slate-600 hover:bg-slate-700">
               メニューに戻る

@@ -94,7 +94,7 @@ export default function Topics() {
         </div>
 
         {/* 戻るボタン（固定） */}
-        <div className="p-4 pt-2 md:p-8 md:pt-4">
+        <div className="p-4 pt-2 md:p-8 md:pt-4 pb-20 sm:pb-8">
           <SecondaryBtn onClick={() => nav(-1)} className="w-full md:h-16 md:text-xl">
             戻る
           </SecondaryBtn>

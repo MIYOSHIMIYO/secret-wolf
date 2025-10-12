@@ -234,7 +234,7 @@ export default function Rules() {
                 </button>
               </div>
 
-              <div className="mt-2 md:mt-4 w-full flex items-center justify-between px-6 md:px-10 lg:px-0 lg:mt-auto">
+              <div className="mt-2 md:mt-4 w-full flex items-center justify-between px-6 md:px-10 lg:px-0 lg:mt-auto mb-20 sm:mb-4">
                 <div className="w-1/3 flex justify-start">
                   {i > 0 ? (
                     <button

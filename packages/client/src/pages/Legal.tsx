@@ -177,7 +177,7 @@ export default function Legal() {
         </div>
 
         {/* 文書内容 */}
-        <div className="flex-1 p-4 overflow-y-auto">
+        <div className="flex-1 p-4 overflow-y-auto pb-20 sm:pb-4">
           <Panel>
             <div className="space-y-4">
               <h2 className="text-2xl font-bold text-white">{currentDocument.title}</h2>
@@ -191,7 +191,7 @@ export default function Legal() {
         </div>
 
         {/* フッター */}
-        <div className="p-4 border-t border-gray-600">
+        <div className="p-4 border-t border-gray-600 pb-20 sm:pb-4">
           <SecondaryBtn
             onClick={() => navigate('/menu')}
             className="w-full"

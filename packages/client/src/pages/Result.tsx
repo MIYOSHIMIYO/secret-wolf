@@ -141,8 +141,8 @@ export default function Result() {
   }, []);
 
   return (
-    <Screen bannerHeight={0} contentScrollable={false} fullBleed={true} maxWidth={9999}>
-      <div className="result-ipad-scale h-screen overflow-hidden px-4 md:px-8 pt-4 md:pt-8 pb-[env(safe-area-inset-bottom)] flex flex-col gap-2 md:gap-3">
+    <Screen bannerHeight={0} contentScrollable={true} fullBleed={true} maxWidth={9999}>
+      <div className="result-ipad-scale min-h-screen px-4 md:px-8 pt-4 md:pt-8 pb-20 sm:pb-8 flex flex-col gap-2 md:gap-3">
         {/* ヘッダー（固定位置） */}
         <div className="relative mb-6 md:mb-8">
           <h1 className="text-3xl md:text-5xl font-bold text-white text-center">結果</h1>

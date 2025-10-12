@@ -93,7 +93,7 @@ export default function Payment() {
         </div>
 
         {/* 画面固定のボタンエリア */}
-        <div className="p-4 bg-gray-900 border-t border-gray-700 lg:px-8">
+        <div className="p-4 bg-gray-900 border-t border-gray-700 lg:px-8 pb-20 sm:pb-4">
           <div className="max-w-2xl mx-auto">
             <SecondaryBtn
               onClick={() => navigate('/menu')}
