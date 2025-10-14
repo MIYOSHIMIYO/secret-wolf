@@ -99,6 +99,12 @@ export default function App() {
         }
         if (phase === "INPUT") {
           console.log("[App] INPUTフェーズに遷移");
+          // カスタムモードの場合はお題作成シーンを経由する必要があるため、自動遷移をスキップ
+          const isCustomMode = useAppStore.getState().isCustomMode;
+          if (isCustomMode) {
+            console.log("[App] カスタムモードのため、INPUTフェーズへの自動遷移をスキップ");
+            return;
+          }
           nav("/input");
         }
         if (phase === "REVEAL") {
