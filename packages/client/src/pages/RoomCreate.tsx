@@ -39,8 +39,13 @@ export default function RoomCreate() {
           
           // 即座に画面遷移（非同期で実行）
           requestAnimationFrame(() => {
-            // カスタムモード・通常モード共にロビーに遷移
-            nav(`/lobby/${roomId}`);
+            if (isCustomMode) {
+              // カスタムモードの場合はロビーに遷移（カスタムモードフラグは既に設定済み）
+              nav(`/lobby/${roomId}`);
+            } else {
+              // 通常モードの場合はロビーに遷移
+              nav(`/lobby/${roomId}`);
+            }
           });
         }
       }

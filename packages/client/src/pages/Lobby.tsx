@@ -25,6 +25,16 @@ export default function Lobby() {
   
   // カスタムモードかどうかを判定（ルーム状態から）
   const isCustomMode = room?.isCustomMode === true;
+  
+  // デバッグ用：カスタムモード判定の確認
+  useEffect(() => {
+    console.log("[Lobby] カスタムモード判定:", {
+      room: room,
+      isCustomMode: isCustomMode,
+      isAutoRoom: room?.isAutoRoom,
+      isCustomModeFlag: room?.isCustomMode
+    });
+  }, [room, isCustomMode]);
 
   // デバッグ用：接続状態の表示（開発時のみ）
   useEffect(() => {
