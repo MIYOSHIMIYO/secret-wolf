@@ -69,6 +69,7 @@ export class RoomDO implements DurableObject {
       chat: [],
       modeStamps: {} as Record<string, number>, // モードスタンプの集計
       isAutoRoom: false, // 知らない誰かと遊ぶかどうか
+      isCustomMode: false, // カスタムモードかどうか
       iconInUse: [] as number[], // 使用中のアイコンID（配列形式）
       lastActivityAt: Date.now(), // 最後のアクティビティ時刻
       createdAt: Date.now(), // ルーム作成時刻
@@ -318,6 +319,7 @@ export class RoomDO implements DurableObject {
           const isCustomMode = Boolean(p?.isCustomMode);
           if (isCustomMode) {
             this.roomState.isAutoRoom = true; // カスタムモードも自動ルームとして扱う
+            this.roomState.isCustomMode = true; // カスタムモードフラグを設定
             console.log(`[Join] カスタムモード - 人数制限チェックをスキップ`);
           }
           
@@ -516,7 +518,7 @@ export class RoomDO implements DurableObject {
         
         // カスタムモードの場合はお題作成シーンに遷移（クライアント側で処理）
         // 通常モードの場合はモード選択シーンに遷移
-        if (this.roomState.isAutoRoom) {
+        if (this.roomState.isCustomMode) {
           // カスタムモードの場合は何もしない（クライアント側でお題作成シーンに遷移）
           return;
         } else {

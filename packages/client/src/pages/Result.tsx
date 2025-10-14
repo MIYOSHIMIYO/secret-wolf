@@ -104,7 +104,7 @@ export default function Result() {
         // 3秒後に適切なシーンに遷移
         setTimeout(() => {
           // カスタムモードの場合はお題作成シーンに戻る
-          if (room?.isAutoRoom) {
+          if (room?.isCustomMode) {
             nav("/custom", { replace: true });
           } else {
             nav("/mode-select", { replace: true });

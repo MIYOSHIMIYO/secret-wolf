@@ -24,7 +24,7 @@ export default function Lobby() {
   const [disbandOpen, setDisbandOpen] = useState(false);
   
   // カスタムモードかどうかを判定（ルーム状態から）
-  const isCustomMode = room?.isAutoRoom === true;
+  const isCustomMode = room?.isCustomMode === true;
 
   // デバッグ用：接続状態の表示（開発時のみ）
   useEffect(() => {
