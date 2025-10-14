@@ -76,6 +76,7 @@ export async function connect(url: string): Promise<void> {
       if (lastJoinPayload && !hasJoined) {
         const { roomId, nick, installId, isCustomMode } = lastJoinPayload;
         console.log('[WebSocket] joinメッセージ送信:', { roomId, nick, installId, isCustomMode });
+        console.log('[WebSocket] joinメッセージ詳細:', JSON.stringify({ roomId, nick, installId, isCustomMode }, null, 2));
         send('join', { roomId, nick, installId, isCustomMode });
         hasJoined = true;
       }

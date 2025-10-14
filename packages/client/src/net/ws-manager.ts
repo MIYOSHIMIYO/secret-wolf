@@ -41,6 +41,7 @@ export async function connectToRoomWithHandler(
         // 念のため接続確立時に join を送信（ws.ts 側でも送るが、取りこぼし防止の二重安全）
         try { 
           console.log('[ws-manager] joinメッセージ送信:', { roomId, nick, installId, isCustomMode });
+          console.log('[ws-manager] joinメッセージ詳細:', JSON.stringify({ roomId, nick, installId, isCustomMode }, null, 2));
           send('join', { roomId, nick, installId, isCustomMode }); 
         } catch {}
         onConnected();
