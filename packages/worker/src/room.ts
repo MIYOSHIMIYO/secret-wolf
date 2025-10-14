@@ -313,6 +313,14 @@ export class RoomDO implements DurableObject {
       
       console.log(`[onMessage] Parsed message type: ${t}, payload:`, p);
       
+      // startCustomGameメッセージの特別なログ
+      if (t === "startCustomGame") {
+        console.log(`[onMessage] *** startCustomGameメッセージを検出 ***`);
+        console.log(`[onMessage] clientId: ${clientId}, roomId: ${this.roomId}`);
+        console.log(`[onMessage] 現在のプレイヤー数: ${this.roomState.players.length}`);
+        console.log(`[onMessage] 現在のホストID: ${this.roomState.hostId}`);
+      }
+      
       // 監視データの記録
       globalMonitor.recordMessage(this.roomId);
 
