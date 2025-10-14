@@ -456,6 +456,8 @@ export class RoomDO implements DurableObject {
         console.log(`[startCustomGame] TOPIC_CREATIONフェーズに遷移`);
         // カスタムモードの場合はTOPIC_CREATIONフェーズに遷移
         this.roomState.phase = "TOPIC_CREATION";
+        this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
+        this.broadcast({ t: "phase", p: { phase: "TOPIC_CREATION", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
         this.broadcastState();
         return;
       }
@@ -785,6 +787,8 @@ export class RoomDO implements DurableObject {
           if (this.roomState.isCustomMode) {
             console.log(`[rematch] カスタムモードのためTOPIC_CREATIONフェーズに遷移`);
             this.roomState.phase = "TOPIC_CREATION";
+            this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
+            this.broadcast({ t: "phase", p: { phase: "TOPIC_CREATION", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
             this.broadcastState();
           } else {
             console.log(`[rematch] 通常モードのためMODE_SELECTフェーズに遷移`);
