@@ -39,13 +39,8 @@ export default function RoomCreate() {
           
           // 即座に画面遷移（非同期で実行）
           requestAnimationFrame(() => {
-            if (isCustomMode) {
-              // カスタムモードの場合はお題作成シーンに遷移
-              nav("/custom");
-            } else {
-              // 通常モードの場合はロビーに遷移
-              nav(`/lobby/${roomId}`);
-            }
+            // カスタムモード・通常モード共にロビーに遷移
+            nav(`/lobby/${roomId}`);
           });
         }
       }

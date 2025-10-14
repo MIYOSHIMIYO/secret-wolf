@@ -22,6 +22,9 @@ export default function Lobby() {
   const reset = useAppStore((s) => s.reset);
 
   const [disbandOpen, setDisbandOpen] = useState(false);
+  
+  // カスタムモードかどうかを判定（ルーム状態から）
+  const isCustomMode = room?.isAutoRoom === true;
 
   // デバッグ用：接続状態の表示（開発時のみ）
   useEffect(() => {
@@ -121,7 +124,7 @@ export default function Lobby() {
         style={{ height: `calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - ${bannerH}px)` }}
       >
         <div className="h-full flex flex-col">
-          <HeaderBar title="ルーム待機" center />
+          <HeaderBar title={isCustomMode ? "カスタムモード - ルーム待機" : "ルーム待機"} center />
 
           <FadeSlide>
             <Panel className="p-4 sm:p-5 md:p-7 lg:p-8 space-y-3 md:space-y-4">
@@ -171,10 +174,18 @@ export default function Lobby() {
                   <div className="flex-1">
                     <PrimaryBtn 
                       className="w-full" 
-                      onClick={() => send("start", {})} 
+                      onClick={() => {
+                        if (isCustomMode) {
+                          // カスタムモードの場合はお題作成シーンに遷移
+                          nav("/custom");
+                        } else {
+                          // 通常モードの場合はゲーム開始
+                          send("start", {});
+                        }
+                      }} 
                       disabled={disabled || !canStart}
                     >
-                      開始
+                      {isCustomMode ? "お題作成へ" : "開始"}
                     </PrimaryBtn>
                   </div>
                   <div className="flex-1">

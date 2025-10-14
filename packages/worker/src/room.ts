@@ -514,7 +514,14 @@ export class RoomDO implements DurableObject {
         const online = this.roomState.players.filter((x: any) => x.connected).length;
         if (online < 3) return;
         
-        this.goModeSelect();
+        // カスタムモードの場合はお題作成シーンに遷移（クライアント側で処理）
+        // 通常モードの場合はモード選択シーンに遷移
+        if (this.roomState.isAutoRoom) {
+          // カスタムモードの場合は何もしない（クライアント側でお題作成シーンに遷移）
+          return;
+        } else {
+          this.goModeSelect();
+        }
         return;
       }
 
