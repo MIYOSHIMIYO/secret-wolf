@@ -190,8 +190,19 @@ export default function CustomLobby() {
                     <PrimaryBtn 
                       className="w-full" 
                       onClick={() => {
+                        console.log("[CustomLobby] お題作成へボタンクリック");
+                        console.log("[CustomLobby] disabled:", disabled, "canStart:", canStart);
+                        console.log("[CustomLobby] isHost:", isHost, "hostActive:", hostActive);
+                        
+                        if (disabled || !canStart) {
+                          console.log("[CustomLobby] ボタンが無効化されています");
+                          return;
+                        }
+                        
                         // カスタムモードの場合はstartCustomGameメッセージを送信
-                        send("startCustomGame", {});
+                        console.log("[CustomLobby] startCustomGameメッセージを送信");
+                        const result = send("startCustomGame", {});
+                        console.log("[CustomLobby] send結果:", result);
                       }} 
                       disabled={disabled || !canStart}
                     >
