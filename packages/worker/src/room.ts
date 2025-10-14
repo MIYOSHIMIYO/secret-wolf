@@ -435,8 +435,18 @@ export class RoomDO implements DurableObject {
         console.log(`[Join] 参加処理開始: clientId=${clientId}, existingId=${id}, isAutoRoom=${this.roomState.isAutoRoom}, 現在の人数=${this.roomState.players.length}`);
         
         if (!id) {
+          // カスタムモードかどうかをチェック
+          const isCustomMode = Boolean(p?.isCustomMode);
+          
+          if (isCustomMode) {
+            // カスタムモードでは自動開始などの自動ルーム挙動を完全に無効化する
+            this.roomState.isAutoRoom = false;
+            this.roomState.isCustomMode = true;
+            console.log(`[Auto] カスタムモードを設定: isCustomMode=${this.roomState.isCustomMode}, isAutoRoom=${this.roomState.isAutoRoom}`);
+          }
+          
           // ルーム人数制限チェック（新規参加者のみ）
-          console.log(`[Join] 新規参加者 - 人数制限チェック開始`);
+          console.log(`[Auto] 新規参加者 - 人数制限チェック開始: isAutoRoom=${this.roomState.isAutoRoom}, isCustomMode=${this.roomState.isCustomMode}`);
           
           if (this.roomState.isAutoRoom) {
             // 知らない誰かと遊ぶ：3人制限（READYフェーズ中は3人目も参加可能）
@@ -449,13 +459,13 @@ export class RoomDO implements DurableObject {
               return;
             }
           } else {
-            // 知り合いと遊ぶ：8人制限
-            console.log(`[Friends] 8人制限チェック: 現在の人数=${this.roomState.players.length}, ROOM_CAPACITY=${ROOM_CAPACITY}`);
+            // 知り合いと遊ぶ/カスタムモード：8人制限
+            console.log(`[Auto] 8人制限チェック: 現在の人数=${this.roomState.players.length}, ROOM_CAPACITY=${ROOM_CAPACITY}`);
             const isFull = isRoomFull(this.roomState);
-            console.log(`[Friends] isRoomFull結果: ${isFull}`);
+            console.log(`[Auto] isRoomFull結果: ${isFull}`);
             
             if (isFull) {
-              console.log(`[Friends] 8人制限に達したため、参加を拒否`);
+              console.log(`[Auto] 8人制限に達したため、参加を拒否`);
               const ws = this.clients.get(clientId);
               ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_FULL", msg: "このルームは満員です" } } as any));
               ws?.close(4000, "room_full");
@@ -518,6 +528,11 @@ export class RoomDO implements DurableObject {
         const ws = this.clients.get(clientId);
         ws?.send(JSON.stringify({ t: "you", p: { playerId: id } }));
         this.broadcastState();
+        
+        // カスタムモードの場合はお題リストも送信
+        if (this.roomState.isCustomMode) {
+          this.broadcastCustomTopics();
+        }
         
         const activeCount = this.activeIds().length;
         if (activeCount >= 3 && !this.roomState.isCustomMode) {
@@ -1542,11 +1557,13 @@ export class RoomDO implements DurableObject {
     this.broadcast({ t: "customTopics", p: { topics: this.roomState.customTopics } } as any);
   }
 
-  // カスタムゲームを開始
+  // カスタムゲームを開始（お題作成シーンから呼び出される）
   private startCustomGame() {
     // カスタムお題からランダムで1つ選択
     const randomIndex = Math.floor(Math.random() * this.roomState.customTopics.length);
     const selectedTopic = this.roomState.customTopics[randomIndex];
+    
+    console.log(`[startCustomGame] 選択されたお題: ${selectedTopic}`);
     
     // お題を設定してゲーム開始
     this.roomState.round.prompt = selectedTopic;

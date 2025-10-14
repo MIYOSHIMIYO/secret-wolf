@@ -89,7 +89,7 @@ export default function CustomTopicCreation() {
   // ゲーム開始
   const startGame = () => {
     if (!canStart) return;
-    send("startCustomGame", {});
+    send("beginCustomGame", {});
   };
 
   // 入力フィールドの変更
