@@ -60,9 +60,11 @@ export class RoomDO {
             chat: [],
             modeStamps: {}, // モードスタンプの集計
             isAutoRoom: false, // 知らない誰かと遊ぶかどうか
+            isCustomMode: false, // カスタムモードかどうか
             iconInUse: [], // 使用中のアイコンID（配列形式）
             lastActivityAt: Date.now(), // 最後のアクティビティ時刻
             createdAt: Date.now(), // ルーム作成時刻
+            customTopics: [], // カスタムお題リスト
         };
         // アイドルタイムアウト（3分）とマッチ上限時間（30分）のアラームを設定
         this.state.storage.setAlarm(Date.now() + 3 * 60 * 1000); // 3分後
@@ -270,12 +272,29 @@ export class RoomDO {
             globalMonitor.recordMessage(this.roomId);
             if (t === "join") {
                 let id = this.clientToPlayerId.get(clientId);
+                console.log(`[Join] joinメッセージ受信:`, { t, p, clientId, existingId: id });
                 if (!id) {
+                    // カスタムモードかどうかをチェック
+                    const isCustomMode = Boolean(p?.isCustomMode);
+                    console.log(`[Join] カスタムモード判定:`, {
+                        isCustomMode: isCustomMode,
+                        p: p,
+                        isCustomModeFlag: p?.isCustomMode,
+                        rawPayload: JSON.stringify(p)
+                    });
+                    if (isCustomMode) {
+                        this.roomState.isAutoRoom = true; // カスタムモードも自動ルームとして扱う
+                        this.roomState.isCustomMode = true; // カスタムモードフラグを設定
+                        console.log(`[Join] カスタムモード設定完了:`, {
+                            isAutoRoom: this.roomState.isAutoRoom,
+                            isCustomMode: this.roomState.isCustomMode
+                        });
+                    }
                     // ルーム人数制限チェック（新規参加者のみ）
                     console.log(`[Join] 新規参加者 - 人数制限チェック開始: isAutoRoom=${this.roomState.isAutoRoom}, 現在の人数=${this.roomState.players.length}`);
                     if (this.roomState.isAutoRoom) {
-                        // 知らない誰かと遊ぶ：人数制限なし（自動マッチングで管理）
-                        console.log(`[Auto] 知らない誰かと遊ぶモード - 人数制限チェックをスキップ`);
+                        // 知らない誰かと遊ぶ/カスタムモード：人数制限なし（自動マッチングで管理）
+                        console.log(`[Auto] 自動マッチングモード - 人数制限チェックをスキップ`);
                     }
                     else {
                         // 知り合いと遊ぶ：8人制限
@@ -325,6 +344,10 @@ export class RoomDO {
                 const ws = this.clients.get(clientId);
                 ws?.send(JSON.stringify({ t: "you", p: { playerId: id } }));
                 this.broadcastState();
+                // カスタムモードの場合はお題リストも送信
+                if (this.roomState.isCustomMode) {
+                    this.broadcastCustomTopics();
+                }
                 if (this.roomState.phase === "LOBBY" && this.roomState.isAutoRoom) {
                     if (this.roomState.players.length >= 3) {
                         console.log(`[Join] 3人揃いました。自動開始します。`);
@@ -434,7 +457,21 @@ export class RoomDO {
                 const online = this.roomState.players.filter((x) => x.connected).length;
                 if (online < 3)
                     return;
-                this.goModeSelect();
+                // カスタムモードの場合はお題作成シーンに遷移（クライアント側で処理）
+                // 通常モードの場合はモード選択シーンに遷移
+                console.log(`[Start] カスタムモード判定:`, {
+                    isCustomMode: this.roomState.isCustomMode,
+                    isAutoRoom: this.roomState.isAutoRoom
+                });
+                if (this.roomState.isCustomMode) {
+                    // カスタムモードの場合は何もしない（クライアント側でお題作成シーンに遷移）
+                    console.log(`[Start] カスタムモード - クライアント側でお題作成シーンに遷移`);
+                    return;
+                }
+                else {
+                    console.log(`[Start] 通常モード - モード選択シーンに遷移`);
+                    this.goModeSelect();
+                }
                 return;
             }
             if (t === "startGame") {
@@ -452,6 +489,58 @@ export class RoomDO {
                     // 知らない誰かと遊ぶの場合は直接ゲーム開始
                     this.startGame();
                 }
+                return;
+            }
+            // カスタムお題機能
+            if (t === "addCustomTopic") {
+                const pid = this.clientToPlayerId.get(clientId);
+                if (!pid)
+                    return;
+                const text = String(p?.text || "").trim();
+                if (!text || text.length === 0)
+                    return;
+                // 文字数制限チェック（20グラフェム）
+                const graphemeLength = this.getGraphemeLength(text);
+                if (graphemeLength > 20) {
+                    const ws = this.clients.get(clientId);
+                    ws?.send(JSON.stringify({ t: "warn", p: { code: "INVALID_OP", msg: "お題は20文字以内で入力してください" } }));
+                    return;
+                }
+                // リスト数制限チェック（10個まで）
+                if (this.roomState.customTopics.length >= 10) {
+                    const ws = this.clients.get(clientId);
+                    ws?.send(JSON.stringify({ t: "warn", p: { code: "INVALID_OP", msg: "お題は最大10個までです" } }));
+                    return;
+                }
+                // お題を追加
+                this.roomState.customTopics.push(text);
+                this.broadcastCustomTopics();
+                return;
+            }
+            if (t === "removeCustomTopic") {
+                const pid = this.clientToPlayerId.get(clientId);
+                if (!pid)
+                    return;
+                const index = Number(p?.index);
+                if (isNaN(index) || index < 0 || index >= this.roomState.customTopics.length)
+                    return;
+                // お題を削除
+                this.roomState.customTopics.splice(index, 1);
+                this.broadcastCustomTopics();
+                return;
+            }
+            if (t === "startCustomGame") {
+                const pid = this.clientToPlayerId.get(clientId);
+                if (!pid || this.roomState.hostId !== pid)
+                    return;
+                // お題が1個以上あることを確認
+                if (this.roomState.customTopics.length === 0) {
+                    const ws = this.clients.get(clientId);
+                    ws?.send(JSON.stringify({ t: "warn", p: { code: "INVALID_OP", msg: "お題を1個以上作成してください" } }));
+                    return;
+                }
+                // カスタムゲームを開始
+                this.startCustomGame();
                 return;
             }
             if (t === "modeStamp") {
@@ -1210,5 +1299,63 @@ export class RoomDO {
             };
             this.broadcast({ t: "state", p: fallbackState });
         }
+    }
+    // グラフェム長を取得するヘルパーメソッド
+    getGraphemeLength(text) {
+        // 簡易的な実装（実際のプロダクションではGraphemeSplitterを使用）
+        return text.length;
+    }
+    // カスタムお題リストをブロードキャスト
+    broadcastCustomTopics() {
+        this.broadcast({ t: "customTopics", p: { topics: this.roomState.customTopics } });
+    }
+    // カスタムゲームを開始
+    startCustomGame() {
+        // カスタムお題からランダムで1つ選択
+        const randomIndex = Math.floor(Math.random() * this.roomState.customTopics.length);
+        const selectedTopic = this.roomState.customTopics[randomIndex];
+        // お題を設定してゲーム開始
+        this.roomState.round.prompt = selectedTopic;
+        this.roomState.round.promptText = selectedTopic;
+        this.startGame();
+    }
+    // カスタムモードでの参加処理
+    handleCustomModeJoin(clientId, p) {
+        let id = this.clientToPlayerId.get(clientId);
+        if (!id) {
+            // 新規参加者
+            id = `p_${nanoid(6)}`;
+            this.clientToPlayerId.set(clientId, id);
+            const iconId = this.pickIconId();
+            const nick = String(p?.nick || "");
+            const installId = String(p?.installId || "");
+            const existingNicks = this.roomState.players.map((p) => p.nick);
+            const uniqueNick = generateUniqueNickname(nick, existingNicks);
+            const player = {
+                id,
+                nick: uniqueNick,
+                iconId,
+                connected: true
+            };
+            this.roomState.players.push(player);
+            // 最初の参加者がホスト
+            if (this.roomState.players.length === 1) {
+                this.roomState.hostId = id;
+            }
+            // カスタムモードとして設定
+            this.roomState.isAutoRoom = true;
+            console.log(`[CustomMode] プレイヤー参加: ${uniqueNick} (${id})`);
+        }
+        else {
+            // 既存プレイヤーの再接続
+            const player = this.roomState.players.find((p) => p.id === id);
+            if (player) {
+                player.connected = true;
+                console.log(`[CustomMode] プレイヤー再接続: ${player.nick} (${id})`);
+            }
+        }
+        // カスタムお題リストを送信
+        this.broadcastCustomTopics();
+        this.broadcastState();
     }
 }

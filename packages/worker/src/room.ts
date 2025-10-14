@@ -398,7 +398,7 @@ export class RoomDO implements DurableObject {
         this.broadcastState();
         
         // カスタムモードの場合はお題リストも送信
-        if (isCustomMode) {
+        if (this.roomState.isCustomMode) {
           this.broadcastCustomTopics();
         }
         
