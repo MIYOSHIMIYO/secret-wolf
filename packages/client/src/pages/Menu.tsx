@@ -46,19 +46,19 @@ export default function Menu() {
       await resetRoomState();
       console.log("[Menu] ルーム状態をリセット完了");
 
-      if (type === "random") {
-        // カスタムモードの場合はルーム作成参加シーンに遷移（カスタムモードフラグ付き）
-        nav("/room-create?mode=custom");
-      } else {
-        // 知り合いと遊ぶの場合はルーム作成画面に遷移
-        nav("/room-create");
-      }
+            if (type === "random") {
+              // カスタムモードの場合は専用のルーム作成シーンに遷移
+              nav("/custom-room-create");
+            } else {
+              // 知り合いと遊ぶの場合はルーム作成画面に遷移
+              nav("/room-create");
+            }
     } catch (error) {
       console.error("[Menu] 状態リセットエラー:", error);
       // エラーが発生してもゲーム開始を試行
       reset();
       if (type === "random") {
-        nav("/auto");
+        nav("/custom-room-create");
       } else {
         nav("/room-create");
       }

@@ -21,6 +21,7 @@ export default function Result() {
   // モード判定
   const myId = useAppStore((s) => s.myId);
   const isHost = myId && room?.hostId === myId;
+  const isCustomMode = useAppStore((s) => s.isCustomMode); // フロントエンド側のカスタムモードフラグを使用
 
   // 公開された秘密を取得
   const secretText = room?.round?.secretText ?? "";

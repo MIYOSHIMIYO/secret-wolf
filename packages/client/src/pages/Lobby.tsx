@@ -20,11 +20,9 @@ export default function Lobby() {
   const room = useAppStore((s) => s.room);
   const myId = useAppStore((s) => s.myId);
   const reset = useAppStore((s) => s.reset);
+  const isCustomMode = useAppStore((s) => s.isCustomMode); // フロントエンド側のカスタムモードフラグを使用
 
   const [disbandOpen, setDisbandOpen] = useState(false);
-  
-  // カスタムモードかどうかを判定（ルーム状態から）
-  const isCustomMode = room?.isCustomMode === true;
   
   // デバッグ用：カスタムモード判定の確認
   useEffect(() => {

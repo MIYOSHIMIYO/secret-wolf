@@ -59,12 +59,12 @@ export class RoomDO {
             phaseSeq: 0,
             chat: [],
             modeStamps: {}, // モードスタンプの集計
-            isAutoRoom: false, // 知らない誰かと遊ぶかどうか
-            isCustomMode: false, // カスタムモードかどうか
+            isAutoRoom: true, // デバッグ用：常にtrue
+            isCustomMode: true, // デバッグ用：常にtrue
+            customTopics: [], // カスタムお題リスト
             iconInUse: [], // 使用中のアイコンID（配列形式）
             lastActivityAt: Date.now(), // 最後のアクティビティ時刻
             createdAt: Date.now(), // ルーム作成時刻
-            customTopics: [], // カスタムお題リスト
         };
         // アイドルタイムアウト（3分）とマッチ上限時間（30分）のアラームを設定
         this.state.storage.setAlarm(Date.now() + 3 * 60 * 1000); // 3分後
@@ -273,6 +273,7 @@ export class RoomDO {
             if (t === "join") {
                 let id = this.clientToPlayerId.get(clientId);
                 console.log(`[Join] joinメッセージ受信:`, { t, p, clientId, existingId: id });
+                console.log(`[Join] 受信データ詳細:`, JSON.stringify({ t, p, clientId, existingId: id }, null, 2));
                 if (!id) {
                     // カスタムモードかどうかをチェック
                     const isCustomMode = Boolean(p?.isCustomMode);
@@ -282,6 +283,7 @@ export class RoomDO {
                         isCustomModeFlag: p?.isCustomMode,
                         rawPayload: JSON.stringify(p)
                     });
+                    // カスタムモードの設定（デバッグ用に強制的に設定）
                     if (isCustomMode) {
                         this.roomState.isAutoRoom = true; // カスタムモードも自動ルームとして扱う
                         this.roomState.isCustomMode = true; // カスタムモードフラグを設定
@@ -290,6 +292,29 @@ export class RoomDO {
                             isCustomMode: this.roomState.isCustomMode
                         });
                     }
+                    else {
+                        // デバッグ用：isCustomModeがfalseの場合でもログを出力
+                        console.log(`[Join] カスタムモードではない:`, {
+                            isCustomMode: isCustomMode,
+                            p: p
+                        });
+                    }
+                    // デバッグ用：強制的にカスタムモードを設定（テスト用）
+                    if (p?.isCustomMode === true) {
+                        this.roomState.isAutoRoom = true;
+                        this.roomState.isCustomMode = true;
+                        console.log(`[Join] 強制的にカスタムモードを設定:`, {
+                            isAutoRoom: this.roomState.isAutoRoom,
+                            isCustomMode: this.roomState.isCustomMode
+                        });
+                    }
+                    // デバッグ用：常にカスタムモードを設定（テスト用）
+                    this.roomState.isAutoRoom = true;
+                    this.roomState.isCustomMode = true;
+                    console.log(`[Join] 常にカスタムモードを設定:`, {
+                        isAutoRoom: this.roomState.isAutoRoom,
+                        isCustomMode: this.roomState.isCustomMode
+                    });
                     // ルーム人数制限チェック（新規参加者のみ）
                     console.log(`[Join] 新規参加者 - 人数制限チェック開始: isAutoRoom=${this.roomState.isAutoRoom}, 現在の人数=${this.roomState.players.length}`);
                     if (this.roomState.isAutoRoom) {
@@ -1288,6 +1313,11 @@ export class RoomDO {
                 ...this.roomState,
                 iconInUse: Array.from(this.roomState.iconInUse)
             };
+            console.log(`[broadcastState] 送信状態:`, {
+                isCustomMode: this.roomState.isCustomMode,
+                isAutoRoom: this.roomState.isAutoRoom,
+                phase: this.roomState.phase
+            });
             this.broadcast({ t: "state", p: RoomStateZ.parse(stateForValidation) });
         }
         catch (error) {
