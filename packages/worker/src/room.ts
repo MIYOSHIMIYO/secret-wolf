@@ -305,9 +305,13 @@ export class RoomDO implements DurableObject {
   }
 
   private async onMessage(clientId: string, ev: MessageEvent) {
+    console.log(`[onMessage] Raw message received from clientId=${clientId}:`, ev.data);
+    
     try {
       const data = JSON.parse(ev.data as string);
       const { t, p } = data as any;
+      
+      console.log(`[onMessage] Parsed message type: ${t}, payload:`, p);
       
       // 監視データの記録
       globalMonitor.recordMessage(this.roomId);

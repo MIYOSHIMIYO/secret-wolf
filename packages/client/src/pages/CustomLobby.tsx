@@ -37,11 +37,10 @@ export default function CustomLobby() {
 
   // デバッグ用：接続状態の表示（開発時のみ）
   useEffect(() => {
-    if (!DEBUG_CONFIG.ENABLED) return;
     const interval = setInterval(() => {
       const debugInfo = getConnectionDebugInfo();
       console.log(`[CustomLobby] WebSocket接続状態:`, debugInfo);
-    }, 10000);
+    }, 5000); // 5秒ごとにログ出力
     return () => clearInterval(interval);
   }, []);
 
