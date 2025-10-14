@@ -63,6 +63,7 @@ export default function CustomLobby() {
       
       if (t === "customTopicCreation") {
         console.log("[CustomLobby] お題作成シーン遷移メッセージ受信:", p);
+        console.log("[CustomLobby] お題作成シーンへ遷移します");
         // お題作成シーンに遷移
         nav("/custom", { replace: true });
       }

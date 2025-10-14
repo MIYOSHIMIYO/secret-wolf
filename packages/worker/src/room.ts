@@ -595,11 +595,19 @@ export class RoomDO implements DurableObject {
       }
 
       if (t === "startCustomGame") {
+        console.log(`[startCustomGame] メッセージ受信: clientId=${clientId}`);
         const pid = this.clientToPlayerId.get(clientId);
-        if (!pid || this.roomState.hostId !== pid) return;
+        console.log(`[startCustomGame] プレイヤーID: ${pid}, ホストID: ${this.roomState.hostId}`);
         
+        if (!pid || this.roomState.hostId !== pid) {
+          console.log(`[startCustomGame] ホスト権限なし: pid=${pid}, hostId=${this.roomState.hostId}`);
+          return;
+        }
+        
+        console.log(`[startCustomGame] customTopicCreationメッセージをブロードキャスト`);
         // カスタムモードの場合はお題作成シーンに遷移するメッセージを送信
         this.broadcast({ t: "customTopicCreation", p: {} } as any);
+        console.log(`[startCustomGame] ブロードキャスト完了`);
         return;
       }
 
