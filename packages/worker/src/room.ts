@@ -629,6 +629,28 @@ export class RoomDO implements DurableObject {
         return;
       }
 
+      if (t === "beginCustomGame") {
+        console.log(`[beginCustomGame] メッセージ受信: clientId=${clientId}`);
+        const pid = this.clientToPlayerId.get(clientId);
+        console.log(`[beginCustomGame] プレイヤーID: ${pid}, ホストID: ${this.roomState.hostId}`);
+        
+        if (!pid || this.roomState.hostId !== pid) {
+          console.log(`[beginCustomGame] ホスト権限なし: pid=${pid}, hostId=${this.roomState.hostId}`);
+          return;
+        }
+        
+        // カスタムお題が1つ以上あるかチェック
+        if (this.roomState.customTopics.length === 0) {
+          console.log(`[beginCustomGame] カスタムお題がありません`);
+          return;
+        }
+        
+        console.log(`[beginCustomGame] カスタムゲームを開始します`);
+        // カスタムゲームを開始
+        this.startCustomGame();
+        return;
+      }
+
       if (t === "modeStamp") {
         const pid = this.clientToPlayerId.get(clientId);
         if (!pid || this.roomState.phase !== "MODE_SELECT") return;
@@ -1529,7 +1551,9 @@ export class RoomDO implements DurableObject {
     // お題を設定してゲーム開始
     this.roomState.round.prompt = selectedTopic;
     this.roomState.round.promptText = selectedTopic;
-    this.startGame();
+    
+    // 直接INPUTフェーズに移行
+    this.goInput();
   }
 
   // カスタムモードでの参加処理
