@@ -68,7 +68,6 @@ export class RoomDO implements DurableObject {
           phaseSeq: 0,
           chat: [],
           modeStamps: {} as Record<string, number>, // モードスタンプの集計
-          isAutoRoom: false, // 知らない誰かと遊ぶかどうか
           isCustomMode: false, // カスタムモードかどうか
           customTopics: [] as string[], // カスタムお題リスト
           iconInUse: [] as number[], // 使用中のアイコンID（配列形式）
@@ -126,22 +125,6 @@ export class RoomDO implements DurableObject {
         if (rid) {
           this.roomState.roomId = String(rid).toUpperCase();
           
-          try {
-            const flagsData = await this.env.MOD_KV.get(`flags:${this.roomState.roomId}`);
-            if (flagsData) {
-              const flags = JSON.parse(flagsData);
-              this.roomState.isAutoRoom = flags.isAutoRoom || false;
-              console.log(`[fetch] ルーム ${this.roomState.roomId} のisAutoRoomフラグ: ${this.roomState.isAutoRoom}`);
-            } else {
-              // フラグが設定されていない場合は知り合いモード（false）として扱う
-              this.roomState.isAutoRoom = false;
-              console.log(`[fetch] ルーム ${this.roomState.roomId} のフラグが未設定のため、知り合いモードとして設定`);
-            }
-          } catch (error) {
-            console.warn(`[fetch] isAutoRoomフラグの確認に失敗:`, error);
-            // エラーの場合も知り合いモード（false）として扱う
-            this.roomState.isAutoRoom = false;
-          }
         }
       } catch {}
 
@@ -237,12 +220,6 @@ export class RoomDO implements DurableObject {
     
     // JUDGEフェーズの処理はクライアント側の画面遷移に依存するため、サーバー側では何もしない
     
-    // RESULTフェーズで7秒経過したら強制終了処理を実行
-    if (this.roomState.phase === "RESULT" && this.roomState.isAutoRoom) {
-      console.log(`[alarm] RESULTフェーズで7秒経過、知らない誰かとの強制終了を実行します`);
-      this.executeAutoEnd();
-      return; 
-    }
   }
 
   private onClose(clientId: string) {
@@ -327,37 +304,27 @@ export class RoomDO implements DurableObject {
       if (t === "join") {
         let id = this.clientToPlayerId.get(clientId);
         console.log(`[Join] joinメッセージ受信:`, { t, p, clientId, existingId: id });
-        console.log(`[Join] 受信データ詳細:`, JSON.stringify({ t, p, clientId, existingId: id }, null, 2));
+        
         if (!id) {
           // カスタムモードかどうかをチェック
           const isCustomMode = Boolean(p?.isCustomMode);
           
           if (isCustomMode) {
-            // カスタムモードでは自動開始などの自動ルーム挙動を完全に無効化する
-            this.roomState.isAutoRoom = false;
             this.roomState.isCustomMode = true;
-            console.log(`[Join] カスタムモードを設定: isCustomMode=${this.roomState.isCustomMode}, isAutoRoom=${this.roomState.isAutoRoom}`);
+            console.log(`[Join] カスタムモードを設定: isCustomMode=${this.roomState.isCustomMode}`);
           }
           
-          // ルーム人数制限チェック（新規参加者のみ）
-          console.log(`[Join] 新規参加者 - 人数制限チェック開始: isAutoRoom=${this.roomState.isAutoRoom}, 現在の人数=${this.roomState.players.length}`);
+          // 8人制限チェック（新規参加者のみ）
+          console.log(`[Join] 8人制限チェック: 現在の人数=${this.roomState.players.length}, ROOM_CAPACITY=${ROOM_CAPACITY}`);
+          const isFull = isRoomFull(this.roomState);
+          console.log(`[Join] isRoomFull結果: ${isFull}`);
           
-          if (this.roomState.isAutoRoom) {
-            // 知らない誰かと遊ぶ/カスタムモード：人数制限なし（自動マッチングで管理）
-            console.log(`[Auto] 自動マッチングモード - 人数制限チェックをスキップ`);
-          } else {
-            // 知り合いと遊ぶ：8人制限
-            console.log(`[Friends] 8人制限チェック: 現在の人数=${this.roomState.players.length}, ROOM_CAPACITY=${ROOM_CAPACITY}`);
-            const isFull = isRoomFull(this.roomState);
-            console.log(`[Friends] isRoomFull結果: ${isFull}`);
-            
-            if (isFull) {
-              console.log(`[Friends] 8人制限に達したため、参加を拒否`);
-              const ws = this.clients.get(clientId);
-              ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_FULL", msg: "このルームは満員です" } } as any));
-              ws?.close(4000, "room_full");
-              return;
-            }
+          if (isFull) {
+            console.log(`[Join] 8人制限に達したため、参加を拒否`);
+            const ws = this.clients.get(clientId);
+            ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_FULL", msg: "このルームは満員です" } } as any));
+            ws?.close(4000, "room_full");
+            return;
           }
           
           console.log(`[Join] 人数制限チェック通過 - 参加を許可`);
@@ -408,141 +375,9 @@ export class RoomDO implements DurableObject {
           this.broadcastCustomTopics();
         }
         
-        if (this.roomState.phase === "LOBBY" && this.roomState.isAutoRoom && !this.roomState.isCustomMode) {
-          if (this.roomState.players.length >= 3) {
-            console.log(`[Join] 3人揃いました。自動開始します。`);
-            this.autoStart();
-          }
-        } else if (this.roomState.isCustomMode) {
-          console.log(`[Join] カスタムモードのため自動開始をスキップ: isCustomMode=${this.roomState.isCustomMode}`);
-        }
         return;
       }
 
-      if (t === "auto") {
-        this.updateActivity();
-        
-        // READYフェーズ中は3人目が参加できるようにする
-        if (this.roomState.phase !== "LOBBY" && this.roomState.phase !== "READY") {
-          console.log(`[Auto] ゲーム開始後のため、新規参加を拒否します: phase=${this.roomState.phase}`);
-          const ws = this.clients.get(clientId);
-          ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_CLOSED", msg: "ゲームが既に開始されています" } } as any));
-          ws?.close(4000, "game_already_started");
-          return;
-        }
-        
-        let id = this.clientToPlayerId.get(clientId);
-        console.log(`[Join] 参加処理開始: clientId=${clientId}, existingId=${id}, isAutoRoom=${this.roomState.isAutoRoom}, 現在の人数=${this.roomState.players.length}`);
-        
-        if (!id) {
-          // カスタムモードかどうかをチェック
-          const isCustomMode = Boolean(p?.isCustomMode);
-          
-          if (isCustomMode) {
-            // カスタムモードでは自動開始などの自動ルーム挙動を完全に無効化する
-            this.roomState.isAutoRoom = false;
-            this.roomState.isCustomMode = true;
-            console.log(`[Auto] カスタムモードを設定: isCustomMode=${this.roomState.isCustomMode}, isAutoRoom=${this.roomState.isAutoRoom}`);
-          }
-          
-          // ルーム人数制限チェック（新規参加者のみ）
-          console.log(`[Auto] 新規参加者 - 人数制限チェック開始: isAutoRoom=${this.roomState.isAutoRoom}, isCustomMode=${this.roomState.isCustomMode}`);
-          
-          if (this.roomState.isAutoRoom) {
-            // 知らない誰かと遊ぶ：3人制限（READYフェーズ中は3人目も参加可能）
-            console.log(`[Auto] 3人制限チェック: 現在の人数=${this.roomState.players.length}, phase=${this.roomState.phase}`);
-            if (this.roomState.players.length >= 3 && this.roomState.phase === "LOBBY") {
-              console.log(`[Auto] 3人制限に達したため、参加を拒否`);
-              const ws = this.clients.get(clientId);
-              ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_FULL", msg: "このルームは満員です" } } as any));
-              ws?.close(4000, "room_full");
-              return;
-            }
-          } else {
-            // 知り合いと遊ぶ/カスタムモード：8人制限
-            console.log(`[Auto] 8人制限チェック: 現在の人数=${this.roomState.players.length}, ROOM_CAPACITY=${ROOM_CAPACITY}`);
-            const isFull = isRoomFull(this.roomState);
-            console.log(`[Auto] isRoomFull結果: ${isFull}`);
-            
-            if (isFull) {
-              console.log(`[Auto] 8人制限に達したため、参加を拒否`);
-              const ws = this.clients.get(clientId);
-              ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_FULL", msg: "このルームは満員です" } } as any));
-              ws?.close(4000, "room_full");
-              return;
-            }
-          }
-          
-          console.log(`[Join] 人数制限チェック通過 - 参加を許可`);
-          
-          id = `p_${nanoid(6)}`;
-          this.clientToPlayerId.set(clientId, id);
-          const iconId = this.pickIconId();
-          const nick = String(p?.nick || "");
-          const installId = String(p?.installId || "");
-          
-          const existingNicks = this.roomState.players.map((p: any) => p.nick);
-          const uniqueNick = generateUniqueNickname(nick, existingNicks);
-          
-          // 既存のルームのisAutoRoomフラグを尊重（新規ルームの場合は既に設定済み）
-          
-          if (this.roomState.players.length === 0) {
-            this.roomState.mode = "STRANGER";
-            console.log(`[Auto] 最初のプレイヤーが入室。STRANGERモードを設定: ${this.roomState.mode}`);
-          }
-          
-          const isHost = this.roomState.players.length === 0;
-          this.roomState.players.push({ 
-            id, 
-            nick: uniqueNick, 
-            iconId, 
-            installId,
-            connected: true,
-            left: false
-          });
-          
-          if (isHost) {
-            this.roomState.hostId = id;
-            console.log(`[Auto] ホストを設定: ${id} (${uniqueNick})`);
-          }
-          
-          console.log(`[Auto] 新規プレイヤー参加: ${id} (${uniqueNick})`);
-        } else {
-          console.warn(`[Join] 既存プレイヤー再接続: clientId=${clientId}, playerId=${id}`);
-          if (this.roomState.phase === "LOBBY") {
-            const pl = this.roomState.players.find((x: any) => x.id === id);
-            if (pl) { 
-              pl.connected = true; 
-              pl.nick = String(p?.nick || pl.nick);
-              if (pl.left === undefined) pl.left = false;
-              if (pl.left === true) {
-                pl.left = false;
-                console.log(`[Auto] 離脱済みプレイヤーが再接続: ${id}`);
-              }
-              
-              console.log(`[Auto] 既存プレイヤー再接続: ${id}`);
-            }
-          }
-        }
-        
-        const ws = this.clients.get(clientId);
-        ws?.send(JSON.stringify({ t: "you", p: { playerId: id } }));
-        this.broadcastState();
-        
-        // カスタムモードの場合はお題リストも送信
-        if (this.roomState.isCustomMode) {
-          this.broadcastCustomTopics();
-        }
-        
-        const activeCount = this.activeIds().length;
-        if (activeCount >= 3 && !this.roomState.isCustomMode) {
-          console.log(`[Auto] 3人揃いました。自動開始します。`);
-          this.autoStart();
-        } else if (this.roomState.isCustomMode) {
-          console.log(`[Auto] カスタムモードのため自動開始をスキップ: isCustomMode=${this.roomState.isCustomMode}, activeCount=${activeCount}`);
-        }
-        return;
-      }
 
       if (t === "start") {
         const pid = this.clientToPlayerId.get(clientId);
@@ -553,10 +388,7 @@ export class RoomDO implements DurableObject {
         
         // カスタムモードの場合はお題作成シーンに遷移（クライアント側で処理）
         // 通常モードの場合はモード選択シーンに遷移
-        console.log(`[Start] カスタムモード判定:`, {
-          isCustomMode: this.roomState.isCustomMode,
-          isAutoRoom: this.roomState.isAutoRoom
-        });
+        console.log(`[Start] カスタムモード判定: isCustomMode=${this.roomState.isCustomMode}`);
         if (this.roomState.isCustomMode) {
           // カスタムモードの場合は何もしない（クライアント側でお題作成シーンに遷移）
           console.log(`[Start] カスタムモード - クライアント側でお題作成シーンに遷移`);
@@ -568,22 +400,6 @@ export class RoomDO implements DurableObject {
         return;
       }
 
-      if (t === "startGame") {
-        const pid = this.clientToPlayerId.get(clientId);
-        if (this.roomState.phase !== "LOBBY" || !pid || this.roomState.hostId !== pid) return;
-        
-        const online = this.roomState.players.filter((x: any) => x.connected).length;
-        if (online < 3) return;
-        
-        // 知り合いモードの場合はMODE_SELECTに遷移
-        if (!this.roomState.isAutoRoom) {
-          this.goModeSelect();
-        } else {
-          // 知らない誰かと遊ぶの場合は直接ゲーム開始
-          this.startGame();
-        }
-        return;
-      }
 
       // カスタムお題機能
       if (t === "addCustomTopic") {
@@ -957,9 +773,6 @@ export class RoomDO implements DurableObject {
         const pid = this.clientToPlayerId.get(clientId);
         if (!pid || this.roomState.phase !== "RESULT") return;
         
-        // オートマッチングではリマッチの概念は持たない
-        if (this.roomState.isAutoRoom) { console.log(`[rematch] isAutoRoomのため無視`); return; }
-        
         const player = this.roomState.players.find((p: any) => p.id === pid);
         if (!player || this.roomState.hostId !== pid) return;
         
@@ -982,8 +795,6 @@ export class RoomDO implements DurableObject {
         const pid = this.clientToPlayerId.get(clientId);
         if (!pid || this.roomState.phase !== "RESULT") return;
         
-        // オートマッチングでは終了ボタンの概念は持たない（サーバー側でも無視）
-        if (this.roomState.isAutoRoom) { console.log(`[endGame] isAutoRoomのため無視`); return; }
         
         const player = this.roomState.players.find((p: any) => p.id === pid);
         if (!player || this.roomState.hostId !== pid) return;
@@ -1135,49 +946,6 @@ export class RoomDO implements DurableObject {
     }
   }
 
-  private autoStart() {
-    // 知らない誰かと遊ぶ機能は廃止したため、この関数は何もしない
-    console.log(`[autoStart] 呼び出されましたが、機能は無効化されています`);
-    return;
-    
-    if (this.roomState.players.length >= 3) {
-      console.log(`[autoStart] 3人揃いました。準備フェーズを開始します。`);
-      
-      this.roomState.phase = "READY";
-      this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
-      
-      this.setEnds(3_000);
-      
-      console.log(`[autoStart] 準備フェーズ開始。3秒後にゲームを開始します。`);
-      
-      this.broadcast({ t: "phase", p: { phase: "READY", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
-      this.broadcastState();
-      return;
-    }
-    
-    if (this.clients.size !== this.roomState.players.length) {
-      console.warn(`[autoStart] 警告: WebSocket接続数(${this.clients.size})とプレイヤー数(${this.roomState.players.length})が一致しません`);
-      
-      console.log(`[autoStart] 接続管理をクリアして再構築します`);
-      this.clients.clear();
-      this.clientToPlayerId.clear();
-      this.roomState.players = [];
-      this.roomState.hostId = undefined;
-    }
-    
-    if (this.roomState.players.length > 0) {
-      console.warn(`[autoStart] 警告: 新しいルームなのにプレイヤーが存在します: ${this.roomState.players.length}人`);
-      this.roomState.players = [];
-      this.roomState.hostId = undefined;
-      console.log(`[autoStart] プレイヤーリストをクリアしました`);
-    }
-  }
-
-  private startGame() {
-    // 知らない誰かと遊ぶの自動開始機能は廃止
-    console.log(`[startGame] 呼び出されましたが、機能は無効化されています`);
-    return;
-  }
 
   private resetGameState() {
     this.roomState.round = {
@@ -1418,41 +1186,10 @@ export class RoomDO implements DurableObject {
 
   private goResult() {
     const startTime = Date.now();
-    console.log(`[goResult] 開始: phase=${this.roomState.phase}, isAutoRoom=${this.roomState.isAutoRoom}, 時刻=${new Date(startTime).toISOString()}`);
+    console.log(`[goResult] 開始: phase=${this.roomState.phase}, 時刻=${new Date(startTime).toISOString()}`);
     
     this.roomState.phase = "RESULT";
     this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
-    
-    if (this.roomState.isAutoRoom) {
-      console.log(`[goResult] 知らない誰かとのため、7秒後に強制終了します`);
-      
-      // より確実な7秒タイマー: setTimeoutとsetAlarmの両方を使用
-      const autoEndTime = Date.now() + 7000;
-      this.roomState.endsAt = autoEndTime;
-      
-      // 方法1: setTimeout（即座に実行）
-      const timerStartTime = Date.now();
-      console.log(`[goResult] setTimeoutで7秒タイマー開始: ${new Date(timerStartTime).toISOString()}`);
-      
-      setTimeout(() => {
-        const timerEndTime = Date.now();
-        const actualDelay = timerEndTime - timerStartTime;
-        console.log(`[goResult] setTimeout: 7秒経過、強制終了を実行します。実際の遅延: ${actualDelay}ms (${actualDelay/1000}秒)`);
-        this.executeAutoEnd();
-      }, 7000);
-      
-      // 方法2: setAlarm（バックアップ）
-      try {
-        this.state.storage.setAlarm(autoEndTime);
-        console.log(`[goResult] setAlarmで7秒後のアラームを設定: ${new Date(autoEndTime).toISOString()}`);
-      } catch (error) {
-        console.error(`[goResult] setAlarm設定エラー（setTimeoutで動作）:`, error);
-      }
-      
-      console.log(`[goResult] 7秒タイマー開始完了。予定終了時刻: ${new Date(autoEndTime).toISOString()}`);
-    } else {
-      console.log(`[goResult] 通常ルームのため、自動終了は設定しません`);
-    }
     
     this.broadcast({ t: "phase", p: { phase: "RESULT", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
     this.broadcastState();
@@ -1461,24 +1198,6 @@ export class RoomDO implements DurableObject {
     console.log(`[goResult] 完了: 処理時間=${endTime - startTime}ms`);
   }
   
-  // 自動終了処理を別メソッドに分離
-  private executeAutoEnd() {
-    // 重複実行を防ぐためのフラグ
-    if (this.roomState.phase !== "RESULT" || !this.roomState.isAutoRoom) {
-      console.log(`[executeAutoEnd] 既に処理済みまたは条件不一致のため、スキップします`);
-      return;
-    }
-    
-    console.log(`[executeAutoEnd] 7秒経過、強制終了を実行します`);
-    this.broadcast({ t: "abort", p: { reason: "game_ended" } });
-    console.log(`[executeAutoEnd] abortメッセージ送信完了`);
-    
-    // 1秒後にルームを削除
-    setTimeout(() => {
-      console.log(`[executeAutoEnd] 強制終了によりルームを完全削除します`);
-      this.deleteRoomCompletely();
-    }, 1000);
-  }
 
   private setEnds(duration: number) {
     this.roomState.endsAt = Date.now() + duration;
@@ -1530,7 +1249,6 @@ export class RoomDO implements DurableObject {
       
       console.log(`[broadcastState] 送信状態:`, {
         isCustomMode: this.roomState.isCustomMode,
-        isAutoRoom: this.roomState.isAutoRoom,
         phase: this.roomState.phase
       });
       
@@ -1604,7 +1322,6 @@ export class RoomDO implements DurableObject {
       }
       
       // カスタムモードとして設定
-      this.roomState.isAutoRoom = true;
       
       console.log(`[CustomMode] プレイヤー参加: ${uniqueNick} (${id})`);
     } else {
