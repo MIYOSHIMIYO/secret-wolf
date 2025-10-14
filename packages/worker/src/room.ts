@@ -453,10 +453,10 @@ export class RoomDO implements DurableObject {
           return;
         }
         
-        console.log(`[startCustomGame] customTopicCreationメッセージをブロードキャスト`);
-        // カスタムモードの場合はお題作成シーンに遷移するメッセージを送信
-        this.broadcast({ t: "customTopicCreation", p: {} } as any);
-        console.log(`[startCustomGame] ブロードキャスト完了`);
+        console.log(`[startCustomGame] TOPIC_CREATIONフェーズに遷移`);
+        // カスタムモードの場合はTOPIC_CREATIONフェーズに遷移
+        this.roomState.phase = "TOPIC_CREATION";
+        this.broadcastState();
         return;
       }
 
@@ -477,7 +477,7 @@ export class RoomDO implements DurableObject {
         }
         
         console.log(`[beginCustomGame] カスタムゲームを開始します`);
-        // カスタムゲームを開始
+        // カスタムゲームを開始（お題を選択してINPUTフェーズに遷移）
         this.startCustomGame();
         return;
       }
@@ -780,10 +780,16 @@ export class RoomDO implements DurableObject {
         
         this.broadcast({ t: "rematch", p: { choice: "rematch" } });
         
-        console.log(`[rematch] 3秒後にgoModeSelectを呼び出します`);
+        console.log(`[rematch] 3秒後に適切なフェーズに遷移します`);
         setTimeout(() => {
-          console.log(`[rematch] goModeSelectを呼び出します`);
-          this.goModeSelect();
+          if (this.roomState.isCustomMode) {
+            console.log(`[rematch] カスタムモードのためTOPIC_CREATIONフェーズに遷移`);
+            this.roomState.phase = "TOPIC_CREATION";
+            this.broadcastState();
+          } else {
+            console.log(`[rematch] 通常モードのためMODE_SELECTフェーズに遷移`);
+            this.goModeSelect();
+          }
           
           console.log(`[rematch] 新しいゲームが開始されるため、ルーム削除をキャンセルします`);
         }, 3000);

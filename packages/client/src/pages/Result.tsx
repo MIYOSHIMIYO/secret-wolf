@@ -340,7 +340,9 @@ export default function Result() {
             <div className="bg-slate-800 rounded-2xl p-6 max-w-sm mx-4 ring-1 ring-white/10 shadow-2xl">
               <div className="text-center space-y-4">
                 <div className="text-white text-lg font-medium">もう一度が選択されました</div>
-                <div className="text-slate-300 text-sm">モード選択シーンに移行します...</div>
+                <div className="text-slate-300 text-sm">
+                  {isCustomMode ? "お題作成シーンに移行します..." : "モード選択シーンに移行します..."}
+                </div>
               </div>
             </div>
           </div>

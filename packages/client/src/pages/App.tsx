@@ -97,14 +97,12 @@ export default function App() {
           console.log("[App] MODE_SELECTフェーズに遷移");
           nav("/mode-select");
         }
+        if (phase === "TOPIC_CREATION") {
+          console.log("[App] TOPIC_CREATIONフェーズに遷移");
+          nav("/custom");
+        }
         if (phase === "INPUT") {
           console.log("[App] INPUTフェーズに遷移");
-          // カスタムモードの場合はお題作成シーンを経由する必要があるため、自動遷移をスキップ
-          const isCustomMode = useAppStore.getState().isCustomMode;
-          if (isCustomMode) {
-            console.log("[App] カスタムモードのため、INPUTフェーズへの自動遷移をスキップ");
-            return;
-          }
           nav("/input");
         }
         if (phase === "REVEAL") {

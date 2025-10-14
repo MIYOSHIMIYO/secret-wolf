@@ -3,7 +3,7 @@ import { z } from "zod";
 
 // Modes and phases
 export type Mode = "NONE" | "LOVE" | "OGIRI" | "DECLARATION";
-export type Phase = "LOBBY" | "MODE_SELECT" | "READY" | "INPUT" | "REVEAL" | "DISCUSS" | "VOTE" | "JUDGE" | "RESULT";
+export type Phase = "LOBBY" | "MODE_SELECT" | "TOPIC_CREATION" | "READY" | "INPUT" | "REVEAL" | "DISCUSS" | "VOTE" | "JUDGE" | "RESULT";
 
 export type Player = {
   id: string;
@@ -102,7 +102,7 @@ export function graphemeLength(text: string): number {
 // Zod schemas matching docs
 const roomIdZ = z.string().regex(/^[A-Z0-9]{6}$/);
 export const ModeZ = z.enum(["NONE", "LOVE", "OGIRI", "DECLARATION", "STRANGER"]);
-export const PhaseZ = z.enum(["LOBBY", "MODE_SELECT", "READY", "INPUT", "REVEAL", "DISCUSS", "VOTE", "JUDGE", "RESULT"]);
+export const PhaseZ = z.enum(["LOBBY", "MODE_SELECT", "TOPIC_CREATION", "READY", "INPUT", "REVEAL", "DISCUSS", "VOTE", "JUDGE", "RESULT"]);
 
 const Nick = z.string().min(1).max(64); // graphemeLength<=8 is enforced outside
 const Text20 = z.string().min(1).max(200); // graphemeLength<=20/NFC external
