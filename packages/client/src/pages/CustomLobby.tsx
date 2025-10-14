@@ -20,27 +20,20 @@ export default function CustomLobby() {
   const room = useAppStore((s) => s.room);
   const myId = useAppStore((s) => s.myId);
   const reset = useAppStore((s) => s.reset);
+  const isCustomMode = useAppStore((s) => s.isCustomMode); // フロントエンド側のカスタムモードフラグを使用
 
   const [disbandOpen, setDisbandOpen] = useState(false);
   
-  // プレイヤー情報の取得
-  const playersById = new Map((room?.players ?? []).map((p) => [p.id, p]));
-  const myPlayer = myId ? playersById.get(myId) : null;
-  const hostPlayer = room?.hostId ? playersById.get(room.hostId) : null;
-
-  // ホスト判定
-  const isHost = myId && room?.hostId === myId;
-
-  // アクティブプレイヤー数
-  const activePlayers = (room?.players ?? []).filter((p) => p.connected);
-  const activeCount = activePlayers.length;
-
-  // ゲーム開始可能かどうか
-  const canStart = activeCount >= 3;
-  const disabled = !canStart;
-
-  // ホストがアクティブかどうか
-  const hostActive = hostPlayer?.connected ?? false;
+  // デバッグ用：カスタムモード判定の確認
+  useEffect(() => {
+    console.log("[CustomLobby] カスタムモード判定詳細:", {
+      room: room,
+      isCustomMode: isCustomMode,
+      isAutoRoom: room?.isAutoRoom,
+      isCustomModeFlag: room?.isCustomMode,
+      roomState: room ? JSON.stringify(room, null, 2) : "null"
+    });
+  }, [room, isCustomMode]);
 
   // デバッグ用：接続状態の表示（開発時のみ）
   useEffect(() => {
@@ -57,116 +50,137 @@ export default function CustomLobby() {
     const handleWsMessage = (message: any) => {
       const { t, p } = message;
       
+      if (t === "disband") {
+        console.log("[CustomLobby] 解散メッセージ受信:", p);
+        setDisbandOpen(true);
+      }
+      
       if (t === "abort") {
-        console.log("[CustomLobby] ルーム終了:", p.reason);
-        reset();
-        nav("/menu");
+        console.log("[CustomLobby] 中断メッセージ受信:", p);
+        // ゲーム中断時の処理
+        nav("/menu", { replace: true });
       }
     };
 
     const cleanup = createMessageListener(handleWsMessage);
     return cleanup;
-  }, [nav, reset]);
+  }, [nav]);
 
-  // ルーム解散
-  const handleDisband = () => {
-    if (isHost) {
-      send("disband", {});
-      reset();
-      nav("/menu");
+  // ルームIDが変更された場合の処理
+  useEffect(() => {
+    if (!id || !room) return;
+    
+    // ルームIDが一致しない場合はメニューに戻る
+    if (room.roomId !== id) {
+      console.warn("[CustomLobby] ルームID不一致:", { expected: id, actual: room.roomId });
+      nav("/menu", { replace: true });
     }
-  };
+  }, [id, room, nav]);
 
-  // ルーム退出
-  const handleLeave = () => {
-    send("leave", {});
+  const players = room?.players ?? [];
+  const capacity = ROOM_CAPACITY;
+  const hostActive = room?.phase === "LOBBY" && room?.hostId != null;
+  const isHost = hostActive && !!myId && !!room?.hostId && myId === room.hostId;
+  const placeholders = useMemo(() => Math.max(0, capacity - players.length), [players.length]);
+  const canStart = players.length >= 3;
+
+  const leave = () => { 
+    console.log("[CustomLobby] ルームから退出します");
+    send("leave", {}); 
+    // 状態をリセットしてからメニューに遷移
     reset();
-    nav("/menu");
+    nav("/menu", { replace: true }); 
+  };
+  
+  // 解散通知を受けた後のOK（サーバーは既に解散処理中）
+  // サーバーに追加のleaveを送らず、静かに切断→メニューへ
+  const ackDisband = () => {
+    console.log("[CustomLobby] 解散OK、静かに切断してメニューへ戻ります");
+    try { forceDisconnect(); } catch {}
+    reset();
+    nav("/menu", { replace: true });
+  };
+  
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const disband = () => {
+    console.log("[CustomLobby] 解散確認モーダルを表示");
+    setConfirmOpen(true);
+  };
+  
+  const confirmYes = () => { 
+    console.log("[CustomLobby] ルームを解散します");
+    console.log("[CustomLobby] WebSocket接続状態:", getConnectionDebugInfo());
+    setConfirmOpen(false); 
+    const result = send("disband", {}); 
+    console.log("[CustomLobby] 解散メッセージ送信結果:", result);
+  };
+  const confirmNo = () => setConfirmOpen(false);
+  
+  // コピー成功時の処理
+  const handleCopySuccess = () => {
+    showToast("コピーしました", "info");
   };
 
-  // ルームIDのコピー
-  const handleCopyRoomId = () => {
-    if (id) {
-      navigator.clipboard.writeText(id);
-      showToast("ルームIDをコピーしました", "success");
-    }
-  };
+  const bannerH = 56;
+  const disabled = disbandOpen;
+
+  // デバッグ用ログを削除
 
   return (
-    <Screen
-      contentScrollable={false}
-      className="h-full overflow-hidden"
-    >
-      <div className="h-full flex flex-col">
-        <HeaderBar title="カスタムモード - ルーム待機" center />
-        
-        <div className="flex-1 px-4 py-6">
-          <Panel className="h-full">
-            <div className="h-full flex flex-col justify-center space-y-8">
-              {/* ルーム情報 */}
-              <div className="text-center space-y-4">
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold text-white">
-                    ルームID: {id}
-                  </h2>
-                  <div className="flex items-center justify-center gap-2">
-                    <CopyButton
-                      text={id || ""}
-                      onCopy={handleCopyRoomId}
-                      className="text-blue-400 hover:text-blue-300"
-                    />
-                    <span className="text-gray-400 text-sm">クリックでコピー</span>
-                  </div>
+    <Screen bannerHeight={bannerH} contentScrollable={false}>
+      <div
+        className="lobby-ipad-scale px-4"
+        style={{ height: `calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - ${bannerH}px)` }}
+      >
+        <div className="h-full flex flex-col">
+          <HeaderBar title="カスタムモード - ルーム待機" center />
+
+          <FadeSlide>
+            <Panel className="p-4 sm:p-5 md:p-7 lg:p-8 space-y-3 md:space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="text-slate-300">ルームID</div>
+                <div className="px-3 py-1 rounded-lg bg-white/10 border border-white/20 text-slate-50 font-mono text-lg tracking-[0.15em]">
+                  {id}
                 </div>
-                <p className="text-gray-300">
-                  {activeCount}人 / {ROOM_CAPACITY}人
-                </p>
+                <CopyButton text={id ?? ""} onCopySuccess={handleCopySuccess} />
+              </div>
+              <div className="flex items-center justify-between text-sm text-slate-300">
+                <div>参加者 <span className="font-semibold text-slate-100">{players.length}</span> / {capacity}</div>
+                {isHost && <div className="text-slate-400">3人以上で開始できます</div>}
               </div>
 
-              {/* プレイヤーリスト */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white text-center">
-                  参加者
-                </h3>
-                <div className="space-y-2">
-                  {activePlayers.map((player) => (
-                    <div
-                      key={player.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg ${
-                        player.id === room?.hostId
-                          ? "bg-blue-900/30 border border-blue-500"
-                          : "bg-gray-800"
-                      }`}
-                    >
-                      <Avatar
-                        iconId={player.iconId}
-                        size="md"
-                        className="flex-shrink-0"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-white font-medium truncate">
-                            {player.nick}
-                          </span>
-                          {player.id === room?.hostId && (
-                            <span className="text-blue-400 text-sm font-medium">
-                              ホスト
-                            </span>
+              <div className="rounded-xl bg-black/20 border border-white/10 p-2 md:p-3 h-72 md:h-[24rem] lg:h-[26rem] overflow-y-auto">
+                <div className="flex flex-col gap-2 md:gap-3">
+                  {players.map((p) => (
+                    <div key={p.id} className="h-16 md:h-20 lg:h-20 px-3 md:px-4 rounded-xl bg-black/30 border border-white/10 flex items-center gap-3 md:gap-4">
+                      <Avatar iconId={p.iconId} size={56} />
+                      <div className="min-w-0 flex-1">
+                        <div className="text-base md:text-xl text-white leading-tight break-words">
+                          {p.nick}
+                          {room?.hostId === p.id && (
+                            <span className="ml-2 text-indigo-400 font-semibold">・ホスト</span>
                           )}
                         </div>
-                        <div className="text-gray-400 text-sm">
-                          {player.connected ? "オンライン" : "オフライン"}
-                        </div>
+                        <div className="text-xs md:text-sm text-white/40 font-mono break-all">{p.id}</div>
                       </div>
+                    </div>
+                  ))}
+                  {Array.from({ length: placeholders }).map((_, i) => (
+                    <div key={`ph-${i}`} className="h-16 md:h-20 lg:h-20 px-3 md:px-4 rounded-xl border border-dashed border-white/15 bg-white/5 flex items-center gap-3 md:gap-4 opacity-70">
+                      <div className="rounded-full bg-white/10 border border-white/10" style={{ width: 56, height: 56 }} />
+                      <div className="text-sm md:text-base text-white/40">空きスロット</div>
                     </div>
                   ))}
                 </div>
               </div>
+            </Panel>
+          </FadeSlide>
 
-              {/* ゲーム開始ボタン */}
-              {hostActive ? (
-                isHost ? (
-                  <div className="space-y-4">
+          <FadeSlide delay={0.05}>
+            {hostActive ? (
+              isHost ? (
+                <div className="mt-2 flex items-center gap-3">
+                  <div className="flex-1">
                     <PrimaryBtn 
                       className="w-full" 
                       onClick={() => {
@@ -177,73 +191,57 @@ export default function CustomLobby() {
                     >
                       お題作成へ
                     </PrimaryBtn>
-                    <DangerBtn
-                      onClick={() => setDisbandOpen(true)}
-                      className="w-full"
+                  </div>
+                  <div className="flex-1">
+                    <DangerBtn 
+                      onClick={() => {
+                        console.log("[CustomLobby] 解散ボタンクリック");
+                        disband();
+                      }} 
+                      disabled={disabled}
                     >
-                      ルームを解散
+                      解散
                     </DangerBtn>
                   </div>
-                ) : (
-                  <div className="text-center space-y-4">
-                    <p className="text-gray-300">
-                      ホストがお題作成を開始するまでお待ちください
-                    </p>
-                    <SecondaryBtn
-                      onClick={handleLeave}
-                      className="w-full"
-                    >
-                      ルームを退出
-                    </SecondaryBtn>
-                  </div>
-                )
+                </div>
               ) : (
-                <div className="text-center space-y-4">
-                  <p className="text-gray-300">
-                    ホストが接続を待っています...
-                  </p>
-                  <SecondaryBtn
-                    onClick={handleLeave}
-                    className="w-full"
-                  >
-                    ルームを退出
-                  </SecondaryBtn>
+                <div className="mt-2">
+                  <SecondaryBtn onClick={leave} disabled={disabled} className="w-full">戻る</SecondaryBtn>
                 </div>
-              )}
+              )
+            ) : (
+              <div className="mt-2">
+                <SecondaryBtn onClick={leave} disabled={disabled} className="w-full">戻る</SecondaryBtn>
+              </div>
+            )}
+          </FadeSlide>
 
-              {/* ゲーム開始条件の説明 */}
-              {!canStart && (
-                <div className="text-center text-gray-400 text-sm">
-                  ゲームを開始するには3人以上必要です
-                </div>
-              )}
+          <Modal open={disbandOpen} onClose={()=>{}} closable={false} title="ルームが解散されました">
+            <div className="space-y-4">
+              <p>ホストがルームを解散しました。</p>
+              <div className="flex justify-end">
+                <PrimaryBtn onClick={ackDisband}>OK</PrimaryBtn>
+              </div>
             </div>
-          </Panel>
+          </Modal>
+
+          <Modal open={confirmOpen} onClose={confirmNo} closable title="ルームを解散しますか？">
+            <div className="space-y-4">
+              <p>この操作は取り消せません。</p>
+              <div className="flex justify-end gap-2">
+                <SecondaryBtn onClick={() => {
+                  console.log("[CustomLobby] 解散キャンセル");
+                  confirmNo();
+                }}>いいえ</SecondaryBtn>
+                <DangerBtn onClick={() => {
+                  console.log("[CustomLobby] 解散確認");
+                  confirmYes();
+                }}>はい</DangerBtn>
+              </div>
+            </div>
+          </Modal>
         </div>
-
-        {/* 下部余白（モバイル対応） */}
-        <div className="pb-20 sm:pb-4"></div>
       </div>
-
-      {/* ルーム解散確認モーダル */}
-      <Modal
-        isOpen={disbandOpen}
-        onClose={() => setDisbandOpen(false)}
-        title="ルームを解散しますか？"
-        content="ルームを解散すると、参加者全員が退出します。"
-        actions={[
-          {
-            label: "キャンセル",
-            onClick: () => setDisbandOpen(false),
-            variant: "secondary" as const,
-          },
-          {
-            label: "解散する",
-            onClick: handleDisband,
-            variant: "danger" as const,
-          },
-        ]}
-      />
     </Screen>
   );
 }
