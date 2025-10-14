@@ -28,11 +28,12 @@ export default function Lobby() {
   
   // デバッグ用：カスタムモード判定の確認
   useEffect(() => {
-    console.log("[Lobby] カスタムモード判定:", {
+    console.log("[Lobby] カスタムモード判定詳細:", {
       room: room,
       isCustomMode: isCustomMode,
       isAutoRoom: room?.isAutoRoom,
-      isCustomModeFlag: room?.isCustomMode
+      isCustomModeFlag: room?.isCustomMode,
+      roomState: room ? JSON.stringify(room, null, 2) : "null"
     });
   }, [room, isCustomMode]);
 

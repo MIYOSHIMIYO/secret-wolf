@@ -75,6 +75,7 @@ export async function connect(url: string): Promise<void> {
       // 再接続含め、接続確立時に一度だけjoinを送信（lastJoinPayloadが設定されている場合）
       if (lastJoinPayload && !hasJoined) {
         const { roomId, nick, installId, isCustomMode } = lastJoinPayload;
+        console.log('[WebSocket] joinメッセージ送信:', { roomId, nick, installId, isCustomMode });
         send('join', { roomId, nick, installId, isCustomMode });
         hasJoined = true;
       }

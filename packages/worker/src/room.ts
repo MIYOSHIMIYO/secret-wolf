@@ -314,13 +314,15 @@ export class RoomDO implements DurableObject {
 
       if (t === "join") {
         let id = this.clientToPlayerId.get(clientId);
+        console.log(`[Join] joinメッセージ受信:`, { t, p, clientId, existingId: id });
         if (!id) {
           // カスタムモードかどうかをチェック
           const isCustomMode = Boolean(p?.isCustomMode);
           console.log(`[Join] カスタムモード判定:`, {
             isCustomMode: isCustomMode,
             p: p,
-            isCustomModeFlag: p?.isCustomMode
+            isCustomModeFlag: p?.isCustomMode,
+            rawPayload: JSON.stringify(p)
           });
           if (isCustomMode) {
             this.roomState.isAutoRoom = true; // カスタムモードも自動ルームとして扱う
