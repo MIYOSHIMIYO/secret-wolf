@@ -47,8 +47,8 @@ export default function Menu() {
       console.log("[Menu] ルーム状態をリセット完了");
 
       if (type === "random") {
-        // カスタムモードの場合はルーム作成参加シーンに遷移（カスタムモードフラグ付き）
-        nav("/room-create?mode=custom");
+        // カスタムモードの場合は専用のルーム作成参加シーンに遷移
+        nav("/custom-room-create");
       } else {
         // 知り合いと遊ぶの場合はルーム作成画面に遷移
         nav("/room-create");

@@ -317,18 +317,10 @@ export class RoomDO implements DurableObject {
         if (!id) {
           // カスタムモードかどうかをチェック
           const isCustomMode = Boolean(p?.isCustomMode);
-          console.log(`[Join] カスタムモード判定:`, {
-            isCustomMode: isCustomMode,
-            p: p,
-            isCustomModeFlag: p?.isCustomMode
-          });
           if (isCustomMode) {
             this.roomState.isAutoRoom = true; // カスタムモードも自動ルームとして扱う
             this.roomState.isCustomMode = true; // カスタムモードフラグを設定
-            console.log(`[Join] カスタムモード設定完了:`, {
-              isAutoRoom: this.roomState.isAutoRoom,
-              isCustomMode: this.roomState.isCustomMode
-            });
+            console.log(`[Join] カスタムモード設定完了`);
           }
           
           // ルーム人数制限チェック（新規参加者のみ）
@@ -526,16 +518,10 @@ export class RoomDO implements DurableObject {
         
         // カスタムモードの場合はお題作成シーンに遷移（クライアント側で処理）
         // 通常モードの場合はモード選択シーンに遷移
-        console.log(`[Start] カスタムモード判定:`, {
-          isCustomMode: this.roomState.isCustomMode,
-          isAutoRoom: this.roomState.isAutoRoom
-        });
         if (this.roomState.isCustomMode) {
           // カスタムモードの場合は何もしない（クライアント側でお題作成シーンに遷移）
-          console.log(`[Start] カスタムモード - クライアント側でお題作成シーンに遷移`);
           return;
         } else {
-          console.log(`[Start] 通常モード - モード選択シーンに遷移`);
           this.goModeSelect();
         }
         return;
