@@ -201,8 +201,13 @@ export default function CustomLobby() {
                         
                         // カスタムモードの場合はstartCustomGameメッセージを送信
                         console.log("[CustomLobby] startCustomGameメッセージを送信");
+                        console.log("[CustomLobby] 送信するメッセージ:", { t: "startCustomGame", p: {} });
                         const result = send("startCustomGame", {});
                         console.log("[CustomLobby] send結果:", result);
+                        
+                        // WebSocketの状態を確認
+                        const debugInfo = getConnectionDebugInfo();
+                        console.log("[CustomLobby] 送信時のWebSocket状態:", debugInfo);
                       }} 
                       disabled={disabled || !canStart}
                     >

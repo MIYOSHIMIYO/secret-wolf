@@ -213,19 +213,23 @@ function stopHeartbeat(): void {
  * メッセージ送信
  */
 export function send(type: string, payload: any): boolean {
+  console.log(`[WebSocket] send関数呼び出し: type=${type}, payload=`, payload);
+  console.log(`[WebSocket] WebSocket状態: readyState=${ws?.readyState}, OPEN=${WebSocket.OPEN}`);
+  
   if (!ws || ws.readyState !== WebSocket.OPEN) {
     console.warn('[WebSocket] 接続していないためメッセージを送信できません');
     return false;
   }
 
   const message = { t: type, p: payload };
+  const messageString = JSON.stringify(message);
+  
+  console.log(`[WebSocket] 送信するメッセージ:`, message);
+  console.log(`[WebSocket] 送信するJSON文字列:`, messageString);
   
   try {
-    ws.send(JSON.stringify(message));
-    if (import.meta.env.DEV) {
-      // 開発時のみログ
-      if (type !== 'ping') console.log('[WebSocket] メッセージ送信成功:', message);
-    }
+    ws.send(messageString);
+    console.log(`[WebSocket] メッセージ送信成功: type=${type}`);
     return true;
   } catch (error) {
     console.error('[WebSocket] メッセージ送信エラー:', error);
