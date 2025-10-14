@@ -60,6 +60,12 @@ export default function CustomLobby() {
         // ゲーム中断時の処理
         nav("/menu", { replace: true });
       }
+      
+      if (t === "customTopicCreation") {
+        console.log("[CustomLobby] お題作成シーン遷移メッセージ受信:", p);
+        // お題作成シーンに遷移
+        nav("/custom", { replace: true });
+      }
     };
 
     const cleanup = createMessageListener(handleWsMessage);
@@ -184,8 +190,8 @@ export default function CustomLobby() {
                     <PrimaryBtn 
                       className="w-full" 
                       onClick={() => {
-                        // カスタムモードの場合はお題作成シーンに遷移
-                        nav("/custom");
+                        // カスタムモードの場合はstartCustomGameメッセージを送信
+                        send("startCustomGame", {});
                       }} 
                       disabled={disabled || !canStart}
                     >

@@ -60,6 +60,12 @@ export default function Lobby() {
         // ゲーム中断時の処理
         nav("/menu", { replace: true });
       }
+      
+      if (t === "customTopicCreation") {
+        console.log("[Lobby] お題作成シーン遷移メッセージ受信:", p);
+        // お題作成シーンに遷移
+        nav("/custom", { replace: true });
+      }
     };
 
     const cleanup = createMessageListener(handleWsMessage);

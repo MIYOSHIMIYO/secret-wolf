@@ -598,15 +598,8 @@ export class RoomDO implements DurableObject {
         const pid = this.clientToPlayerId.get(clientId);
         if (!pid || this.roomState.hostId !== pid) return;
         
-        // お題が1個以上あることを確認
-        if (this.roomState.customTopics.length === 0) {
-          const ws = this.clients.get(clientId);
-          ws?.send(JSON.stringify({ t: "warn", p: { code: "INVALID_OP", msg: "お題を1個以上作成してください" } } as any));
-          return;
-        }
-        
-        // カスタムゲームを開始
-        this.startCustomGame();
+        // カスタムモードの場合はお題作成シーンに遷移するメッセージを送信
+        this.broadcast({ t: "customTopicCreation", p: {} } as any);
         return;
       }
 
