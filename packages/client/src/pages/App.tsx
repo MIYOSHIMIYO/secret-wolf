@@ -95,6 +95,13 @@ export default function App() {
         // 画面遷移（createAppMessageHandlerで処理される）
         if (phase === "MODE_SELECT") {
           console.log("[App] MODE_SELECTフェーズに遷移");
+          // カスタムモードの場合はMODE_SELECTをスキップ
+          const isCustomMode = useAppStore.getState().isCustomMode;
+          console.log("[App] isCustomModeフラグ:", isCustomMode);
+          if (isCustomMode) {
+            console.log("[App] カスタムモードのため、MODE_SELECTフェーズをスキップ");
+            return;
+          }
           nav("/mode-select");
         }
         if (phase === "TOPIC_CREATION") {
