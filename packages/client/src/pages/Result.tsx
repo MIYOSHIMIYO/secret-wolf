@@ -101,9 +101,14 @@ export default function Result() {
         console.debug("[Result] リマッチ選択を受信");
         // モーダルを表示
         setRematchModalOpen(true);
-        // 3秒後にモード選択シーンに遷移
+        // 3秒後に適切なシーンに遷移
         setTimeout(() => {
-          nav("/mode-select", { replace: true });
+          // カスタムモードの場合はお題作成シーンに戻る
+          if (room?.isAutoRoom) {
+            nav("/custom", { replace: true });
+          } else {
+            nav("/mode-select", { replace: true });
+          }
         }, 3000);
       }
       

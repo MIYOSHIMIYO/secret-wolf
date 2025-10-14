@@ -24,6 +24,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancel from "./pages/PaymentCancel";
 import Legal from "./pages/Legal";
 import ValidationTest from "./pages/ValidationTest";
+import CustomTopicCreation from "./pages/CustomTopicCreation";
 import { AppTrackingTransparencyService } from "./plugins/AppTrackingTransparency";
 import { initializePWA } from "./utils/pwa";
 import "./styles.css";
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { path: "mode-select", element: <ModeSelect /> },
       { path: "auto", element: <AutoWait /> },
       { path: "auto-wait", element: <AutoWait /> },
+      { path: "custom", element: <CustomTopicCreation /> },
       { path: "input", element: <Input /> },
       { path: "reveal", element: <Reveal /> },
       { path: "discuss", element: <Discuss /> },

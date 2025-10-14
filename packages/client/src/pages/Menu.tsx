@@ -47,8 +47,8 @@ export default function Menu() {
       console.log("[Menu] ルーム状態をリセット完了");
 
       if (type === "random") {
-        // 知らない誰かとの場合は直接ルーム待機シーンに遷移
-        nav("/auto");
+        // カスタムモードの場合は直接お題作成シーンに遷移
+        nav("/custom");
       } else {
         // 知り合いと遊ぶの場合はルーム作成画面に遷移
         nav("/room-create");
@@ -88,9 +88,9 @@ export default function Menu() {
         <div className="menu-scale flex flex-col px-scale-1 sm:px-2 md:px-3 xl:px-6 pt-scale-0 sm:pt-1 md:pt-2 xl:pt-8 xl:transform-none xl:mx-auto xl:w-full xl:max-w-none xl:space-y-8">
           {/* タブレット・モバイル用2列レイアウト */}
           <div className="xl:hidden">
-            {/* 上部：知らない誰かと（紫）と知り合いと遊ぶ（青） */}
+            {/* 上部：カスタムして遊ぶ（紫）と知り合いと遊ぶ（青） */}
             <div className="flex mb-scale-1 sm:mb-2 md:mb-2">
-              {/* 左列：知らない誰かと（紫）- 40% */}
+              {/* 左列：カスタムして遊ぶ（紫）- 40% */}
               <div className="w-[40%] pr-scale-4 sm:pr-6 md:pr-7 pt-scale-1 sm:pt-2 md:pt-2">
                 <button
                   onClick={() => handleStart("random")}
@@ -98,7 +98,7 @@ export default function Menu() {
                 >
                   <img
                     src={unknownImage}
-                    alt="知らない誰かと"
+                    alt="カスタムして遊ぶ"
                     className="w-full md:w-[75%] mx-0 md:mx-auto h-auto rounded-scale-2xl shadow-lg"
                   />
                 </button>
@@ -172,7 +172,7 @@ export default function Menu() {
 
           {/* デスクトップ用3×2グリッドレイアウト */}
           <div className="hidden xl:grid xl:grid-cols-3 xl:gap-6 xl:items-center">
-            {/* 1列目：知らない誰かと */}
+            {/* 1列目：カスタムして遊ぶ */}
             <div className="w-full">
               <button
                 onClick={() => handleStart("random")}
@@ -180,7 +180,7 @@ export default function Menu() {
               >
                 <img
                   src={unknownImage}
-                  alt="知らない誰かと"
+                  alt="カスタムして遊ぶ"
                   className="w-full h-auto rounded-scale-2xl shadow-lg xl:max-h-[200px] object-contain"
                 />
               </button>
