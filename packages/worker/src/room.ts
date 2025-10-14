@@ -333,8 +333,9 @@ export class RoomDO implements DurableObject {
           const isCustomMode = Boolean(p?.isCustomMode);
           
           if (isCustomMode) {
-            this.roomState.isAutoRoom = true; // カスタムモードも自動ルームとして扱う
-            this.roomState.isCustomMode = true; // カスタムモードフラグを設定
+            // カスタムモードでは自動開始などの自動ルーム挙動を完全に無効化する
+            this.roomState.isAutoRoom = false;
+            this.roomState.isCustomMode = true;
             console.log(`[Join] カスタムモードを設定: isCustomMode=${this.roomState.isCustomMode}, isAutoRoom=${this.roomState.isAutoRoom}`);
           }
           
@@ -1098,11 +1099,9 @@ export class RoomDO implements DurableObject {
   }
 
   private autoStart() {
-    if (this.roomState.phase !== "LOBBY") return;
-    if (!this.roomState.isAutoRoom) return;
-    if (this.roomState.isCustomMode) return; // カスタムモードでは自動開始しない
-    
-    console.log(`[autoStart] 新しいルームでのゲーム開始: roomId=${this.roomState.roomId}`);
+    // 知らない誰かと遊ぶ機能は廃止したため、この関数は何もしない
+    console.log(`[autoStart] 呼び出されましたが、機能は無効化されています`);
+    return;
     
     if (this.roomState.players.length >= 3) {
       console.log(`[autoStart] 3人揃いました。準備フェーズを開始します。`);
@@ -1138,40 +1137,9 @@ export class RoomDO implements DurableObject {
   }
 
   private startGame() {
-    if (this.roomState.phase !== "READY") return;
-    if (!this.roomState.isAutoRoom) return;
-    if (this.roomState.isCustomMode) return; // カスタムモードでは自動開始しない
-    
-    console.log(`[startGame] ゲーム開始処理を実行します`);
-    
-    this.resetGameState();
-    
-    const prompts = PROMPTS.STRANGER;
-    const selectedPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-    
-    console.log(`[startGame] ゲーム開始: roomId=${this.roomState.roomId}, mode=${this.roomState.mode}, prompt=${selectedPrompt}`);
-    
-    this.roomState.roundId = nanoid();
-    this.roomState.round = {
-      prompt: selectedPrompt,
-      promptText: selectedPrompt,
-      promptId: Math.floor(Math.random() * prompts.length),
-      secretText: "",
-      secretOwner: "",
-      submissions: {},
-      chat: [],
-      votes: {},
-      result: null
-    };
-    
-    this.roomState.phase = "INPUT";
-    this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
-    this.setEnds(30_000); // 30秒固定
-    
-    console.log(`[startGame] ゲーム開始完了。プレイヤー数: ${this.roomState.players.length}`);
-    
-    this.broadcast({ t: "phase", p: { phase: "INPUT", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
-    this.broadcastState();
+    // 知らない誰かと遊ぶの自動開始機能は廃止
+    console.log(`[startGame] 呼び出されましたが、機能は無効化されています`);
+    return;
   }
 
   private resetGameState() {
