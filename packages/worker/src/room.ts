@@ -335,6 +335,7 @@ export class RoomDO implements DurableObject {
           if (isCustomMode) {
             this.roomState.isAutoRoom = true; // カスタムモードも自動ルームとして扱う
             this.roomState.isCustomMode = true; // カスタムモードフラグを設定
+            console.log(`[Join] カスタムモードを設定: isCustomMode=${this.roomState.isCustomMode}, isAutoRoom=${this.roomState.isAutoRoom}`);
           }
           
           // ルーム人数制限チェック（新規参加者のみ）
@@ -411,6 +412,8 @@ export class RoomDO implements DurableObject {
             console.log(`[Join] 3人揃いました。自動開始します。`);
             this.autoStart();
           }
+        } else if (this.roomState.isCustomMode) {
+          console.log(`[Join] カスタムモードのため自動開始をスキップ: isCustomMode=${this.roomState.isCustomMode}`);
         }
         return;
       }
@@ -519,6 +522,8 @@ export class RoomDO implements DurableObject {
         if (activeCount >= 3 && !this.roomState.isCustomMode) {
           console.log(`[Auto] 3人揃いました。自動開始します。`);
           this.autoStart();
+        } else if (this.roomState.isCustomMode) {
+          console.log(`[Auto] カスタムモードのため自動開始をスキップ: isCustomMode=${this.roomState.isCustomMode}, activeCount=${activeCount}`);
         }
         return;
       }
