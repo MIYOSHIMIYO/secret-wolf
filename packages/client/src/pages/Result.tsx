@@ -116,12 +116,9 @@ export default function Result() {
       if (t === "endGame") {
         // ホストが終了を選択
         console.debug("[Result] ゲーム終了選択を受信");
-        
-        // 知らない誰かとの場合はモーダルを表示しない（5秒後の強制終了で処理される）
-        if (!room?.isAutoRoom) {
-          // 即座にモーダルを表示（サーバー側のabortメッセージで遷移）
-          setEndGameModalOpen(true);
-        }
+
+        // 直接モーダルを表示（サーバー側のabortメッセージで遷移）
+        setEndGameModalOpen(true);
       }
       
       if (t === "abort") {
@@ -179,8 +176,8 @@ export default function Result() {
             
             {/* ボタン群 */}
             <div className="pt-6">
-              {/* 知り合いと遊ぶ（通常ルーム）の場合のみボタンを表示 */}
-              {!room?.isAutoRoom && (
+              {/* 通常/カスタムいずれもホストのみボタンを表示 */}
+              (
                 isHost ? (
                   <div className="flex gap-4 justify-center">
                     <PrimaryBtn 
@@ -196,14 +193,9 @@ export default function Result() {
                     ホストの選択を待ってください
                   </div>
                 )
-              )}
+              )
               
-              {/* 知らない誰かとの場合は7秒後に強制終了する旨を表示 */}
-              {room?.isAutoRoom && (
-                <div className="text-slate-300 text-center px-6 py-4 bg-slate-700/50 rounded-xl text-lg">
-                  7秒後にメニューシーンに移行します
-                </div>
-              )}
+              {/* 自動終了案内は廃止 */}
             </div>
           </div>
           
@@ -293,8 +285,8 @@ export default function Result() {
           
           {/* ボタン群（固定位置） */}
           <div className="mt-8 md:mt-10 flex gap-3 md:gap-4 justify-center pb-40 sm:pb-6">
-            {/* 知り合いと遊ぶ（通常ルーム）の場合のみボタンを表示 */}
-            {!room?.isAutoRoom && (
+            {/* 通常/カスタムいずれもホストのみボタンを表示 */}
+            (
               isHost ? (
                 <>
                   <PrimaryBtn 
@@ -310,14 +302,7 @@ export default function Result() {
                   ホストの選択を待ってください
                 </div>
               )
-            )}
-            
-            {/* 知らない誰かとの場合は7秒後に強制終了する旨を表示 */}
-            {room?.isAutoRoom && (
-              <div className="text-slate-300 text-center px-6 py-3 bg-slate-700/50 rounded-xl">
-                7秒後にメニューシーンに移行します
-              </div>
-            )}
+            )
           </div>
         </div>
         

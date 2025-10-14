@@ -174,7 +174,7 @@ export class RoomDO implements DurableObject {
 
     if (this.roomState.phase === "READY") {
       console.log(`[alarm] READYフェーズからINPUTフェーズに移行`);
-      this.startGame();
+      this.goInput();
       return;
     }
     if (this.roomState.phase === "INPUT") {

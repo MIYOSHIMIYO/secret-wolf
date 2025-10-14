@@ -46,7 +46,7 @@ export default function Menu() {
       await resetRoomState();
       console.log("[Menu] ルーム状態をリセット完了");
 
-            if (type === "random") {
+            if (type === "custom") {
               // カスタムモードの場合は専用のルーム作成シーンに遷移
               nav("/custom-room-create");
             } else {
@@ -57,7 +57,7 @@ export default function Menu() {
       console.error("[Menu] 状態リセットエラー:", error);
       // エラーが発生してもゲーム開始を試行
       reset();
-      if (type === "random") {
+      if (type === "custom") {
         nav("/custom-room-create");
       } else {
         nav("/room-create");
@@ -93,7 +93,7 @@ export default function Menu() {
               {/* 左列：カスタムして遊ぶ（紫）- 40% */}
               <div className="w-[40%] pr-scale-4 sm:pr-6 md:pr-7 pt-scale-1 sm:pt-2 md:pt-2">
                 <button
-                  onClick={() => handleStart("random")}
+                  onClick={() => handleStart("custom")}
                   className="w-full h-auto active:scale-[0.98] transition-transform"
                 >
                   <img
@@ -175,7 +175,7 @@ export default function Menu() {
             {/* 1列目：カスタムして遊ぶ */}
             <div className="w-full">
               <button
-                onClick={() => handleStart("random")}
+                onClick={() => handleStart("custom")}
                 className="w-full h-auto active:scale-[0.98] transition-transform"
               >
                 <img

@@ -71,7 +71,6 @@ export type RoomState = {
   phaseSeq?: number;
   modeStamps?: Record<string, number>; // モードスタンプの集計
   playerVotes?: Record<string, Record<string, number>>; // プレイヤー個別の投票数
-  isAutoRoom?: boolean; // 知らない誰かと遊ぶかどうか
   isCustomMode?: boolean; // カスタムモードかどうか
   customTopics?: string[]; // カスタムお題リスト
   iconInUse?: number[]; // 使用中のアイコンID（配列形式）
@@ -180,7 +179,6 @@ export const RoomStateZ = z.object({
   roundId: z.string().optional(),
   phaseSeq: z.number().int().optional(),
   modeStamps: z.record(z.string(), z.number().int().nonnegative()).optional(),
-  isAutoRoom: z.boolean().optional(),
   isCustomMode: z.boolean().optional(),
   customTopics: z.array(z.string()).optional(),
 });
