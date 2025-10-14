@@ -314,12 +314,19 @@ export class RoomDO implements DurableObject {
       if (t === "join") {
         let id = this.clientToPlayerId.get(clientId);
         if (!id) {
+          // カスタムモードかどうかをチェック
+          const isCustomMode = Boolean(p?.isCustomMode);
+          if (isCustomMode) {
+            this.roomState.isAutoRoom = true; // カスタムモードも自動ルームとして扱う
+            console.log(`[Join] カスタムモード - 人数制限チェックをスキップ`);
+          }
+          
           // ルーム人数制限チェック（新規参加者のみ）
           console.log(`[Join] 新規参加者 - 人数制限チェック開始: isAutoRoom=${this.roomState.isAutoRoom}, 現在の人数=${this.roomState.players.length}`);
           
           if (this.roomState.isAutoRoom) {
-            // 知らない誰かと遊ぶ：人数制限なし（自動マッチングで管理）
-            console.log(`[Auto] 知らない誰かと遊ぶモード - 人数制限チェックをスキップ`);
+            // 知らない誰かと遊ぶ/カスタムモード：人数制限なし（自動マッチングで管理）
+            console.log(`[Auto] 自動マッチングモード - 人数制限チェックをスキップ`);
           } else {
             // 知り合いと遊ぶ：8人制限
             console.log(`[Friends] 8人制限チェック: 現在の人数=${this.roomState.players.length}, ROOM_CAPACITY=${ROOM_CAPACITY}`);
@@ -378,6 +385,11 @@ export class RoomDO implements DurableObject {
         
         this.broadcastState();
         
+        // カスタムモードの場合はお題リストも送信
+        if (isCustomMode) {
+          this.broadcastCustomTopics();
+        }
+        
         if (this.roomState.phase === "LOBBY" && this.roomState.isAutoRoom) {
           if (this.roomState.players.length >= 3) {
             console.log(`[Join] 3人揃いました。自動開始します。`);
@@ -389,13 +401,6 @@ export class RoomDO implements DurableObject {
 
       if (t === "auto") {
         this.updateActivity();
-        
-        // カスタムモードの場合は特別処理
-        const mode = String(p?.mode || "");
-        if (mode === "CUSTOM") {
-          this.handleCustomModeJoin(clientId, p);
-          return;
-        }
         
         // READYフェーズ中は3人目が参加できるようにする
         if (this.roomState.phase !== "LOBBY" && this.roomState.phase !== "READY") {

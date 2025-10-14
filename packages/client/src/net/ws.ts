@@ -12,7 +12,7 @@ let reconnectTimer: NodeJS.Timeout | null = null;
 let heartbeatTimer: NodeJS.Timeout | null = null;
 let connectionAttempts = 0;
 let hasJoined = false; // joinメッセージ送信済みフラグ
-let lastJoinPayload: { roomId: string; nick: string; installId: string } | null = null; // 再接続時の自動join用
+let lastJoinPayload: { roomId: string; nick: string; installId: string; isCustomMode?: boolean } | null = null; // 再接続時の自動join用
 let manualClose = false; // 明示的切断かどうかのフラグ（接続単位で評価）
 let connectionIdCounter = 0; // 接続ごとに増えるID（manualCloseフラグのスコープを接続単位に限定）
 let manualCloseConnId: number | null = null; // manualClose をセットした接続ID
@@ -74,8 +74,8 @@ export async function connect(url: string): Promise<void> {
 
       // 再接続含め、接続確立時に一度だけjoinを送信（lastJoinPayloadが設定されている場合）
       if (lastJoinPayload && !hasJoined) {
-        const { roomId, nick, installId } = lastJoinPayload;
-        send('join', { roomId, nick, installId });
+        const { roomId, nick, installId, isCustomMode } = lastJoinPayload;
+        send('join', { roomId, nick, installId, isCustomMode });
         hasJoined = true;
       }
     };
@@ -265,11 +265,11 @@ function notifyHandlers(message: any): void {
 /**
  * ルームに接続
  */
-export async function connectToRoom(roomId: string, nick: string, installId: string): Promise<void> {
+export async function connectToRoom(roomId: string, nick: string, installId: string, isCustomMode?: boolean): Promise<void> {
   const url = `${WS_CONFIG.BASE_URL}/ws/room/${roomId}`.replace(/^http/, 'ws');
   
   // 再接続時にも自動でjoinできるようにペイロードを保持
-  lastJoinPayload = { roomId, nick, installId };
+  lastJoinPayload = { roomId, nick, installId, isCustomMode };
   hasJoined = false;
   await connect(url);
 }

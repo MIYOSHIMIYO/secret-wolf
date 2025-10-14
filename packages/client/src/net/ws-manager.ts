@@ -31,14 +31,15 @@ export async function connectToRoomWithHandler(
   roomId: string, 
   nick: string, 
   installId: string,
-  onConnected?: () => void
+  onConnected?: () => void,
+  isCustomMode?: boolean
 ): Promise<void> {
   // 接続成功時のコールバックを設定
   if (onConnected) {
     const cleanup = addMessageHandler((message) => {
       if (message.t === 'connected') {
         // 念のため接続確立時に join を送信（ws.ts 側でも送るが、取りこぼし防止の二重安全）
-        try { send('join', { roomId, nick, installId }); } catch {}
+        try { send('join', { roomId, nick, installId, isCustomMode }); } catch {}
         onConnected();
         cleanup();
       }
@@ -54,7 +55,7 @@ export async function connectToRoomWithHandler(
     }
   });
   
-  await connectToRoom(roomId, nick, installId);
+  await connectToRoom(roomId, nick, installId, isCustomMode);
 }
 
 /**

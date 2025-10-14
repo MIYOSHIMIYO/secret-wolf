@@ -60,15 +60,13 @@ export default function CustomTopicCreation() {
     };
   }, [nav]);
 
-  // ルームに参加（初回のみ）
+  // ルームに参加済みかチェック（ルーム作成参加シーンを経由してくるため、ここでは参加処理は不要）
   useEffect(() => {
     if (!room) {
-      // カスタムモードでルームに参加
-      const nick = localStorage.getItem("nick") || "プレイヤー";
-      const installId = localStorage.getItem("installId") || "unknown";
-      send("auto", { mode: "CUSTOM", nick, installId });
+      // ルームに参加していない場合はメニューに戻る
+      nav("/menu");
     }
-  }, [room]);
+  }, [room, nav]);
 
   // お題を追加
   const addTopic = () => {

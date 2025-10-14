@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAppStore } from "@/state/store";
 import { getNick } from "@/lib/nick";
 import { getInstallId } from "@/lib/installId";
@@ -13,11 +13,15 @@ import RoomFullModal from "@/components/RoomFullModal";
 
 export default function RoomCreate() {
   const nav = useNavigate();
+  const [searchParams] = useSearchParams();
   const [roomId, setRoomId] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [showRoomFullModal, setShowRoomFullModal] = useState(false);
   const reset = useAppStore((s) => s.reset);
+  
+  // カスタムモードかどうかを判定
+  const isCustomMode = searchParams.get("mode") === "custom";
 
   // WebSocketメッセージ処理（join送信は ws.ts 内で接続完了時に一度だけ実施）
   useEffect(() => {
@@ -35,7 +39,13 @@ export default function RoomCreate() {
           
           // 即座に画面遷移（非同期で実行）
           requestAnimationFrame(() => {
-            nav(`/lobby/${roomId}`);
+            if (isCustomMode) {
+              // カスタムモードの場合はお題作成シーンに遷移
+              nav("/custom");
+            } else {
+              // 通常モードの場合はロビーに遷移
+              nav(`/lobby/${roomId}`);
+            }
           });
         }
       }
@@ -79,7 +89,7 @@ export default function RoomCreate() {
       // 5. WebSocket接続を開始
       const nick = getNick();
       const installId = getInstallId();
-      connectToRoomWithHandler(newRoomId, nick, installId);
+      connectToRoomWithHandler(newRoomId, nick, installId, undefined, isCustomMode);
       
       // 接続タイムアウトを設定（8秒）
       setTimeout(() => {
@@ -120,7 +130,7 @@ export default function RoomCreate() {
       
       connectToRoomWithHandler(roomId, nick, installId, () => {
         console.log(`[RoomCreate] 接続完了: roomId=${roomId}`);
-      });
+      }, isCustomMode);
       
       // 接続タイムアウトを設定（8秒）
       setTimeout(() => {
@@ -149,7 +159,7 @@ export default function RoomCreate() {
         <div className="h-full flex flex-col">
           {/* 上詰め配置 */}
           <div className="w-full">
-              <HeaderBar title="ルーム作成・参加" center />
+              <HeaderBar title={isCustomMode ? "カスタムモード - ルーム作成・参加" : "ルーム作成・参加"} center />
 
               {/* create section */}
               <Panel className="mt-6 md:mt-10 lg:mt-10 xl:mt-12 p-4 sm:p-6 md:p-9 lg:p-9 xl:p-10">
