@@ -68,8 +68,8 @@ export class RoomDO implements DurableObject {
           phaseSeq: 0,
           chat: [],
           modeStamps: {} as Record<string, number>, // モードスタンプの集計
-          isAutoRoom: true, // デバッグ用：常にtrue
-          isCustomMode: true, // デバッグ用：常にtrue
+          isAutoRoom: false, // 知らない誰かと遊ぶかどうか
+          isCustomMode: false, // カスタムモードかどうか
           customTopics: [] as string[], // カスタムお題リスト
           iconInUse: [] as number[], // 使用中のアイコンID（配列形式）
           lastActivityAt: Date.now(), // 最後のアクティビティ時刻
@@ -319,46 +319,11 @@ export class RoomDO implements DurableObject {
         if (!id) {
           // カスタムモードかどうかをチェック
           const isCustomMode = Boolean(p?.isCustomMode);
-          console.log(`[Join] カスタムモード判定:`, {
-            isCustomMode: isCustomMode,
-            p: p,
-            isCustomModeFlag: p?.isCustomMode,
-            rawPayload: JSON.stringify(p)
-          });
           
-          // カスタムモードの設定（デバッグ用に強制的に設定）
           if (isCustomMode) {
             this.roomState.isAutoRoom = true; // カスタムモードも自動ルームとして扱う
             this.roomState.isCustomMode = true; // カスタムモードフラグを設定
-            console.log(`[Join] カスタムモード設定完了:`, {
-              isAutoRoom: this.roomState.isAutoRoom,
-              isCustomMode: this.roomState.isCustomMode
-            });
-          } else {
-            // デバッグ用：isCustomModeがfalseの場合でもログを出力
-            console.log(`[Join] カスタムモードではない:`, {
-              isCustomMode: isCustomMode,
-              p: p
-            });
           }
-          
-          // デバッグ用：強制的にカスタムモードを設定（テスト用）
-          if (p?.isCustomMode === true) {
-            this.roomState.isAutoRoom = true;
-            this.roomState.isCustomMode = true;
-            console.log(`[Join] 強制的にカスタムモードを設定:`, {
-              isAutoRoom: this.roomState.isAutoRoom,
-              isCustomMode: this.roomState.isCustomMode
-            });
-          }
-          
-          // デバッグ用：常にカスタムモードを設定（テスト用）
-          this.roomState.isAutoRoom = true;
-          this.roomState.isCustomMode = true;
-          console.log(`[Join] 常にカスタムモードを設定:`, {
-            isAutoRoom: this.roomState.isAutoRoom,
-            isCustomMode: this.roomState.isCustomMode
-          });
           
           // ルーム人数制限チェック（新規参加者のみ）
           console.log(`[Join] 新規参加者 - 人数制限チェック開始: isAutoRoom=${this.roomState.isAutoRoom}, 現在の人数=${this.roomState.players.length}`);

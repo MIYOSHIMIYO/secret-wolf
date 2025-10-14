@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useAppStore } from "@/state/store";
-import { connectToRoomWithHandler } from "@/net/ws-manager";
+import { getNick } from "@/lib/nick";
+import { getInstallId } from "@/lib/installId";
+import { connectToRoomWithHandler, getConnectionDebugInfo, forceDisconnect } from "@/net/ws-manager";
+import { showToast } from "@/lib/toast";
 import Screen from "@/components/Screen";
 import HeaderBar from "@/components/HeaderBar";
+import Panel from "@/components/Panel";
 import { PrimaryBtn, SecondaryBtn } from "@/components/Buttons";
-// Inputコンポーネントの代わりにtextareaを使用
-import { showToast } from "@/lib/toast";
+import RoomFullModal from "@/components/RoomFullModal";
 
 export default function CustomRoomCreate() {
   const nav = useNavigate();
@@ -22,7 +25,7 @@ export default function CustomRoomCreate() {
     setIsCustomMode(true);
   }, [setIsCustomMode]);
 
-  // WebSocketメッセージ処理
+  // WebSocketメッセージ処理（join送信は ws.ts 内で接続完了時に一度だけ実施）
   useEffect(() => {
     const handleWsMessage = (event: CustomEvent) => {
       const { t, p } = event.detail;
@@ -74,11 +77,13 @@ export default function CustomRoomCreate() {
     try {
       setIsCreating(true);
       const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const nick = getNick();
+      const installId = getInstallId();
       
       await connectToRoomWithHandler(
         newRoomId,
-        "ホスト",
-        `custom-host-${Date.now()}`,
+        nick,
+        installId,
         undefined,
         true // isCustomMode = true
       );
@@ -97,11 +102,13 @@ export default function CustomRoomCreate() {
     
     try {
       setIsJoining(true);
+      const nick = getNick();
+      const installId = getInstallId();
       
       await connectToRoomWithHandler(
         roomId.trim().toUpperCase(),
-        "ゲスト",
-        `custom-guest-${Date.now()}`,
+        nick,
+        installId,
         undefined,
         true // isCustomMode = true
       );
@@ -120,93 +127,76 @@ export default function CustomRoomCreate() {
       className="h-full overflow-hidden"
     >
       <div className="h-full flex flex-col">
-        {/* 上詰め配置 */}
-        <div className="w-full">
-          <HeaderBar title="カスタムモード - ルーム作成・参加" center />
-          
-          {/* メインコンテンツ */}
-          <div className="px-4 py-6 space-y-6">
-            {/* ルーム作成セクション */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-bold text-white text-center">
-                新しいルームを作成
-              </h2>
-              <PrimaryBtn
-                className="w-full"
-                onClick={handleCreateRoom}
-                disabled={isCreating || isJoining}
-              >
-                {isCreating ? "作成中..." : "ルームを作成"}
-              </PrimaryBtn>
-            </div>
-
-            {/* 区切り線 */}
-            <div className="flex items-center">
-              <div className="flex-1 h-px bg-gray-600"></div>
-              <span className="px-4 text-gray-400 text-sm">または</span>
-              <div className="flex-1 h-px bg-gray-600"></div>
-            </div>
-
-            {/* ルーム参加セクション */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-bold text-white text-center">
-                既存のルームに参加
-              </h2>
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  placeholder="ルームIDを入力"
-                  value={roomId}
-                  onChange={(e) => setRoomId(e.target.value)}
-                  disabled={isCreating || isJoining}
-                  className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                />
-                <SecondaryBtn
+        <HeaderBar title="カスタムモード - ルーム作成・参加" center />
+        
+        <div className="flex-1 px-4 py-6">
+          <Panel className="h-full">
+            <div className="h-full flex flex-col justify-center space-y-8">
+              {/* ルーム作成セクション */}
+              <div className="space-y-4">
+                <h2 className="text-xl font-bold text-white text-center">
+                  新しいルームを作成
+                </h2>
+                <p className="text-gray-300 text-center text-sm">
+                  カスタムお題でゲームを始めましょう
+                </p>
+                <PrimaryBtn
                   className="w-full"
-                  onClick={joinRoom}
-                  disabled={!roomId.trim() || isCreating || isJoining}
+                  onClick={handleCreateRoom}
+                  disabled={isCreating || isJoining}
                 >
-                  {isJoining ? "参加中..." : "ルームに参加"}
-                </SecondaryBtn>
+                  {isCreating ? "作成中..." : "ルームを作成"}
+                </PrimaryBtn>
+              </div>
+
+              {/* 区切り線 */}
+              <div className="flex items-center">
+                <div className="flex-1 h-px bg-gray-600"></div>
+                <span className="px-4 text-gray-400 text-sm">または</span>
+                <div className="flex-1 h-px bg-gray-600"></div>
+              </div>
+
+              {/* ルーム参加セクション */}
+              <div className="space-y-4">
+                <h2 className="text-xl font-bold text-white text-center">
+                  既存のルームに参加
+                </h2>
+                <p className="text-gray-300 text-center text-sm">
+                  ルームIDを入力して参加
+                </p>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    placeholder="ルームIDを入力"
+                    value={roomId}
+                    onChange={(e) => setRoomId(e.target.value)}
+                    disabled={isCreating || isJoining}
+                    className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                    maxLength={6}
+                  />
+                  <SecondaryBtn
+                    className="w-full"
+                    onClick={joinRoom}
+                    disabled={!roomId.trim() || isCreating || isJoining}
+                  >
+                    {isJoining ? "参加中..." : "ルームに参加"}
+                  </SecondaryBtn>
+                </div>
               </div>
             </div>
-          </div>
+          </Panel>
         </div>
 
         {/* 下部余白（モバイル対応） */}
-        <div className="flex-1"></div>
+        <div className="pb-20 sm:pb-4"></div>
       </div>
 
       {/* ルーム満員モーダル */}
-      {showRoomFullModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 mx-4 max-w-sm w-full">
-            <h3 className="text-lg font-bold text-white mb-4 text-center">
-              ルームが満員です
-            </h3>
-            <p className="text-gray-300 text-center mb-6">
-              このルームは既に満員です。別のルームに参加するか、新しいルームを作成してください。
-            </p>
-            <div className="flex gap-3">
-              <SecondaryBtn
-                className="flex-1"
-                onClick={() => setShowRoomFullModal(false)}
-              >
-                閉じる
-              </SecondaryBtn>
-              <PrimaryBtn
-                className="flex-1"
-                onClick={() => {
-                  setShowRoomFullModal(false);
-                  handleCreateRoom();
-                }}
-              >
-                新規作成
-              </PrimaryBtn>
-            </div>
-          </div>
-        </div>
-      )}
+      <RoomFullModal
+        isOpen={showRoomFullModal}
+        onClose={() => setShowRoomFullModal(false)}
+        onCreateNew={handleCreateRoom}
+      />
     </Screen>
   );
 }
