@@ -406,7 +406,7 @@ export class RoomDO implements DurableObject {
           this.broadcastCustomTopics();
         }
         
-        if (this.roomState.phase === "LOBBY" && this.roomState.isAutoRoom) {
+        if (this.roomState.phase === "LOBBY" && this.roomState.isAutoRoom && !this.roomState.isCustomMode) {
           if (this.roomState.players.length >= 3) {
             console.log(`[Join] 3人揃いました。自動開始します。`);
             this.autoStart();
@@ -516,7 +516,7 @@ export class RoomDO implements DurableObject {
         this.broadcastState();
         
         const activeCount = this.activeIds().length;
-        if (activeCount >= 3) {
+        if (activeCount >= 3 && !this.roomState.isCustomMode) {
           console.log(`[Auto] 3人揃いました。自動開始します。`);
           this.autoStart();
         }
@@ -1095,6 +1095,7 @@ export class RoomDO implements DurableObject {
   private autoStart() {
     if (this.roomState.phase !== "LOBBY") return;
     if (!this.roomState.isAutoRoom) return;
+    if (this.roomState.isCustomMode) return; // カスタムモードでは自動開始しない
     
     console.log(`[autoStart] 新しいルームでのゲーム開始: roomId=${this.roomState.roomId}`);
     
@@ -1134,6 +1135,7 @@ export class RoomDO implements DurableObject {
   private startGame() {
     if (this.roomState.phase !== "READY") return;
     if (!this.roomState.isAutoRoom) return;
+    if (this.roomState.isCustomMode) return; // カスタムモードでは自動開始しない
     
     console.log(`[startGame] ゲーム開始処理を実行します`);
     
