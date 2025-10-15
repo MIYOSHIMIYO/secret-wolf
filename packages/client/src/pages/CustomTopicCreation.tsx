@@ -106,13 +106,13 @@ export default function CustomTopicCreation() {
   };
 
   return (
-    <Screen contentScrollable={false} maxWidth={1200} innerClassName="xl:px-12">
-      <div className="h-full overflow-hidden px-4 md:px-10 xl:px-0 pt-4 md:pt-10 flex flex-col gap-3 md:gap-6 xl:gap-8">
+    <Screen contentScrollable={true} maxWidth={1200} innerClassName="xl:px-12">
+      <div className="min-h-screen px-4 md:px-10 xl:px-0 pt-4 md:pt-10 pb-32 md:pb-40 flex flex-col gap-3 md:gap-6 xl:gap-8">
         {/* ヘッダー */}
         <HeaderBar title="お題作成" center />
 
-        <div className="flex-1 overflow-hidden xl:overflow-visible">
-          <div className="flex flex-col gap-3 md:gap-6 xl:grid xl:grid-cols-[minmax(0,460px)_minmax(0,1fr)] xl:gap-8 xl:items-start h-full">
+        <div className="flex-1">
+          <div className="flex flex-col gap-3 md:gap-6 xl:grid xl:grid-cols-[minmax(0,460px)_minmax(0,1fr)] xl:gap-8 xl:items-start">
             
             {/* 左カラム：お題入力 */}
             <div className="flex flex-col gap-3 md:gap-6 xl:gap-8 xl:sticky xl:top-8">
@@ -171,7 +171,7 @@ export default function CustomTopicCreation() {
             </div>
 
             {/* 右カラム：お題リスト */}
-            <div className="flex flex-col gap-3 md:gap-6 xl:gap-6 xl:max-h-[calc(100vh-220px)] xl:overflow-y-auto xl:pr-3">
+            <div className="flex flex-col gap-3 md:gap-6 xl:gap-6 xl:max-h-[calc(100vh-200px)] xl:overflow-y-auto xl:pr-3">
               <div className="rounded-2xl bg-gradient-to-br from-slate-900/50 via-slate-800/30 to-gray-900/20 ring-1 ring-slate-400/30 p-3 md:p-6">
                 <h3 className="text-slate-200 font-medium text-sm md:text-2xl mb-2 md:mb-4">
                   作成されたお題
