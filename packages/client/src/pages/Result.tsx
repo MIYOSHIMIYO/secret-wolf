@@ -177,21 +177,25 @@ export default function Result() {
             {/* ボタン群 */}
             <div className="pt-6">
               {/* 通常/カスタムいずれもホストのみボタンを表示 */}
-              {isHost ? (
-                <div className="flex gap-4 justify-center">
-                  <PrimaryBtn 
-                    onClick={() => send("rematch", {})}
-                    className="transition-all duration-200 h-14 text-xl px-8"
-                  >
-                    もう一度
-                  </PrimaryBtn>
-                  <DangerBtn onClick={() => setConfirmOpen(true)} className="h-14 text-xl px-8">終了</DangerBtn>
-                </div>
-              ) : (
-                <div className="text-slate-300 text-center px-6 py-4 bg-slate-700/50 rounded-xl text-lg">
-                  ホストの選択を待ってください
-                </div>
-              )}
+              (
+                isHost ? (
+                  <div className="flex gap-4 justify-center">
+                    <PrimaryBtn 
+                      onClick={() => send("rematch", {})}
+                      className="transition-all duration-200 h-14 text-xl px-8"
+                    >
+                      もう一度
+                    </PrimaryBtn>
+                    <DangerBtn onClick={() => setConfirmOpen(true)} className="h-14 text-xl px-8">終了</DangerBtn>
+                  </div>
+                ) : (
+                  <div className="text-slate-300 text-center px-6 py-4 bg-slate-700/50 rounded-xl text-lg">
+                    ホストの選択を待ってください
+                  </div>
+                )
+              )
+              
+              {/* 自動終了案内は廃止 */}
             </div>
           </div>
           
@@ -282,21 +286,23 @@ export default function Result() {
           {/* ボタン群（固定位置） */}
           <div className="mt-8 md:mt-10 flex gap-3 md:gap-4 justify-center pb-40 sm:pb-6">
             {/* 通常/カスタムいずれもホストのみボタンを表示 */}
-            {isHost ? (
-              <>
-                <PrimaryBtn 
-                  onClick={() => send("rematch", {})}
-                  className="transition-all duration-200 md:h-14 md:text-xl"
-                >
-                  もう一度
-                </PrimaryBtn>
-                <DangerBtn onClick={() => setConfirmOpen(true)} className="md:h-14 md:text-xl">終了</DangerBtn>
-              </>
-            ) : (
-              <div className="text-slate-300 text-center px-6 py-3 bg-slate-700/50 rounded-xl">
-                ホストの選択を待ってください
-              </div>
-            )}
+            (
+              isHost ? (
+                <>
+                  <PrimaryBtn 
+                    onClick={() => send("rematch", {})}
+                    className="transition-all duration-200 md:h-14 md:text-xl"
+                  >
+                    もう一度
+                  </PrimaryBtn>
+                  <DangerBtn onClick={() => setConfirmOpen(true)} className="md:h-14 md:text-xl">終了</DangerBtn>
+                </>
+              ) : (
+                <div className="text-slate-300 text-center px-6 py-3 bg-slate-700/50 rounded-xl">
+                  ホストの選択を待ってください
+                </div>
+              )
+            )
           </div>
         </div>
         
