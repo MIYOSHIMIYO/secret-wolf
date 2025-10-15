@@ -27,7 +27,10 @@ export default function Menu() {
   useEffect(() => {
     try {
       checkAndResetDaily();
-      syncReportStatus();
+      // 通報ステータス同期は非同期で実行し、エラーを無視
+      syncReportStatus().catch((error) => {
+        console.warn("通報ステータス同期をスキップしました:", error);
+      });
     } catch (error) {
       console.error("初期化エラー:", error);
     }

@@ -1,6 +1,6 @@
 import { getInstallId } from "./installId";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8787";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://secret-werewolf-prod.qmdg2pmnw6.workers.dev";
 
 export interface ReportStatus {
   installId: string;
@@ -19,7 +19,14 @@ export interface ReportStatus {
 export async function checkReportStatus(): Promise<ReportStatus> {
   try {
     const installId = getInstallId();
-    const response = await fetch(`${API_BASE_URL}/report/status/${installId}`);
+    const response = await fetch(`${API_BASE_URL}/report/status/${installId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // タイムアウトを設定（5秒）
+      signal: AbortSignal.timeout(5000)
+    });
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -29,7 +36,12 @@ export async function checkReportStatus(): Promise<ReportStatus> {
     return data as ReportStatus;
     
   } catch (error) {
-    console.error("通報ステータスチェックエラー:", error);
+    // ネットワークエラーの場合は静かにデフォルト値を返す
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      console.warn("通報ステータスAPIに接続できません。デフォルト値を使用します。");
+    } else {
+      console.error("通報ステータスチェックエラー:", error);
+    }
     
     // エラー時はデフォルト値を返す
     return {
