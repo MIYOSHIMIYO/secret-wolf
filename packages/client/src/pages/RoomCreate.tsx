@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAppStore } from "@/state/store";
 import { getNick } from "@/lib/nick";
 import { getInstallId } from "@/lib/installId";
@@ -20,8 +20,6 @@ export default function RoomCreate() {
   const [showRoomFullModal, setShowRoomFullModal] = useState(false);
   const reset = useAppStore((s) => s.reset);
   
-  // カスタムモードかどうかを判定
-  const isCustomMode = searchParams.get("mode") === "custom";
 
   // WebSocketメッセージ処理（join送信は ws.ts 内で接続完了時に一度だけ実施）
   useEffect(() => {
@@ -39,13 +37,8 @@ export default function RoomCreate() {
           
           // 即座に画面遷移（非同期で実行）
           requestAnimationFrame(() => {
-            if (isCustomMode) {
-              // カスタムモードの場合はロビーに遷移（カスタムモードフラグは既に設定済み）
-              nav(`/lobby/${roomId}`);
-            } else {
-              // 通常モードの場合はロビーに遷移
-              nav(`/lobby/${roomId}`);
-            }
+            // 通常モードの場合はロビーに遷移
+            nav(`/lobby/${roomId}`);
           });
         }
       }
@@ -89,7 +82,7 @@ export default function RoomCreate() {
       // 5. WebSocket接続を開始
       const nick = getNick();
       const installId = getInstallId();
-      connectToRoomWithHandler(newRoomId, nick, installId, undefined, isCustomMode);
+      connectToRoomWithHandler(newRoomId, nick, installId, undefined, false);
       
       // 接続タイムアウトを設定（8秒）
       setTimeout(() => {
@@ -130,7 +123,7 @@ export default function RoomCreate() {
       
       connectToRoomWithHandler(roomId, nick, installId, () => {
         console.log(`[RoomCreate] 接続完了: roomId=${roomId}`);
-      }, isCustomMode);
+      }, false);
       
       // 接続タイムアウトを設定（8秒）
       setTimeout(() => {
@@ -159,7 +152,7 @@ export default function RoomCreate() {
         <div className="h-full flex flex-col">
           {/* 上詰め配置 */}
           <div className="w-full">
-              <HeaderBar title={isCustomMode ? "カスタムモード - ルーム作成・参加" : "ルーム作成・参加"} center />
+              <HeaderBar title="心理戦 - ルーム作成・参加" center />
 
               {/* create section */}
               <Panel className="mt-6 md:mt-10 lg:mt-10 xl:mt-12 p-4 sm:p-6 md:p-9 lg:p-9 xl:p-10">
@@ -199,7 +192,7 @@ export default function RoomCreate() {
                   </PrimaryBtn>
                 </div>
                 <div className="text-slate-400 text-xs sm:text-sm md:text-xl lg:text-base xl:text-lg mt-3">
-                  6-8文字の英数字で入力してください（フリック式入力ではなくキーボード入力の方が安定します）。
+                  6-8文字の英数字で入力してください（フリック式入力ではなくキーボード式入力の方が安定します）。
                 </div>
               </Panel>
 

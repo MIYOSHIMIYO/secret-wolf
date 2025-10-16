@@ -20,19 +20,7 @@ export default function Lobby() {
   const room = useAppStore((s) => s.room);
   const myId = useAppStore((s) => s.myId);
   const reset = useAppStore((s) => s.reset);
-  const isCustomMode = useAppStore((s) => s.isCustomMode); // フロントエンド側のカスタムモードフラグを使用
-
   const [disbandOpen, setDisbandOpen] = useState(false);
-  
-  // デバッグ用：カスタムモード判定の確認
-  useEffect(() => {
-    console.log("[Lobby] カスタムモード判定詳細:", {
-      room: room,
-      isCustomMode: isCustomMode,
-      isCustomModeFlag: room?.isCustomMode,
-      roomState: room ? JSON.stringify(room, null, 2) : "null"
-    });
-  }, [room, isCustomMode]);
 
   // デバッグ用：接続状態の表示（開発時のみ）
   useEffect(() => {
@@ -60,11 +48,6 @@ export default function Lobby() {
         nav("/menu", { replace: true });
       }
       
-      if (t === "customTopicCreation") {
-        console.log("[Lobby] お題作成シーン遷移メッセージ受信:", p);
-        // お題作成シーンに遷移
-        nav("/custom", { replace: true });
-      }
     };
 
     const cleanup = createMessageListener(handleWsMessage);
@@ -138,7 +121,7 @@ export default function Lobby() {
         style={{ height: `calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - ${bannerH}px)` }}
       >
         <div className="h-full flex flex-col">
-          <HeaderBar title={isCustomMode ? "カスタムモード - ルーム待機" : "ルーム待機"} center />
+          <HeaderBar title="心理戦 - ルーム待機" center />
 
           <FadeSlide>
             <Panel className="p-4 sm:p-5 md:p-7 lg:p-8 space-y-3 md:space-y-4">
@@ -199,7 +182,7 @@ export default function Lobby() {
                       }} 
                       disabled={disabled || !canStart}
                     >
-                      {isCustomMode ? "お題作成へ" : "開始"}
+                      開始
                     </PrimaryBtn>
                   </div>
                   <div className="flex-1">
