@@ -198,7 +198,7 @@ export default function Menu() {
                 <img
                   src={friendsImage}
                   alt="知り合いと遊ぶ"
-                  className="w-full h-auto rounded-scale-2xl shadow-lg xl:max-h-[140px] object-contain"
+                  className="w-[90%] sm:w-[85%] md:w-[80%] lg:w-[75%] xl:w-[70%] h-auto rounded-scale-2xl shadow-lg max-h-[120px] sm:max-h-[140px] md:max-h-[160px] lg:max-h-[180px] xl:max-h-[140px] object-contain mx-auto"
                 />
               </button>
             </div>
