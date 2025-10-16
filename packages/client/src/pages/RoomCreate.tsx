@@ -199,7 +199,7 @@ export default function RoomCreate() {
                   </PrimaryBtn>
                 </div>
                 <div className="text-slate-400 text-xs sm:text-sm md:text-xl lg:text-base xl:text-lg mt-3">
-                  6-8文字の英数字で入力してください
+                  6-8文字の英数字で入力してください（フリック式入力ではなくキーボード入力の方が安定します）。
                 </div>
               </Panel>
 
