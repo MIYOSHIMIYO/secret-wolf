@@ -310,6 +310,7 @@ export class RoomDO implements DurableObject {
           // ルームIDのプレフィックスをチェック
           const roomId = String(p?.roomId || "");
           const isCustomMode = Boolean(p?.isCustomMode);
+          const isCreating = Boolean(p?.isCreating);
           
           // ルームIDのプレフィックスとモードの整合性をチェック
           if (roomId.startsWith("N") && isCustomMode) {
@@ -338,9 +339,9 @@ export class RoomDO implements DurableObject {
             return;
           }
           
-          // ルームが初期化されているかチェック
-          if (!this.roomState.isInitialized) {
-            console.log(`[Join] 存在しないルームID: ${roomId} (isInitialized: ${this.roomState.isInitialized})`);
+          // ルームが初期化されているかチェック（ルーム作成時は除く）
+          if (!isCreating && !this.roomState.isInitialized) {
+            console.log(`[Join] 存在しないルームID: ${roomId} (isInitialized: ${this.roomState.isInitialized}, isCreating: ${isCreating})`);
             const ws = this.clients.get(clientId);
             ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_NOT_FOUND", msg: "ルームが存在しません" } } as any));
             ws?.close(4000, "room_not_found");
@@ -386,10 +387,10 @@ export class RoomDO implements DurableObject {
             left: false
           });
           
-          // 最初のプレイヤーが参加した時にルームを初期化済みとしてマーク
-          if (this.roomState.players.length === 1) {
+          // ルーム作成時（isCreating=true）のみルームを初期化済みとしてマーク
+          if (isCreating) {
             this.roomState.isInitialized = true;
-            console.log(`[Join] ルームを初期化済みとしてマーク: ${roomId}`);
+            console.log(`[Join] ルーム作成により初期化済みとしてマーク: ${roomId}`);
           }
           
           if (this.roomState.phase === "LOBBY" && !this.roomState.hostId) {

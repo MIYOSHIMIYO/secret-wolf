@@ -82,7 +82,7 @@ export default function RoomCreate() {
       // 5. WebSocket接続を開始
       const nick = getNick();
       const installId = getInstallId();
-      connectToRoomWithHandler(newRoomId, nick, installId, undefined, false);
+      connectToRoomWithHandler(newRoomId, nick, installId, undefined, false, true);
       
       // 接続タイムアウトを設定（8秒）
       setTimeout(() => {
@@ -123,7 +123,7 @@ export default function RoomCreate() {
       
       connectToRoomWithHandler(roomId, nick, installId, () => {
         console.log(`[RoomCreate] 接続完了: roomId=${roomId}`);
-      }, false);
+      }, false, false);
       
       // 接続タイムアウトを設定（8秒）
       setTimeout(() => {

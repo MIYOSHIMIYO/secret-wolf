@@ -87,7 +87,7 @@ export default function CustomRoomCreate() {
       // 5. WebSocket接続を開始
       const nick = getNick();
       const installId = getInstallId();
-      connectToRoomWithHandler(newRoomId, nick, installId, undefined, true); // isCustomMode = true
+      connectToRoomWithHandler(newRoomId, nick, installId, undefined, true, true); // isCustomMode = true
       
       // 接続タイムアウトを設定（8秒）
       setTimeout(() => {
@@ -128,7 +128,7 @@ export default function CustomRoomCreate() {
       
       connectToRoomWithHandler(roomId, nick, installId, () => {
         console.log(`[CustomRoomCreate] 接続完了: roomId=${roomId}`);
-      }, true); // isCustomMode = true
+      }, true, false); // isCustomMode = true
       
       // 接続タイムアウトを設定（8秒）
       setTimeout(() => {
