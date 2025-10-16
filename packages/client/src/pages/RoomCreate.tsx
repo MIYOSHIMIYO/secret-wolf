@@ -69,8 +69,9 @@ export default function RoomCreate() {
       // 1. 完全なリセットを実行
       reset();
       
-      // 2. 新しいルームIDを生成（6文字の英数字）
-      const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+      // 2. 新しいルームIDを生成（通常モード用プレフィックス付き）
+      const baseId = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const newRoomId = `N${baseId}`; // N = Normal mode
       
       // 3. 既存のWebSocket接続を強制的にクリーンアップ
       forceDisconnect();
@@ -139,7 +140,7 @@ export default function RoomCreate() {
     }
   };
 
-  const joinEnabled = /^[A-Z0-9]{6,8}$/.test(roomId);
+  const joinEnabled = /^N[A-Z0-9]{6}$/.test(roomId); // 通常モード用のプレフィックスN付きルームID
   const bannerH = 0;
 
   return (
@@ -178,7 +179,7 @@ export default function RoomCreate() {
                     type="text"
                     value={roomId}
                     onChange={(e) => setRoomId(e.target.value.toUpperCase())}
-                    placeholder="例: ABC123"
+                    placeholder="例: NABC123"
                     className="flex-1 px-4 sm:px-5 md:px-7 lg:px-6 xl:px-7 py-3 sm:py-4 md:py-7 lg:py-5 xl:py-6 bg-slate-800 border border-slate-600 rounded-lg lg:rounded-xl xl:rounded-2xl text-slate-200 placeholder-slate-400 focus:outline-none focus:border-blue-500 text-base sm:text-lg md:text-3xl lg:text-xl xl:text-2xl"
                     maxLength={8}
                   />
@@ -191,7 +192,7 @@ export default function RoomCreate() {
                   </PrimaryBtn>
                 </div>
                 <div className="text-slate-400 text-xs sm:text-sm md:text-xl lg:text-base xl:text-lg mt-3">
-                  6-8文字の英数字で入力してください（フリック式入力ではなくキーボード式入力の方が安定します）。
+                  7文字の英数字で入力してください（N + 6文字、例：NABC123）（フリック式入力ではなくキーボード式入力の方が安定します）。
                 </div>
               </Panel>
 

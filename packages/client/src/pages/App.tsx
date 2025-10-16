@@ -16,6 +16,9 @@ const WARN_TEXT: Record<string, string> = {
   ROOM_CLOSED: "現在、解散処理中です",
   ALREADY_STARTED: "すでにゲームが開始されています",
   ROOM_FULL: "このルームは満員です",
+  INVALID_ROOM_MODE: "このルームIDは異なるモード用です",
+  INVALID_ROOM_ID: "ルームIDの形式が正しくありません",
+  ROOM_NOT_FOUND: "ルームが存在しません",
 };
 
 export default function App() {

@@ -306,8 +306,45 @@ export class RoomDO implements DurableObject {
         console.log(`[Join] joinメッセージ受信:`, { t, p, clientId, existingId: id });
         
         if (!id) {
-          // カスタムモードかどうかをチェック
+          // ルームIDのプレフィックスをチェック
+          const roomId = String(p?.roomId || "");
           const isCustomMode = Boolean(p?.isCustomMode);
+          
+          // ルームIDのプレフィックスとモードの整合性をチェック
+          if (roomId.startsWith("N") && isCustomMode) {
+            console.log(`[Join] 通常モードのルームIDでカスタムモード参加を拒否: ${roomId}`);
+            const ws = this.clients.get(clientId);
+            ws?.send(JSON.stringify({ t: "warn", p: { code: "INVALID_ROOM_MODE", msg: "このルームIDは通常モード用です" } } as any));
+            ws?.close(4000, "invalid_room_mode");
+            return;
+          }
+          
+          if (roomId.startsWith("C") && !isCustomMode) {
+            console.log(`[Join] カスタムモードのルームIDで通常モード参加を拒否: ${roomId}`);
+            const ws = this.clients.get(clientId);
+            ws?.send(JSON.stringify({ t: "warn", p: { code: "INVALID_ROOM_MODE", msg: "このルームIDはカスタムモード用です" } } as any));
+            ws?.close(4000, "invalid_room_mode");
+            return;
+          }
+          
+          // ルームIDの形式をチェック
+          const expectedPrefix = isCustomMode ? "C" : "N";
+          if (!roomId.startsWith(expectedPrefix) || roomId.length !== 7) {
+            console.log(`[Join] 無効なルームID形式: ${roomId}, 期待される形式: ${expectedPrefix}[6文字]`);
+            const ws = this.clients.get(clientId);
+            ws?.send(JSON.stringify({ t: "warn", p: { code: "INVALID_ROOM_ID", msg: "ルームIDの形式が正しくありません" } } as any));
+            ws?.close(4000, "invalid_room_id");
+            return;
+          }
+          
+          // ルームが存在するかチェック（プレイヤーが0人の場合は存在しないとみなす）
+          if (this.roomState.players.length === 0) {
+            console.log(`[Join] 存在しないルームID: ${roomId}`);
+            const ws = this.clients.get(clientId);
+            ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_NOT_FOUND", msg: "ルームが存在しません" } } as any));
+            ws?.close(4000, "room_not_found");
+            return;
+          }
           
           if (isCustomMode) {
             this.roomState.isCustomMode = true;
