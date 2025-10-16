@@ -84,11 +84,11 @@ export default function Menu() {
 
   return (
     <Screen innerClassName="xl:px-10" fullBleed={true} maxWidth={9999}>
-      <div className="h-full overflow-hidden xl:overflow-visible px-2 sm:px-3 md:px-4 xl:px-0 pt-2 sm:pt-3 md:pt-4 xl:pt-0 pb-2 flex flex-col">
+      <div className="h-full overflow-y-auto xl:overflow-visible px-2 sm:px-3 md:px-4 xl:px-0 pt-2 sm:pt-3 md:pt-4 xl:pt-0 pb-2 flex flex-col">
         <HeaderBar title="メニュー" center />
 
         {/* メインゲームオプション（画像ベース） */}
-        <div className="menu-scale flex flex-col px-scale-1 sm:px-2 md:px-3 xl:px-6 pt-scale-0 sm:pt-1 md:pt-2 xl:pt-8 xl:transform-none xl:mx-auto xl:w-full xl:max-w-none xl:space-y-8">
+        <div className="menu-scale flex flex-col px-scale-1 sm:px-2 md:px-3 xl:px-6 pt-scale-0 sm:pt-1 md:pt-2 xl:pt-8 xl:transform-none xl:mx-auto xl:w-full xl:max-w-none xl:space-y-8 pb-20 sm:pb-24 md:pb-28 xl:pb-8">
           {/* タブレット・モバイル用2列レイアウト */}
           <div className="xl:hidden">
             {/* 上部：カスタムして遊ぶ（紫）と知り合いと遊ぶ（青） */}
@@ -102,7 +102,7 @@ export default function Menu() {
                   <img
                     src={unknownImage}
                     alt="カスタムして遊ぶ"
-                    className="w-full md:w-[90%] mx-0 md:mx-auto h-auto rounded-scale-2xl shadow-lg max-h-[150px] sm:max-h-[180px] md:max-h-[250px] object-contain"
+                    className="w-full md:w-[95%] mx-0 md:mx-auto h-auto rounded-scale-2xl shadow-lg max-h-[180px] sm:max-h-[220px] md:max-h-[300px] object-contain"
                   />
                 </button>
               </div>
@@ -116,7 +116,7 @@ export default function Menu() {
                   <img
                     src={friendsImage}
                     alt="知り合いと遊ぶ"
-                    className="w-full md:w-[95%] mx-0 md:mx-auto h-auto rounded-scale-2xl shadow-lg max-h-[180px] sm:max-h-[200px] md:max-h-[280px] lg:max-h-[300px] xl:max-h-[320px] object-contain"
+                    className="w-full md:w-[100%] mx-0 md:mx-auto h-auto rounded-scale-2xl shadow-lg max-h-[220px] sm:max-h-[250px] md:max-h-[320px] lg:max-h-[350px] xl:max-h-[380px] object-contain"
                   />
                 </button>
               </div>
@@ -184,7 +184,7 @@ export default function Menu() {
                 <img
                   src={unknownImage}
                   alt="カスタムして遊ぶ"
-                  className="w-full h-auto rounded-scale-2xl shadow-lg xl:max-h-[280px] object-contain"
+                  className="w-full h-auto rounded-scale-2xl shadow-lg xl:max-h-[350px] object-contain"
                 />
               </button>
             </div>
@@ -198,7 +198,7 @@ export default function Menu() {
                 <img
                   src={friendsImage}
                   alt="知り合いと遊ぶ"
-                  className="w-[95%] sm:w-[95%] md:w-full h-auto rounded-scale-2xl shadow-lg max-h-[180px] sm:max-h-[200px] md:max-h-[280px] lg:max-h-[300px] xl:max-h-[320px] object-contain mx-auto"
+                  className="w-[100%] sm:w-[100%] md:w-full h-auto rounded-scale-2xl shadow-lg max-h-[220px] sm:max-h-[250px] md:max-h-[320px] lg:max-h-[350px] xl:max-h-[380px] object-contain mx-auto"
                 />
               </button>
             </div>
