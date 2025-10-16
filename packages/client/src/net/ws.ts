@@ -279,7 +279,12 @@ function notifyHandlers(message: any): void {
  * ルームに接続
  */
 export async function connectToRoom(roomId: string, nick: string, installId: string, isCustomMode?: boolean, isCreating?: boolean): Promise<void> {
-  const url = `${WS_CONFIG.BASE_URL}/ws/room/${roomId}`.replace(/^http/, 'ws');
+  let url = `${WS_CONFIG.BASE_URL}/ws/room/${roomId}`.replace(/^http/, 'ws');
+  
+  // ルーム作成時はクエリパラメータでisCreatingフラグを渡す
+  if (isCreating) {
+    url += '?isCreating=true';
+  }
   
   // 再接続時にも自動でjoinできるようにペイロードを保持
   lastJoinPayload = { roomId, nick, installId, isCustomMode, isCreating };

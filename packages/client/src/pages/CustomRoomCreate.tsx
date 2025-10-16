@@ -78,37 +78,13 @@ export default function CustomRoomCreate() {
       const baseId = Math.random().toString(36).substring(2, 8).toUpperCase();
       const newRoomId = `C${baseId}`; // C = Custom mode
       
-      // 3. ルーム作成APIを呼び出してKVストレージに保存
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://secret-werewolf-prod.qmdg2pmnw6.workers.dev";
-      try {
-        const createResponse = await fetch(`${API_BASE_URL}/rooms`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ roomId: newRoomId, mode: 'CUSTOM' })
-        });
-        
-        if (!createResponse.ok) {
-          throw new Error('Failed to create room');
-        }
-        
-        const createData = await createResponse.json();
-        console.log(`[CustomRoomCreate] ルーム作成API成功: ${createData.roomId}`);
-      } catch (error) {
-        console.error('[CustomRoomCreate] ルーム作成APIエラー:', error);
-        showToast("ルーム作成に失敗しました。", "error");
-        setIsCreating(false);
-        return;
-      }
-      
-      // 4. 既存のWebSocket接続を強制的にクリーンアップ
+      // 3. 既存のWebSocket接続を強制的にクリーンアップ
       forceDisconnect();
       
-      // 5. クリーンアップ後の待機時間を最小化
+      // 4. クリーンアップ後の待機時間を最小化
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // 6. WebSocket接続を開始
+      // 5. WebSocket接続を開始（ルーム作成はWebSocket接続時に実行）
       const nick = getNick();
       const installId = getInstallId();
       connectToRoomWithHandler(newRoomId, nick, installId, undefined, true, true); // isCustomMode = true

@@ -271,17 +271,22 @@ router.get("/rooms/:roomId/exists", async (request: Request & { params: any }, e
 
 router.get("/ws/room/:roomId", async (request: Request & { params: any }, env: Env) => {
   const roomId = request.params.roomId;
+  const url = new URL(request.url);
+  const isCreating = url.searchParams.get('isCreating') === 'true';
   
-  // ルーム存在チェック（Durable Object作成前にチェック）
-  const key = `room:${roomId}`;
-  const roomExists = await env.MOD_KV.get(key);
-  
-  if (!roomExists) {
-    const origin = request.headers.get("Origin") || undefined;
-    return withCors(Response.json({ error: "Room not found" }, { status: 404 }), env, origin);
+  // ルーム作成時は存在チェックをスキップ
+  if (!isCreating) {
+    // ルーム存在チェック（Durable Object作成前にチェック）
+    const key = `room:${roomId}`;
+    const roomExists = await env.MOD_KV.get(key);
+    
+    if (!roomExists) {
+      const origin = request.headers.get("Origin") || undefined;
+      return withCors(Response.json({ error: "Room not found" }, { status: 404 }), env, origin);
+    }
   }
   
-  // ルームが存在する場合のみDurable Objectを作成
+  // ルームが存在する場合（または作成時）のみDurable Objectを作成
   const id = env.DO_ROOMS.idFromName(roomId);
   const stub = env.DO_ROOMS.get(id);
   return stub.fetch(request);

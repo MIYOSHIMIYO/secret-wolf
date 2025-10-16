@@ -391,6 +391,14 @@ export class RoomDO implements DurableObject {
           if (isCreating) {
             this.roomState.isInitialized = true;
             console.log(`[Join] ルーム作成により初期化済みとしてマーク: ${roomId}`);
+            
+            // KVストレージにルーム情報を保存
+            try {
+              await this.env.MOD_KV.put(`room:${roomId}`, "1", { expirationTtl: 3600 });
+              console.log(`[Join] ルーム情報をKVストレージに保存: ${roomId}`);
+            } catch (error) {
+              console.error(`[Join] KVストレージ保存エラー: ${roomId}`, error);
+            }
           }
           
           if (this.roomState.phase === "LOBBY" && !this.roomState.hostId) {
