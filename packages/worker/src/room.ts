@@ -310,7 +310,6 @@ export class RoomDO implements DurableObject {
           // ルームIDのプレフィックスをチェック
           const roomId = String(p?.roomId || "");
           const isCustomMode = Boolean(p?.isCustomMode);
-          const isCreating = Boolean(p?.isCreating);
           
           // ルームIDのプレフィックスとモードの整合性をチェック
           if (roomId.startsWith("N") && isCustomMode) {
@@ -339,13 +338,10 @@ export class RoomDO implements DurableObject {
             return;
           }
           
-          // ルームが初期化されているかチェック（ルーム作成時は除く）
-          if (!isCreating && !this.roomState.isInitialized) {
-            console.log(`[Join] 存在しないルームID: ${roomId} (isInitialized: ${this.roomState.isInitialized}, isCreating: ${isCreating})`);
-            const ws = this.clients.get(clientId);
-            ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_NOT_FOUND", msg: "ルームが存在しません" } } as any));
-            ws?.close(4000, "room_not_found");
-            return;
+          // ルームが初期化されているかチェック
+          if (!this.roomState.isInitialized) {
+            console.log(`[Join] ルームを初期化: ${roomId}`);
+            this.roomState.isInitialized = true;
           }
           
           if (isCustomMode) {
@@ -387,19 +383,6 @@ export class RoomDO implements DurableObject {
             left: false
           });
           
-          // ルーム作成時（isCreating=true）のみルームを初期化済みとしてマーク
-          if (isCreating) {
-            this.roomState.isInitialized = true;
-            console.log(`[Join] ルーム作成により初期化済みとしてマーク: ${roomId}`);
-            
-            // KVストレージにルーム情報を保存
-            try {
-              await this.env.MOD_KV.put(`room:${roomId}`, "1", { expirationTtl: 3600 });
-              console.log(`[Join] ルーム情報をKVストレージに保存: ${roomId}`);
-            } catch (error) {
-              console.error(`[Join] KVストレージ保存エラー: ${roomId}`, error);
-            }
-          }
           
           if (this.roomState.phase === "LOBBY" && !this.roomState.hostId) {
             this.roomState.hostId = id;

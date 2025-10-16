@@ -12,7 +12,7 @@ let reconnectTimer: NodeJS.Timeout | null = null;
 let heartbeatTimer: NodeJS.Timeout | null = null;
 let connectionAttempts = 0;
 let hasJoined = false; // joinメッセージ送信済みフラグ
-let lastJoinPayload: { roomId: string; nick: string; installId: string; isCustomMode?: boolean; isCreating?: boolean } | null = null; // 再接続時の自動join用
+let lastJoinPayload: { roomId: string; nick: string; installId: string; isCustomMode?: boolean } | null = null; // 再接続時の自動join用
 let manualClose = false; // 明示的切断かどうかのフラグ（接続単位で評価）
 let connectionIdCounter = 0; // 接続ごとに増えるID（manualCloseフラグのスコープを接続単位に限定）
 let manualCloseConnId: number | null = null; // manualClose をセットした接続ID
@@ -74,10 +74,10 @@ export async function connect(url: string): Promise<void> {
 
       // 再接続含め、接続確立時に一度だけjoinを送信（lastJoinPayloadが設定されている場合）
       if (lastJoinPayload && !hasJoined) {
-        const { roomId, nick, installId, isCustomMode, isCreating } = lastJoinPayload;
-        console.log('[WebSocket] joinメッセージ送信:', { roomId, nick, installId, isCustomMode, isCreating });
-        console.log('[WebSocket] joinメッセージ詳細:', JSON.stringify({ roomId, nick, installId, isCustomMode, isCreating }, null, 2));
-        send('join', { roomId, nick, installId, isCustomMode, isCreating });
+        const { roomId, nick, installId, isCustomMode } = lastJoinPayload;
+        console.log('[WebSocket] joinメッセージ送信:', { roomId, nick, installId, isCustomMode });
+        console.log('[WebSocket] joinメッセージ詳細:', JSON.stringify({ roomId, nick, installId, isCustomMode }, null, 2));
+        send('join', { roomId, nick, installId, isCustomMode });
         hasJoined = true;
       }
     };
@@ -111,12 +111,6 @@ export async function connect(url: string): Promise<void> {
       // 再接続時に再joinできるようにフラグをリセット
       hasJoined = false;
 
-      // 404エラー（ルームが見つからない）の場合は特別処理
-      if (event.code === 1006 && event.reason.includes('Room not found')) {
-        console.log('[WebSocket] ルームが見つかりません');
-        notifyHandlers({ t: 'room_not_found', p: { reason: 'Room not found' } });
-        return;
-      }
 
       // ② 1006（Abnormal Closure）は通信断の一時的な可能性が高い。
       //    この場合は「ユーザー切断扱い」にせず、再接続だけを行う。
@@ -278,16 +272,11 @@ function notifyHandlers(message: any): void {
 /**
  * ルームに接続
  */
-export async function connectToRoom(roomId: string, nick: string, installId: string, isCustomMode?: boolean, isCreating?: boolean): Promise<void> {
-  let url = `${WS_CONFIG.BASE_URL}/ws/room/${roomId}`.replace(/^http/, 'ws');
-  
-  // ルーム作成時はクエリパラメータでisCreatingフラグを渡す
-  if (isCreating) {
-    url += '?isCreating=true';
-  }
+export async function connectToRoom(roomId: string, nick: string, installId: string, isCustomMode?: boolean): Promise<void> {
+  const url = `${WS_CONFIG.BASE_URL}/ws/room/${roomId}`.replace(/^http/, 'ws');
   
   // 再接続時にも自動でjoinできるようにペイロードを保持
-  lastJoinPayload = { roomId, nick, installId, isCustomMode, isCreating };
+  lastJoinPayload = { roomId, nick, installId, isCustomMode };
   hasJoined = false;
   await connect(url);
 }
