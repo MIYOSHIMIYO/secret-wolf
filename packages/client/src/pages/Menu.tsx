@@ -102,7 +102,7 @@ export default function Menu() {
                   <img
                     src={unknownImage}
                     alt="カスタムして遊ぶ"
-                    className="w-full md:w-[75%] mx-0 md:mx-auto h-auto rounded-scale-2xl shadow-lg"
+                    className="w-full md:w-[75%] mx-0 md:mx-auto h-auto rounded-scale-2xl shadow-lg max-h-[80px] sm:max-h-[100px] md:max-h-[200px] object-contain"
                   />
                 </button>
               </div>
@@ -116,7 +116,7 @@ export default function Menu() {
                   <img
                     src={friendsImage}
                     alt="知り合いと遊ぶ"
-                    className="w-full md:w-[70%] mx-0 md:mx-auto h-auto rounded-scale-2xl shadow-lg"
+                    className="w-full md:w-[70%] mx-0 md:mx-auto h-auto rounded-scale-2xl shadow-lg max-h-[80px] sm:max-h-[100px] md:max-h-[200px] lg:max-h-[220px] xl:max-h-[240px] object-contain"
                   />
                 </button>
               </div>
