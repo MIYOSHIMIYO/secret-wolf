@@ -171,7 +171,7 @@ export default function CustomTopicCreation() {
             </div>
 
             {/* 右カラム：お題リスト */}
-            <div className="flex flex-col gap-3 md:gap-6 xl:gap-6 xl:max-h-[calc(100vh-200px)] xl:overflow-y-auto xl:pr-3">
+            <div className="flex flex-col gap-3 md:gap-6 xl:gap-6 max-h-[60vh] md:max-h-[70vh] xl:max-h-[calc(100vh-200px)] overflow-y-auto pr-2 xl:pr-3">
               <div className="rounded-2xl bg-gradient-to-br from-slate-900/50 via-slate-800/30 to-gray-900/20 ring-1 ring-slate-400/30 p-3 md:p-6">
                 <h3 className="text-slate-200 font-medium text-sm md:text-2xl mb-2 md:mb-4">
                   作成されたお題
@@ -187,7 +187,7 @@ export default function CustomTopicCreation() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2 md:space-y-3">
+                  <div className="space-y-2 md:space-y-3 max-h-[40vh] md:max-h-[50vh] xl:max-h-none overflow-y-auto">
                     {topics.map((topic, index) => (
                       <div
                         key={index}
