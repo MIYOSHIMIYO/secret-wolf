@@ -174,7 +174,14 @@ export default function Rules() {
         <div ref={canvasRef} className="relative mx-auto max-w-[800px] px-5 pt-4 pb-4 md:px-10 md:pt-8 md:pb-8 lg:max-w-none lg:px-0 lg:pt-10">
           <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12 lg:items-start">
             <div className="relative">
-              <div className="relative overflow-hidden" style={{ height: slideHeight }}>
+              <div 
+                className="relative overflow-y-auto" 
+                style={{ 
+                  height: slideHeight,
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#94a3b8 #1e293b'
+                }}
+              >
                 <AnimatePresence initial={false} custom={dir} mode="wait">
                   <motion.section
                     key={page.key}
