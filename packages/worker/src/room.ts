@@ -173,6 +173,11 @@ export class RoomDO implements DurableObject {
 
     console.log(`[alarm] フェーズ ${this.roomState.phase} の処理を実行します。現在時刻: ${now}, 期限: ${this.roomState.endsAt}`);
 
+    if (this.roomState.phase === "MODE_SELECT") {
+      console.log(`[alarm] MODE_SELECTフェーズからINPUTフェーズに移行`);
+      this.goInput();
+      return;
+    }
     if (this.roomState.phase === "READY") {
       console.log(`[alarm] READYフェーズからINPUTフェーズに移行`);
       this.goInput();
@@ -1058,7 +1063,7 @@ export class RoomDO implements DurableObject {
     this.roomState.playerVotes = {};
     this.roomState.phase = "MODE_SELECT";
     this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
-    this.setEnds(30_000);
+    this.setEnds(LIMITS.modeSelectSec * 1000);
     
     // 初期状態のモードスタンプとプレイヤー個別投票数を送信
     this.broadcast({ 
@@ -1071,6 +1076,8 @@ export class RoomDO implements DurableObject {
     
     this.broadcast({ t: "phase", p: { phase: "MODE_SELECT", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
     this.broadcastState();
+    
+    console.log(`[goModeSelect] モード選択フェーズ開始。制限時間: ${LIMITS.modeSelectSec}秒, endsAt: ${this.roomState.endsAt}`);
   }
 
   private goInput() {
