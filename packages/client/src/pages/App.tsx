@@ -83,7 +83,14 @@ export default function App() {
         if (typeof endsAt === "number") {
           // 重複更新を防ぐため、前回の値と比較
           if (lastEndsAtRef.current !== endsAt) {
-            console.log("[phase] endsAt更新", { phase, from: lastEndsAtRef.current, to: endsAt, duration: (endsAt - Date.now()) / 1000 });
+            console.log("[phase] endsAt更新", { 
+              phase, 
+              from: lastEndsAtRef.current, 
+              to: endsAt, 
+              duration: (endsAt - Date.now()) / 1000,
+              currentTime: Date.now(),
+              expectedDuration: phase === 'INPUT' ? 60 : phase === 'VOTE' ? 15 : 'unknown'
+            });
             setEndsAt(endsAt);
             lastEndsAtRef.current = endsAt;
           }

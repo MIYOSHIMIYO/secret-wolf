@@ -86,7 +86,6 @@ export const LIMITS = {
   nickMaxGraphemes: 8,
   chatMax: 120,
   reconnectWindowMs: 30000,
-  modeSelectSec: 30,
   inputSec: 60,
   revealMs: 8000,
   discussPerPlayerSec: 15,
