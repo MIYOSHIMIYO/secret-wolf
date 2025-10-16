@@ -156,7 +156,7 @@ export default function CustomRoomCreate() {
         <div className="h-full flex flex-col">
           {/* 上詰め配置 */}
           <div className="w-full">
-              <HeaderBar title="カスタムモード - ルーム作成・参加" center />
+              <HeaderBar title="ルーム作成・参加" center />
 
               {/* create section */}
               <Panel className="mt-6 md:mt-10 lg:mt-10 xl:mt-12 p-4 sm:p-6 md:p-9 lg:p-9 xl:p-10">

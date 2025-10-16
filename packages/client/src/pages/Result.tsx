@@ -343,7 +343,7 @@ export default function Result() {
                 <div className="text-white text-lg font-medium">もう一度が選択されました</div>
                 <div className="text-slate-300 text-sm">
                   {(() => {
-                    const message = isCustomMode ? "お題作成シーンに移行します..." : "モード選択シーンに移行します...";
+                    const message = isCustomMode ? "お題作成シーンに移行します..." : "お題ジャンル選択シーンに移行します...";
                     console.log("[Result] リマッチモーダル表示:", { 
                       isCustomMode, 
                       roomIsCustomMode: room?.isCustomMode,

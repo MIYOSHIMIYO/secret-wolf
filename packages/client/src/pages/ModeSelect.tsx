@@ -313,7 +313,7 @@ export default function ModeSelect() {
         style={{ height: `calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - ${bannerH}px)` }}
       >
         <div className="flex flex-col h-full xl:gap-6">
-          <HeaderBar title="モード選択" center />
+          <HeaderBar title="お題ジャンル選択" center />
 
           <div className="flex-1 overflow-hidden xl:flex xl:gap-8 xl:items-start">
             <div className="flex flex-col gap-3 sm:gap-4 md:gap-6 xl:w-[360px] xl:flex-none xl:space-y-4">
@@ -322,11 +322,11 @@ export default function ModeSelect() {
                 <div className="text-center xl:text-left">
                   {isHost ? (
                     <p className="text-slate-300 text-sm md:text-xl mb-2 md:mb-3">
-                      どのモードで遊ぶか決めてください
+                      どのジャンルで遊ぶか決めてください
                     </p>
                   ) : (
                     <p className="text-slate-300 text-sm md:text-xl mb-2 md:mb-3">
-                      モードを押して、ホストに希望を伝えましょう
+                      ジャンルを押して、ホストに希望を伝えましょう
                     </p>
                   )}
                   <h3 className="text-white text-base sm:text-lg md:text-3xl font-semibold">
@@ -418,7 +418,7 @@ export default function ModeSelect() {
           <div className="bg-slate-800 rounded-2xl p-6 max-w-sm mx-4 ring-1 ring-white/10 shadow-2xl">
             <div className="text-center space-y-4">
               <div className="text-white text-lg font-medium">
-                {modes.find(m => m.id === selectedMode)?.name}モードでゲームを始めますか？
+                {modes.find(m => m.id === selectedMode)?.name}でゲームを始めますか？
               </div>
               <div className="flex gap-3 justify-center">
                 <button
