@@ -107,7 +107,7 @@ export default function CustomTopicCreation() {
 
   return (
     <Screen contentScrollable={true} maxWidth={1200} innerClassName="xl:px-12">
-      <div className="min-h-screen px-4 md:px-10 xl:px-0 pt-4 md:pt-10 pb-32 md:pb-40 flex flex-col gap-3 md:gap-6 xl:gap-8">
+      <div className="min-h-screen px-4 md:px-10 xl:px-0 pt-4 md:pt-10 pb-48 md:pb-56 flex flex-col gap-3 md:gap-6 xl:gap-8">
         {/* ヘッダー */}
         <HeaderBar title="お題作成" center />
 
