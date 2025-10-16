@@ -10,12 +10,12 @@ import { PrimaryBtn } from "@/components/Buttons";
 import { resetRoomState } from "@/lib/roomUtils";
 
 // 画像のインポート
-import friendsImage from "@/assets/menulogo/friends_play.png";
-import unknownImage from "@/assets/menulogo/strangers_play.png";
-import supportImage from "@/assets/menulogo/enjoy_support.png";
-import aboutImage from "@/assets/menulogo/seisan_face.png";
-import nicknameImage from "@/assets/menulogo/set_nickname.png";
-import rulesImage from "@/assets/menulogo/check_rules.png";
+import friendsImage from "@/assets/menulogo/friends_play2.png";
+import unknownImage from "@/assets/menulogo/strangers_play2.png";
+import supportImage from "@/assets/menulogo/enjoy_support2.png";
+import aboutImage from "@/assets/menulogo/seisan_face2.png";
+import nicknameImage from "@/assets/menulogo/set_nickname2.png";
+import rulesImage from "@/assets/menulogo/check_rules2.png";
 
 export default function Menu() {
   const reset = useAppStore((s) => s.reset);
