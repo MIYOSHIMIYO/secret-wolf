@@ -33,6 +33,9 @@ export default function Result() {
   // 公開された秘密を取得
   const secretText = room?.round?.secretText ?? "";
   const secretOwner = room?.round?.secretOwner ?? "";
+  
+  // お題を取得
+  const promptText = room?.round?.promptText ?? "";
 
   // 投票結果を計算（「投票なし」を除外）
   const votes = room?.round?.votes as Record<string, string | "NONE"> | undefined;
@@ -169,6 +172,16 @@ export default function Result() {
               </div>
             </div>
             
+            {/* お題表示 */}
+            {promptText && (
+              <div className="text-center">
+                <div className="text-slate-300 text-lg mb-2">お題</div>
+                <div className="bg-slate-800/50 text-slate-200 px-6 py-3 rounded-lg text-xl font-medium ring-1 ring-slate-600/50">
+                  {promptText}
+                </div>
+              </div>
+            )}
+            
             {/* 秘密の持ち主の質問・回答 */}
             <div className="text-center">
               <div className="text-slate-300 text-2xl">
@@ -242,6 +255,16 @@ export default function Result() {
               {winnerText}
             </div>
           </div>
+          
+          {/* お題表示 */}
+          {promptText && (
+            <div className="text-center mb-4 md:mb-6">
+              <div className="text-slate-300 text-sm md:text-lg mb-2">お題</div>
+              <div className="bg-slate-800/50 text-slate-200 px-4 md:px-6 py-2 md:py-3 rounded-lg text-base md:text-xl font-medium ring-1 ring-slate-600/50">
+                {promptText}
+              </div>
+            </div>
+          )}
           
           {/* 秘密の持ち主の質問・回答 */}
           <div className="text-center mb-4 md:mb-6">
