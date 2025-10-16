@@ -85,10 +85,10 @@ export const LIMITS = {
   nickMaxGraphemes: 8,
   chatMax: 120,
   reconnectWindowMs: 30000,
-  inputSec: 30,
+  inputSec: 60,
   revealMs: 8000,
   discussPerPlayerSec: 15,
-  voteSec: 10,
+  voteSec: 15,
   judgeMs: 2000,
 } as const;
 
