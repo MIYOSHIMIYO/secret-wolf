@@ -13,7 +13,6 @@ import RoomFullModal from "@/components/RoomFullModal";
 
 export default function RoomCreate() {
   const nav = useNavigate();
-  const [searchParams] = useSearchParams();
   const [roomId, setRoomId] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);

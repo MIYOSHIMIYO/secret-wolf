@@ -172,13 +172,8 @@ export default function Lobby() {
                     <PrimaryBtn 
                       className="w-full" 
                       onClick={() => {
-                        if (isCustomMode) {
-                          // カスタムモードの場合はお題作成シーンに遷移
-                          nav("/custom");
-                        } else {
-                          // 通常モードの場合はゲーム開始
-                          send("start", {});
-                        }
+                        // 通常モードの場合はゲーム開始
+                        send("start", {});
                       }} 
                       disabled={disabled || !canStart}
                     >
