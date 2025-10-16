@@ -29,7 +29,6 @@ export default function CustomLobby() {
     console.log("[CustomLobby] カスタムモード判定詳細:", {
       room: room,
       isCustomMode: isCustomMode,
-      isAutoRoom: room?.isAutoRoom,
       isCustomModeFlag: room?.isCustomMode,
       roomState: room ? JSON.stringify(room, null, 2) : "null"
     });
