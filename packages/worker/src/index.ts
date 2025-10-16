@@ -232,22 +232,37 @@ router.get("/debug/monitoring", (req: Request, env: Env) => {
 });
 
 router.post("/rooms", async (req: Request, env: Env) => {
-  const roomId = genRoomId();
-  await env.MOD_KV.put(`room:${roomId}`, "1", { expirationTtl: 3600 });
   try {
     const body = await req.json().catch(() => null) as any;
+    const roomId = String(body?.roomId ?? genRoomId());
     const mode = String(body?.mode ?? "");
+    
+    // ルームIDが既に存在するかチェック
+    const existingRoom = await env.MOD_KV.get(`room:${roomId}`);
+    if (existingRoom) {
+      const origin = req.headers.get("Origin") || undefined;
+      return withCors(Response.json({ error: "Room already exists" }, { status: 409 }), env, origin);
+    }
+    
+    // KVストレージにルーム情報を保存
+    await env.MOD_KV.put(`room:${roomId}`, "1", { expirationTtl: 3600 });
+    
     if (mode) await env.MOD_KV.put(`mode:${roomId}`, mode, { expirationTtl: 3600 });
     
     // 知り合いモードのルーム作成時はisAutoRoomをfalseに設定
     await env.MOD_KV.put(`flags:${roomId}`, JSON.stringify({ isAutoRoom: false }), { expirationTtl: 3600 });
-  } catch {}
-  const origin = req.headers.get("Origin") || undefined;
-  return withCors(Response.json({ roomId }), env, origin);
+    
+    const origin = req.headers.get("Origin") || undefined;
+    return withCors(Response.json({ roomId }), env, origin);
+  } catch (error) {
+    const origin = req.headers.get("Origin") || undefined;
+    return withCors(Response.json({ error: "Failed to create room" }, { status: 500 }), env, origin);
+  }
 });
 
 router.get("/rooms/:roomId/exists", async (request: Request & { params: any }, env: Env) => {
-  const key = `room:${(request.params.roomId ?? "").toUpperCase()}`;
+  const roomId = request.params.roomId ?? "";
+  const key = `room:${roomId}`;
   const v = await env.MOD_KV.get(key);
   const origin = request.headers.get("Origin") || undefined;
   if (v) return withCors(Response.json({ exists: true }), env, origin);
