@@ -33,7 +33,8 @@ export async function connectToRoomWithHandler(
   installId: string,
   onConnected?: () => void,
   isCustomMode?: boolean,
-  isCreating?: boolean
+  isCreating?: boolean,
+  onMessage?: (message: any) => void
 ): Promise<void> {
   // 接続成功時のコールバックを設定
   if (onConnected) {
@@ -49,6 +50,12 @@ export async function connectToRoomWithHandler(
         cleanup();
       }
     });
+  }
+  
+  // メッセージハンドラーを設定
+  if (onMessage) {
+    const cleanup = addMessageHandler(onMessage);
+    // クリーンアップ関数を返す（必要に応じて）
   }
   
   // LOBBYフェーズになった時の遷移ハンドラーを設定

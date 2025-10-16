@@ -111,6 +111,13 @@ export async function connect(url: string): Promise<void> {
       // 再接続時に再joinできるようにフラグをリセット
       hasJoined = false;
 
+      // 404エラー（ルームが見つからない）の場合は特別処理
+      if (event.code === 1006 && event.reason.includes('Room not found')) {
+        console.log('[WebSocket] ルームが見つかりません');
+        notifyHandlers({ t: 'room_not_found', p: { reason: 'Room not found' } });
+        return;
+      }
+
       // ② 1006（Abnormal Closure）は通信断の一時的な可能性が高い。
       //    この場合は「ユーザー切断扱い」にせず、再接続だけを行う。
       if (event.code === 1006) {

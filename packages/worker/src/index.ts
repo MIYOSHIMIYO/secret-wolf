@@ -254,8 +254,20 @@ router.get("/rooms/:roomId/exists", async (request: Request & { params: any }, e
   return withCors(new Response("Not Found", { status: 404 }), env, origin);
 });
 
-router.get("/ws/room/:roomId", (request: Request & { params: any }, env: Env) => {
-  const id = env.DO_ROOMS.idFromName(request.params.roomId);
+router.get("/ws/room/:roomId", async (request: Request & { params: any }, env: Env) => {
+  const roomId = request.params.roomId;
+  
+  // ルーム存在チェック（Durable Object作成前にチェック）
+  const key = `room:${roomId}`;
+  const roomExists = await env.MOD_KV.get(key);
+  
+  if (!roomExists) {
+    const origin = request.headers.get("Origin") || undefined;
+    return withCors(Response.json({ error: "Room not found" }, { status: 404 }), env, origin);
+  }
+  
+  // ルームが存在する場合のみDurable Objectを作成
+  const id = env.DO_ROOMS.idFromName(roomId);
   const stub = env.DO_ROOMS.get(id);
   return stub.fetch(request);
 });

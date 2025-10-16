@@ -111,19 +111,34 @@ export default function RoomCreate() {
       // 1. 完全なリセットを実行
       reset();
       
-      // 2. 既存のWebSocket接続を強制的にクリーンアップ
+      // 2. ルーム存在チェック
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://secret-werewolf-prod.qmdg2pmnw6.workers.dev";
+      const existsResponse = await fetch(`${API_BASE_URL}/rooms/${roomId}/exists`);
+      
+      if (!existsResponse.ok) {
+        showToast("ルームが存在しません。正しいルームIDを入力してください。", "error");
+        setIsJoining(false);
+        return;
+      }
+      
+      // 3. 既存のWebSocket接続を強制的にクリーンアップ
       forceDisconnect();
       
       // クリーンアップ後の待機時間を最小化
       await new Promise(resolve => setTimeout(resolve, 20));
       
-      // 3. WebSocket接続を開始
+      // 4. WebSocket接続を開始
       const nick = getNick();
       const installId = getInstallId();
       
       connectToRoomWithHandler(roomId, nick, installId, () => {
         console.log(`[RoomCreate] 接続完了: roomId=${roomId}`);
-      }, false, false);
+      }, false, false, (message) => {
+        if (message.t === 'room_not_found') {
+          showToast("ルームが存在しません。正しいルームIDを入力してください。", "error");
+          setIsJoining(false);
+        }
+      });
       
       // 接続タイムアウトを設定（8秒）
       setTimeout(() => {
