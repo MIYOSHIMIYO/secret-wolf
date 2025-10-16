@@ -60,7 +60,7 @@ export class RoomDO implements DurableObject {
           round: { 
             prompt: "", 
             secretOwner: "", 
-            submissions: {}, 
+            submissions: {},
             votes: {},
             secretText: ""
           },
@@ -73,6 +73,7 @@ export class RoomDO implements DurableObject {
           iconInUse: [] as number[], // 使用中のアイコンID（配列形式）
           lastActivityAt: Date.now(), // 最後のアクティビティ時刻
           createdAt: Date.now(), // ルーム作成時刻
+          isInitialized: false, // ルームが初期化済みかどうか
         };
     
     // アイドルタイムアウト（3分）とマッチ上限時間（30分）のアラームを設定
@@ -337,9 +338,9 @@ export class RoomDO implements DurableObject {
             return;
           }
           
-          // ルームが存在するかチェック（プレイヤーが0人の場合は存在しないとみなす）
-          if (this.roomState.players.length === 0) {
-            console.log(`[Join] 存在しないルームID: ${roomId}`);
+          // ルームが初期化されているかチェック
+          if (!this.roomState.isInitialized) {
+            console.log(`[Join] 存在しないルームID: ${roomId} (isInitialized: ${this.roomState.isInitialized})`);
             const ws = this.clients.get(clientId);
             ws?.send(JSON.stringify({ t: "warn", p: { code: "ROOM_NOT_FOUND", msg: "ルームが存在しません" } } as any));
             ws?.close(4000, "room_not_found");
@@ -384,6 +385,12 @@ export class RoomDO implements DurableObject {
             connected: true,
             left: false
           });
+          
+          // 最初のプレイヤーが参加した時にルームを初期化済みとしてマーク
+          if (this.roomState.players.length === 1) {
+            this.roomState.isInitialized = true;
+            console.log(`[Join] ルームを初期化済みとしてマーク: ${roomId}`);
+          }
           
           if (this.roomState.phase === "LOBBY" && !this.roomState.hostId) {
             this.roomState.hostId = id;

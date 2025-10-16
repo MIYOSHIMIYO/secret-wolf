@@ -76,6 +76,7 @@ export type RoomState = {
   iconInUse?: number[]; // 使用中のアイコンID（配列形式）
   lastActivityAt?: number; // 最後のアクティビティ時刻
   createdAt?: number; // ルーム作成時刻
+  isInitialized?: boolean; // ルームが初期化済みかどうか
 };
 
 export type BannerPlace = "TITLE" | "MENU" | "LOBBY" | "MODE_SELECT" | "READY" | "INPUT" | "DISCUSS" | "RESULT";
@@ -181,6 +182,7 @@ export const RoomStateZ = z.object({
   modeStamps: z.record(z.string(), z.number().int().nonnegative()).optional(),
   isCustomMode: z.boolean().optional(),
   customTopics: z.array(z.string()).optional(),
+  isInitialized: z.boolean().optional(),
 });
 export const S_state = z.object({ t: z.literal("state"), p: RoomStateZ });
 export const S_phase = z.object({ t: z.literal("phase"), p: z.object({ phase: PhaseZ, endsAt: z.number(), roundId: z.string(), phaseSeq: z.number().int().positive() }) });
