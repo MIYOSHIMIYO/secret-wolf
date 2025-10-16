@@ -22,5 +22,5 @@ export const useAppStore = create<State>((set) => ({
   setEndsAt: (t) => set({ endsAt: t }),
   setMyId: (id) => set({ myId: id }),
   setIsCustomMode: (isCustomMode) => set({ isCustomMode }),
-  reset: () => set({ room: null, endsAt: 0, myId: null, isCustomMode: false }),
+  reset: () => set({ room: null, endsAt: 0, myId: null }),
 })); 

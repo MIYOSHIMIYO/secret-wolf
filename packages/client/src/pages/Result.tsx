@@ -22,6 +22,13 @@ export default function Result() {
   const myId = useAppStore((s) => s.myId);
   const isHost = myId && room?.hostId === myId;
   const isCustomMode = useAppStore((s) => s.isCustomMode); // フロントエンド側のカスタムモードフラグを使用
+  
+  // デバッグログ
+  console.log("[Result] モード判定:", { 
+    isCustomMode, 
+    roomIsCustomMode: room?.isCustomMode,
+    isHost 
+  });
 
   // 公開された秘密を取得
   const secretText = room?.round?.secretText ?? "";
@@ -335,7 +342,15 @@ export default function Result() {
               <div className="text-center space-y-4">
                 <div className="text-white text-lg font-medium">もう一度が選択されました</div>
                 <div className="text-slate-300 text-sm">
-                  {isCustomMode ? "お題作成シーンに移行します..." : "モード選択シーンに移行します..."}
+                  {(() => {
+                    const message = isCustomMode ? "お題作成シーンに移行します..." : "モード選択シーンに移行します...";
+                    console.log("[Result] リマッチモーダル表示:", { 
+                      isCustomMode, 
+                      roomIsCustomMode: room?.isCustomMode,
+                      message 
+                    });
+                    return message;
+                  })()}
                 </div>
               </div>
             </div>
