@@ -138,7 +138,7 @@ export default function CustomLobby() {
         style={{ height: `calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - ${bannerH}px)` }}
       >
         <div className="h-full flex flex-col">
-          <HeaderBar title="カスタムモード - ルーム待機" center />
+          <HeaderBar title="頭脳戦 - ルーム待機" center />
 
           <FadeSlide>
             <Panel className="p-4 sm:p-5 md:p-7 lg:p-8 space-y-3 md:space-y-4">

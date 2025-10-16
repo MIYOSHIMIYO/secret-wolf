@@ -156,7 +156,7 @@ export default function CustomRoomCreate() {
         <div className="h-full flex flex-col">
           {/* 上詰め配置 */}
           <div className="w-full">
-              <HeaderBar title="ルーム作成・参加" center />
+              <HeaderBar title="頭脳戦 - ルーム作成・参加" center />
 
               {/* create section */}
               <Panel className="mt-6 md:mt-10 lg:mt-10 xl:mt-12 p-4 sm:p-6 md:p-9 lg:p-9 xl:p-10">
@@ -196,7 +196,7 @@ export default function CustomRoomCreate() {
                   </PrimaryBtn>
                 </div>
                 <div className="text-slate-400 text-xs sm:text-sm md:text-xl lg:text-base xl:text-lg mt-3">
-                  6-8文字の英数字で入力してください（フリック式入力ではなくキーボード入力の方が安定します）。
+                  6-8文字の英数字で入力してください（フリック式入力ではなくキーボード式入力の方が安定します）。
                 </div>
               </Panel>
 
