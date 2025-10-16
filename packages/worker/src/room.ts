@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid/non-secure";
-import { S2C, C2S, RoomStateZ } from "@secret/shared/src/gameTypes";
+import { S2C, C2S, RoomStateZ, LIMITS } from "@secret/shared/src/gameTypes";
 import { PROMPTS } from "../../shared/src/prompts";
 import { ROOM_CAPACITY } from "@secret/shared/src/constants";
 import { globalMonitor } from "./monitoring.js";
@@ -1076,11 +1076,11 @@ export class RoomDO implements DurableObject {
   private goInput() {
     this.roomState.phase = "INPUT";
     this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
-    this.setEnds(60_000); // 60秒固定
+    this.setEnds(LIMITS.inputSec * 1000); // LIMITSから取得
     this.broadcast({ t: "phase", p: { phase: "INPUT", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
     this.broadcastState();
     
-    console.log(`[goInput] 秘密入力フェーズ開始。制限時間: 60秒`);
+    console.log(`[goInput] 秘密入力フェーズ開始。制限時間: ${LIMITS.inputSec}秒`);
   }
 
   private goReady() {
@@ -1169,7 +1169,7 @@ export class RoomDO implements DurableObject {
   private goVote() {
     this.roomState.phase = "VOTE";
     this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
-    this.setEnds(15_000); // 15秒固定
+    this.setEnds(LIMITS.voteSec * 1000); // LIMITSから取得
     
     // discuss情報を更新
     if (this.roomState.round.discuss) {
@@ -1179,7 +1179,7 @@ export class RoomDO implements DurableObject {
     this.broadcast({ t: "phase", p: { phase: "VOTE", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
     this.broadcastState();
     
-    console.log(`[goVote] 投票フェーズ開始。制限時間: 15秒`);
+    console.log(`[goVote] 投票フェーズ開始。制限時間: ${LIMITS.voteSec}秒`);
   }
 
   private goJudge() {
