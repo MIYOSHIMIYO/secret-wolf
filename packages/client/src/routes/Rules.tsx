@@ -191,22 +191,35 @@ export default function Rules() {
                     animate="center"
                     exit="exit"
                     transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                    className="rule-card absolute inset-0 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-[6px] shadow-[0_10px_30px_rgba(0,0,0,.25)] p-6 md:p-10"
+                    className="rule-card absolute inset-0 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-[6px] shadow-[0_10px_30px_rgba(0,0,0,.25)] flex flex-col"
                   >
-                    <h1 className="rule-title text-3xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-violet-200 to-sky-200">
-                      {page.title}
-                    </h1>
-                    <div className="h-1 md:h-2 w-14 md:w-24 bg-primary-400/70 rounded-full mt-2 md:mt-4 mb-4 md:mb-7" />
-                    <ul className="space-y-2 md:space-y-4">
-                      {page.bullets.map((b, idx) => (
-                        <li
-                          key={idx}
-                          className="rule-item text-lg md:text-[1.7rem] leading-relaxed before:content-['•'] before:mr-2 before:text-violet-300"
-                        >
-                          <Rich text={b} />
-                        </li>
-                      ))}
-                    </ul>
+                    {/* 固定ヘッダー部分 */}
+                    <div className="flex-shrink-0 p-6 md:p-10 pb-4 md:pb-6">
+                      <h1 className="rule-title text-3xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-violet-200 to-sky-200">
+                        {page.title}
+                      </h1>
+                      <div className="h-1 md:h-2 w-14 md:w-24 bg-primary-400/70 rounded-full mt-2 md:mt-4 mb-4 md:mb-7" />
+                    </div>
+                    
+                    {/* スクロール可能なコンテンツ部分 */}
+                    <div 
+                      className="flex-1 overflow-y-auto px-6 md:px-10 pb-6 md:pb-10"
+                      style={{
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: '#94a3b8 #1e293b'
+                      }}
+                    >
+                      <ul className="space-y-2 md:space-y-4">
+                        {page.bullets.map((b, idx) => (
+                          <li
+                            key={idx}
+                            className="rule-item text-lg md:text-[1.7rem] leading-relaxed before:content-['•'] before:mr-2 before:text-violet-300"
+                          >
+                            <Rich text={b} />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </motion.section>
                 </AnimatePresence>
               </div>
