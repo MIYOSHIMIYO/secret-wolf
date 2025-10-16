@@ -59,7 +59,7 @@ export default function Vote() {
   }
 
   // サーバーから送られてくる正確なタイマー値を使用
-  const voteEndsAt = room?.endsAt || Date.now() + 10000;
+  const voteEndsAt = room?.endsAt || Date.now() + 15000; // 15秒のフォールバック
 
   return (
     <Screen contentScrollable={false}>

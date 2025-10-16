@@ -1080,7 +1080,7 @@ export class RoomDO implements DurableObject {
     this.broadcast({ t: "phase", p: { phase: "INPUT", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
     this.broadcastState();
     
-    console.log(`[goInput] 秘密入力フェーズ開始。制限時間: ${LIMITS.inputSec}秒`);
+    console.log(`[goInput] 秘密入力フェーズ開始。制限時間: ${LIMITS.inputSec}秒, endsAt: ${this.roomState.endsAt}`);
   }
 
   private goReady() {
@@ -1179,7 +1179,7 @@ export class RoomDO implements DurableObject {
     this.broadcast({ t: "phase", p: { phase: "VOTE", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
     this.broadcastState();
     
-    console.log(`[goVote] 投票フェーズ開始。制限時間: ${LIMITS.voteSec}秒`);
+    console.log(`[goVote] 投票フェーズ開始。制限時間: ${LIMITS.voteSec}秒, endsAt: ${this.roomState.endsAt}`);
   }
 
   private goJudge() {
