@@ -123,48 +123,37 @@ export default function Terms() {
             </ul>
           </section>
 
-          {/* 8. 応援（サポート）機能について */}
-          <section>
-            <h3 className="text-base font-semibold mb-2">8. 応援（サポート）機能について</h3>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>本サービスでは、ユーザーが任意で作者を応援（サポート）する機能を提供しています。</li>
-              <li>応援は任意の行為であり、ゲームの進行に影響を与えるものではありません。</li>
-              <li>応援により得られる特典はありません。</li>
-              <li>応援の決済は、Stripe社の決済システムを利用して処理されます。</li>
-              <li>応援に関する返金については、購入から7日以内に限り対応いたします。</li>
-            </ul>
-          </section>
 
-          {/* 9. 免責 */}
+          {/* 8. 免責 */}
           <section>
-            <h3 className="text-base font-semibold mb-2">9. 免責</h3>
+            <h3 className="text-base font-semibold mb-2">8. 免責</h3>
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li>本サービスの提供・変更・一時停止・終了等によりユーザーに生じた損害について、当方は一切の責任を負いません（法令で免責が認められない場合を除く）。</li>
               <li>通信回線・ブラウザ・決済システム側の障害、不可抗力（災害等）による影響についても同様とします。</li>
             </ul>
           </section>
 
-          {/* 10. 規約の変更 */}
+          {/* 9. 規約の変更 */}
           <section>
-            <h3 className="text-base font-semibold mb-2">10. 規約の変更</h3>
+            <h3 className="text-base font-semibold mb-2">9. 規約の変更</h3>
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li>本規約は、必要に応じて改定します。改定後の内容は正本URLの掲載時から効力を生じます。</li>
               <li>重要な変更時は、アプリ内でお知らせします。</li>
             </ul>
           </section>
 
-          {/* 11. 準拠法・裁判管轄 */}
+          {/* 10. 準拠法・裁判管轄 */}
           <section>
-            <h3 className="text-base font-semibold mb-2">11. 準拠法・裁判管轄</h3>
+            <h3 className="text-base font-semibold mb-2">10. 準拠法・裁判管轄</h3>
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li>本規約は日本法に準拠します。</li>
               <li>本規約に関して紛争が生じた場合、当方の主たる事業所（又は住所）所在地を管轄する地方裁判所又は簡易裁判所を第一審の専属的合意管轄裁判所とします。</li>
             </ul>
           </section>
 
-          {/* 12. お問い合わせ */}
+          {/* 11. お問い合わせ */}
           <section>
-            <h3 className="text-base font-semibold mb-2">12. お問い合わせ</h3>
+            <h3 className="text-base font-semibold mb-2">11. お問い合わせ</h3>
             <ul className="list-disc list-inside space-y-1 ml-4">
               <li>連絡先：<a href="mailto:support@secret-werewolf.com" className="text-blue-600 underline">support@secret-werewolf.com</a></li>
               <li>プライバシーポリシー：<a href="https://miyoshimiyo.github.io/secret-werewolf-legal/privacy/" className="text-blue-600 underline">https://miyoshimiyo.github.io/secret-werewolf-legal/privacy/</a></li>
