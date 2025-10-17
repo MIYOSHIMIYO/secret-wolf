@@ -39,14 +39,6 @@ export default function Topics() {
       gradient: "from-gray-600 to-slate-500",
       color: "from-gray-600 to-slate-500",
       prompts: PROMPTS.NONE
-    },
-    {
-      id: "STRANGER",
-      name: "知らない誰かと",
-      description: "世の中、いろんな人がいるものね",
-      gradient: "from-blue-500 to-indigo-600",
-      color: "from-blue-500 to-indigo-600",
-      prompts: PROMPTS.STRANGER
     }
   ];
 
