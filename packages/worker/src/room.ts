@@ -489,6 +489,16 @@ export class RoomDO implements DurableObject {
           return;
         }
         
+        // ゲーム状態をリセット（お題リストは保持）
+        console.log(`[startCustomGame] ゲーム状態をリセットします`);
+        this.roomState.round = {
+          prompt: '',
+          secretOwner: '',
+          submissions: {},
+          votes: {},
+          secretText: ''
+        };
+        
         console.log(`[startCustomGame] TOPIC_CREATIONフェーズに遷移`);
         // カスタムモードの場合はTOPIC_CREATIONフェーズに遷移
         this.roomState.phase = "TOPIC_CREATION";
@@ -820,10 +830,20 @@ export class RoomDO implements DurableObject {
         
         console.log(`[rematch] 3秒後に適切なフェーズに遷移します`);
         setTimeout(() => {
+          // ゲーム状態をリセット（お題リストは保持）
+          console.log(`[rematch] ゲーム状態をリセットします`);
+          this.roomState.round = {
+            prompt: '',
+            secretOwner: '',
+            submissions: {},
+            votes: {},
+            secretText: ''
+          };
+          this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
+          
           if (this.roomState.isCustomMode) {
             console.log(`[rematch] カスタムモードのためTOPIC_CREATIONフェーズに遷移`);
             this.roomState.phase = "TOPIC_CREATION";
-            this.roomState.phaseSeq = (this.roomState.phaseSeq ?? 0) + 1;
             this.broadcast({ t: "phase", p: { phase: "TOPIC_CREATION", endsAt: this.roomState.endsAt, roundId: this.roomState.roundId, phaseSeq: this.roomState.phaseSeq } });
             this.broadcastState();
           } else {

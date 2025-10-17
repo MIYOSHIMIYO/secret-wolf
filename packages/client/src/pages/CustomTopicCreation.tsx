@@ -39,6 +39,14 @@ export default function CustomTopicCreation() {
       setTopics([]);
     }
   }, [room?.customTopics]);
+
+  // コンポーネントマウント時にゲーム状態をリセット
+  useEffect(() => {
+    console.log("[CustomTopicCreation] コンポーネントマウント - ゲーム状態をリセット");
+    // 入力フィールドをリセット
+    setInputText("");
+    setIsSubmitting(false);
+  }, []);
   
   const count = useMemo(() => graphemeLengthNFC(inputText), [inputText]);
   const canAddTopic = count > 0 && count <= 20 && topics.length < 10;
