@@ -128,10 +128,10 @@ export default function Rules() {
     };
   }, []);
 
-  // SEでは表示欄を優先的に縦に広げる（内容高さよりも利用可能高さを優先）
-  const isSmallViewport = typeof window !== "undefined" ? window.innerWidth <= 375 : false;
+  // モバイル・タブレットでは説明欄の縦幅を短くする
+  const isMobileViewport = typeof window !== "undefined" ? window.innerWidth <= 768 : false;
   const slideHeight = measuredSlideMax && availableForSlide
-    ? (isSmallViewport ? availableForSlide : Math.min(measuredSlideMax, availableForSlide))
+    ? (isMobileViewport ? Math.min(availableForSlide * 0.75, measuredSlideMax) : Math.min(measuredSlideMax, availableForSlide))
     : undefined;
 
   return (
