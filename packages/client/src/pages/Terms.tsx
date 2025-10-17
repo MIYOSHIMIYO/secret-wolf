@@ -42,7 +42,7 @@ export default function Terms() {
           {/* アプリ情報 */}
           <div className="text-center space-y-2">
             <h2 className="text-lg font-semibold">秘密人狼 — 誰かの秘密が落ちている</h2>
-            <p className="text-gray-600">利用規約 v1.0.0（改定日：2024年12月1日）</p>
+            <p className="text-gray-600">利用規約 v1.0.0（改定日：2025年10月17日）</p>
           </div>
 
           <p>
