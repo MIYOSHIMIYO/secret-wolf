@@ -29,6 +29,17 @@ export default function CustomTopicCreation() {
   const [topics, setTopics] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // ルームのお題リストを初期値として使用
+  useEffect(() => {
+    if (room?.customTopics && room.customTopics.length > 0) {
+      console.log("[CustomTopicCreation] ルームのお題リストを初期化:", room.customTopics);
+      setTopics(room.customTopics);
+    } else {
+      console.log("[CustomTopicCreation] お題リストが空または未定義です");
+      setTopics([]);
+    }
+  }, [room?.customTopics]);
+  
   const count = useMemo(() => graphemeLengthNFC(inputText), [inputText]);
   const canAddTopic = count > 0 && count <= 20 && topics.length < 10;
   const canStart = isHost && topics.length > 0;
@@ -39,6 +50,7 @@ export default function CustomTopicCreation() {
       const { t, p } = event.detail;
       
       if (t === "customTopics") {
+        console.log("[CustomTopicCreation] customTopicsメッセージ受信:", p.topics);
         setTopics(p.topics || []);
       }
       
@@ -76,6 +88,12 @@ export default function CustomTopicCreation() {
     if (trimmedText.length === 0) return;
     
     setIsSubmitting(true);
+    
+    // ローカルステートを即座に更新（楽観的更新）
+    const newTopics = [...topics, trimmedText];
+    setTopics(newTopics);
+    
+    // バックエンドに送信
     send("addCustomTopic", { text: trimmedText });
     setInputText("");
     setIsSubmitting(false);
@@ -83,6 +101,11 @@ export default function CustomTopicCreation() {
 
   // お題を削除
   const removeTopic = (index: number) => {
+    // ローカルステートを即座に更新（楽観的更新）
+    const newTopics = topics.filter((_, i) => i !== index);
+    setTopics(newTopics);
+    
+    // バックエンドに送信
     send("removeCustomTopic", { index });
   };
 
