@@ -84,7 +84,6 @@ export default function Payment() {
                 <div className="space-y-3 text-gray-300">
                   <p>• 外部サイトに移動します</p>
                   <p>• 応援は任意の行為です</p>
-                  <p>• 特典はありません</p>
                   <p>• ゲームの進行に影響はありません</p>
                 </div>
               </div>
