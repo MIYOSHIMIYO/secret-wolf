@@ -330,8 +330,8 @@ export class RoomDO implements DurableObject {
           
           // ルームIDの形式をチェック
           const expectedPrefix = isCustomMode ? "C" : "N";
-          if (!roomId.startsWith(expectedPrefix) || roomId.length !== 7) {
-            console.log(`[Join] 無効なルームID形式: ${roomId}, 期待される形式: ${expectedPrefix}[6文字]`);
+          if (!roomId.startsWith(expectedPrefix) || roomId.length !== 6) {
+            console.log(`[Join] 無効なルームID形式: ${roomId}, 期待される形式: ${expectedPrefix}[5文字]`);
             const ws = this.clients.get(clientId);
             ws?.send(JSON.stringify({ t: "warn", p: { code: "INVALID_ROOM_ID", msg: "ルームIDの形式が正しくありません" } } as any));
             ws?.close(4000, "invalid_room_id");
