@@ -128,10 +128,23 @@ export default function Rules() {
     };
   }, []);
 
-  // モバイル・タブレットでは説明欄の縦幅を短くする
+  // レスポンシブで説明欄の縦幅を調整
   const isMobileViewport = typeof window !== "undefined" ? window.innerWidth <= 768 : false;
+  const isDesktopViewport = typeof window !== "undefined" ? window.innerWidth >= 1024 : false;
+  
   const slideHeight = measuredSlideMax && availableForSlide
-    ? (isMobileViewport ? Math.min(availableForSlide * 0.75, measuredSlideMax) : Math.min(measuredSlideMax, availableForSlide))
+    ? (() => {
+        if (isMobileViewport) {
+          // モバイル・タブレット：説明欄を長くする（90%）
+          return Math.min(availableForSlide * 0.9, measuredSlideMax);
+        } else if (isDesktopViewport) {
+          // デスクトップ：説明欄を短くする（60%）
+          return Math.min(availableForSlide * 0.6, measuredSlideMax);
+        } else {
+          // その他：デフォルト
+          return Math.min(measuredSlideMax, availableForSlide);
+        }
+      })()
     : undefined;
 
   return (
