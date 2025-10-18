@@ -184,7 +184,7 @@ export default function Menu() {
                 <img
                   src={unknownImage}
                   alt="カスタムして遊ぶ"
-                  className="w-full h-auto rounded-scale-2xl shadow-lg xl:max-h-[350px] object-contain"
+                  className="w-full h-auto rounded-scale-2xl shadow-lg xl:max-h-[280px] object-contain"
                 />
               </button>
             </div>
@@ -198,7 +198,7 @@ export default function Menu() {
                 <img
                   src={friendsImage}
                   alt="知り合いと遊ぶ"
-                  className="w-[100%] sm:w-[100%] md:w-full h-auto rounded-scale-2xl shadow-lg max-h-[220px] sm:max-h-[250px] md:max-h-[320px] lg:max-h-[350px] xl:max-h-[380px] object-contain mx-auto"
+                  className="w-[100%] sm:w-[100%] md:w-full h-auto rounded-scale-2xl shadow-lg max-h-[220px] sm:max-h-[250px] md:max-h-[320px] lg:max-h-[350px] xl:max-h-[280px] object-contain mx-auto"
                 />
               </button>
             </div>
@@ -209,7 +209,7 @@ export default function Menu() {
                 <img
                   src={supportImage}
                   alt="楽しめたら応援"
-                  className="w-full h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[200px] object-contain"
+                  className="w-full h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[280px] object-contain"
                 />
               </Link>
             </div>
@@ -220,7 +220,7 @@ export default function Menu() {
                 <img
                   src={aboutImage}
                   alt="作者について"
-                  className="w-full h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[200px] object-contain"
+                  className="w-full h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[280px] object-contain"
                 />
               </Link>
             </div>
@@ -231,7 +231,7 @@ export default function Menu() {
                 <img
                   src={nicknameImage}
                   alt="ニックネームを決めないと"
-                  className="w-full h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[200px] object-contain"
+                  className="w-full h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[280px] object-contain"
                 />
               </Link>
             </div>
@@ -242,7 +242,7 @@ export default function Menu() {
                 <img
                   src={rulesImage}
                   alt="ルールを確認だ"
-                  className="w-full h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[200px] object-contain"
+                  className="w-full h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[280px] object-contain"
                 />
               </Link>
             </div>

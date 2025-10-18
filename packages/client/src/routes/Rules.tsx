@@ -213,7 +213,7 @@ export default function Rules() {
                         {page.bullets.map((b, idx) => (
                           <li
                             key={idx}
-                            className="rule-item text-lg md:text-[1.7rem] leading-relaxed before:content-['•'] before:mr-2 before:text-violet-300"
+                            className="rule-item text-lg md:text-xl lg:text-lg xl:text-lg leading-relaxed before:content-['•'] before:mr-2 before:text-violet-300"
                           >
                             <Rich text={b} />
                           </li>
