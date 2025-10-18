@@ -137,13 +137,13 @@ export default function Rules() {
     ? (() => {
         if (isSmallMobileViewport) {
           // iPhone SEレベル：説明欄を最大限長くする（95%）
-          return Math.min(availableForSlide * 0.95, measuredSlideMax);
+          return Math.min(availableForSlide * 1.15, measuredSlideMax);
         } else if (isMobileViewport) {
           // その他のモバイル・タブレット：説明欄を長くする（90%）
           return Math.min(availableForSlide * 0.9, measuredSlideMax);
         } else if (isDesktopViewport) {
           // デスクトップ：説明欄を短くする（60%）
-          return Math.min(availableForSlide * 0.6, measuredSlideMax);
+          return Math.min(availableForSlide * 0.8, measuredSlideMax);
         } else {
           // その他：デフォルト
           return Math.min(measuredSlideMax, availableForSlide);
