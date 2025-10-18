@@ -130,12 +130,16 @@ export default function Rules() {
 
   // レスポンシブで説明欄の縦幅を調整
   const isMobileViewport = typeof window !== "undefined" ? window.innerWidth <= 768 : false;
+  const isSmallMobileViewport = typeof window !== "undefined" ? window.innerWidth <= 414 : false; // iPhone SEレベル
   const isDesktopViewport = typeof window !== "undefined" ? window.innerWidth >= 1024 : false;
   
   const slideHeight = measuredSlideMax && availableForSlide
     ? (() => {
-        if (isMobileViewport) {
-          // モバイル・タブレット：説明欄を長くする（90%）
+        if (isSmallMobileViewport) {
+          // iPhone SEレベル：説明欄を最大限長くする（95%）
+          return Math.min(availableForSlide * 0.95, measuredSlideMax);
+        } else if (isMobileViewport) {
+          // その他のモバイル・タブレット：説明欄を長くする（90%）
           return Math.min(availableForSlide * 0.9, measuredSlideMax);
         } else if (isDesktopViewport) {
           // デスクトップ：説明欄を短くする（60%）
