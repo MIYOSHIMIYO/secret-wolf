@@ -137,7 +137,7 @@ export default function Rules() {
     ? (() => {
         if (isSmallMobileViewport) {
           // iPhone SEレベル：説明欄を最大限長くする（95%）
-          return Math.min(availableForSlide * 1.15, measuredSlideMax);
+          return Math.min(availableForSlide * 1.05, measuredSlideMax);
         } else if (isMobileViewport) {
           // その他のモバイル・タブレット：説明欄を長くする（90%）
           return Math.min(availableForSlide * 0.9, measuredSlideMax);
