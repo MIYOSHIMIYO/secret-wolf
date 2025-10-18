@@ -1,3 +1,6 @@
+import videoSrc from "@/assets/movie/秘密人狼ルール.mov";
+import videoThumbnail from "@/assets/movie/秘密人狼ルール-Cover.jpg";
+
 export type RulePage = {
   key: string;
   title: string;
@@ -5,9 +8,28 @@ export type RulePage = {
   body?: string;
   note?: string;
   tips?: string[];
+  video?: {
+    src: string;
+    thumbnail: string;
+    title: string;
+  };
 };
 
 export const RULE_PAGES: RulePage[] = [
+  {
+    key: "video",
+    title: "ルール説明動画",
+    bullets: [
+      "ゲームの基本的な流れを動画で確認できます。",
+      "初回プレイの方は必ずご視聴ください。",
+      "動画は途中で停止・再生・シークが可能です。",
+    ],
+    video: {
+      src: videoSrc,
+      thumbnail: videoThumbnail,
+      title: "秘密人狼ルール説明動画",
+    },
+  },
   {
     key: "warnings",
     title: "注意事項",

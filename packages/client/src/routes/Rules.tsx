@@ -226,16 +226,51 @@ export default function Rules() {
                         scrollbarColor: '#94a3b8 #1e293b'
                       }}
                     >
-                      <ul className="space-y-2 md:space-y-4">
-                        {page.bullets.map((b, idx) => (
-                          <li
-                            key={idx}
-                            className="rule-item text-lg md:text-xl lg:text-lg xl:text-lg leading-relaxed before:content-['•'] before:mr-2 before:text-violet-300"
-                          >
-                            <Rich text={b} />
-                          </li>
-                        ))}
-                      </ul>
+                      {page.video ? (
+                        /* 動画ページの場合 */
+                        <div className="space-y-4">
+                          <ul className="space-y-2 md:space-y-4 mb-6">
+                            {page.bullets.map((b, idx) => (
+                              <li
+                                key={idx}
+                                className="rule-item text-lg md:text-xl lg:text-lg xl:text-lg leading-relaxed before:content-['•'] before:mr-2 before:text-violet-300"
+                              >
+                                <Rich text={b} />
+                              </li>
+                            ))}
+                          </ul>
+                          
+                          {/* 動画プレイヤー */}
+                          <div className="relative w-full bg-black rounded-2xl overflow-hidden shadow-2xl">
+                            <video
+                              className="w-full h-auto max-h-[60vh] object-contain"
+                              controls
+                              poster={page.video.thumbnail}
+                              preload="metadata"
+                            >
+                              <source src={page.video.src} type="video/mp4" />
+                              <source src={page.video.src} type="video/quicktime" />
+                              お使いのブラウザは動画の再生をサポートしていません。
+                            </video>
+                          </div>
+                          
+                          <div className="text-center text-slate-300 text-sm md:text-base">
+                            {page.video.title}
+                          </div>
+                        </div>
+                      ) : (
+                        /* 通常ページの場合 */
+                        <ul className="space-y-2 md:space-y-4">
+                          {page.bullets.map((b, idx) => (
+                            <li
+                              key={idx}
+                              className="rule-item text-lg md:text-xl lg:text-lg xl:text-lg leading-relaxed before:content-['•'] before:mr-2 before:text-violet-300"
+                            >
+                              <Rich text={b} />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </motion.section>
                 </AnimatePresence>
