@@ -64,7 +64,7 @@ export default defineConfig(({ mode }) => {
         "@/assets": "/src/assets"
       } 
     },
-    assetsInclude: ["**/*.PNG", "**/*.png", "**/*.JPG", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.svg"],
+    assetsInclude: ["**/*.PNG", "**/*.png", "**/*.JPG", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.svg", "**/*.mov", "**/*.mp4", "**/*.webm"],
     optimizeDeps: {
       include: ['react', 'react-dom']
     },

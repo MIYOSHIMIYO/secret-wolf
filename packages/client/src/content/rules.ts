@@ -1,6 +1,3 @@
-import videoSrc from "@/assets/movie/秘密人狼ルール.mov";
-import videoThumbnail from "@/assets/movie/秘密人狼ルール-Cover.jpg";
-
 export type RulePage = {
   key: string;
   title: string;
@@ -25,8 +22,8 @@ export const RULE_PAGES: RulePage[] = [
       "動画は途中で停止・再生・シークが可能です。",
     ],
     video: {
-      src: videoSrc,
-      thumbnail: videoThumbnail,
+      src: "/src/assets/movie/秘密人狼ルール.mov",
+      thumbnail: "/src/assets/movie/秘密人狼ルール-Cover.jpg",
       title: "秘密人狼ルール説明動画",
     },
   },
