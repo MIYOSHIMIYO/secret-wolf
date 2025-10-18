@@ -1,4 +1,4 @@
-import videoSrc from "@/assets/movie/秘密人狼ルール.mov";
+import videoSrc from "@/assets/movie/秘密人狼ルール.mp4";
 import videoThumbnail from "@/assets/movie/秘密人狼ルール-Cover.jpg";
 
 export type RulePage = {
