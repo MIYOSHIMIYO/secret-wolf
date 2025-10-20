@@ -76,9 +76,9 @@ export class RoomDO implements DurableObject {
           isInitialized: false, // ルームが初期化済みかどうか
         };
     
-    // アイドルタイムアウト（3分）とマッチ上限時間（30分）のアラームを設定
-    this.state.storage.setAlarm(Date.now() + 3 * 60 * 1000); // 3分後
-    this.state.storage.setAlarm(Date.now() + 30 * 60 * 1000); // 30分後
+    // アイドルタイムアウト（10分）とマッチ上限時間（60分）のアラームを設定
+    this.state.storage.setAlarm(Date.now() + 10 * 60 * 1000); // 10分後
+    this.state.storage.setAlarm(Date.now() + 60 * 60 * 1000); // 60分後
   }
 
   // レート制限チェック
@@ -151,19 +151,19 @@ export class RoomDO implements DurableObject {
   async alarm() {
     const now = Date.now();
     
-    // アイドルタイムアウトチェック（3分）
-    const idleTimeout = 3 * 60 * 1000;
+    // アイドルタイムアウトチェック（10分）
+    const idleTimeout = 10 * 60 * 1000;
     if (this.roomState.lastActivityAt && (now - this.roomState.lastActivityAt) > idleTimeout) {
-      console.log(`[alarm] アイドルタイムアウト（3分）によりルームを終了します`);
+      console.log(`[alarm] アイドルタイムアウト（10分）によりルームを終了します`);
       this.broadcast({ t: "abort", p: { reason: "idle_timeout" } });
       this.deleteRoomCompletely();
       return;
     }
     
-    // マッチ上限時間チェック（30分）
-    const matchTimeout = 30 * 60 * 1000;
+    // マッチ上限時間チェック（60分）
+    const matchTimeout = 60 * 60 * 1000;
     if (this.roomState.createdAt && (now - this.roomState.createdAt) > matchTimeout) {
-      console.log(`[alarm] マッチ上限時間（30分）によりルームを終了します`);
+      console.log(`[alarm] マッチ上限時間（60分）によりルームを終了します`);
       this.broadcast({ t: "abort", p: { reason: "match_timeout" } });
       this.deleteRoomCompletely();
       return;
@@ -762,6 +762,9 @@ export class RoomDO implements DurableObject {
         return;
       }
 
+      // アクティビティの更新（ping以外のメッセージでも更新）
+      this.updateActivity();
+
       if (t === "report") {
         const pid = this.clientToPlayerId.get(clientId);
         if (!pid) return;
@@ -1297,8 +1300,15 @@ export class RoomDO implements DurableObject {
     const packet = JSON.stringify(msg);
     for (const ws of this.clients.values()) {
       try {
-        ws.send(packet);
+        // WebSocket接続状態をチェック
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(packet);
+        } else {
+          // 接続が閉じられている場合は警告を出さない
+          console.log(`[broadcast] 接続が閉じられているため送信をスキップ: readyState=${ws.readyState}`);
+        }
       } catch (error) {
+        // エラーの詳細をログに記録（本番環境では警告レベル）
         console.warn(`[broadcast] 送信エラー:`, error);
       }
     }

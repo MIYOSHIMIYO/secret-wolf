@@ -696,7 +696,7 @@ router.post("/auto", async (req: Request, env: Env) => {
       log(env, "info", `[Auto] モード ${mode} の既存ルーム ${roomId} に参加します`);
       
       // 既存ルームでもisAutoRoomフラグを設定
-      await env.MOD_KV.put(`flags:${roomId}`, JSON.stringify({ isAutoRoom: true }), { expirationTtl: 1800 });
+      await env.MOD_KV.put(`flags:${roomId}`, JSON.stringify({ isAutoRoom: true }), { expirationTtl: 3600 });
     } else {
       // 新規ルームを作成
       roomId = genRoomId();
@@ -707,11 +707,11 @@ router.post("/auto", async (req: Request, env: Env) => {
 
     // ルーム情報をKVに保存（新規ルームの場合のみ）
     if (isNewRoom) {
-      await env.MOD_KV.put(`room:${roomId}`, "1", { expirationTtl: 1800 });
+      await env.MOD_KV.put(`room:${roomId}`, "1", { expirationTtl: 3600 });
       await env.MOD_KV.put(`auto:${roomId}`, "1", { expirationTtl: 600 });
-      await env.MOD_KV.put(`mode:${roomId}`, mode, { expirationTtl: 1800 });
+      await env.MOD_KV.put(`mode:${roomId}`, mode, { expirationTtl: 3600 });
       // 自動マッチングルームフラグを設定
-      await env.MOD_KV.put(`flags:${roomId}`, JSON.stringify({ isAutoRoom: true }), { expirationTtl: 1800 });
+      await env.MOD_KV.put(`flags:${roomId}`, JSON.stringify({ isAutoRoom: true }), { expirationTtl: 3600 });
     }
 
     const origin = req.headers.get("Origin") || undefined;
