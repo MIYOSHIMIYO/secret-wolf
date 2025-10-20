@@ -42,6 +42,20 @@ export default function Topics() {
     }
   ];
 
+  // 頭脳戦のお題アイデア（サンプル）
+  const brainstormIdeas = [
+    "こんな特技があります",
+    "人狼になったら〇〇します",
+    "自分では〇〇顔だと思っています",
+    "こんな役なら得意かも",
+    "おすすめのお店はここです",
+    "「友達」とはなんですか",
+    "「自然」がこう言っています",
+    "思っていないこと言います",
+    "「子・丑・寅・卯・辰」次は？",
+    "ただ「カメムシ」と入力してください"
+  ];
+
   return (
     <Screen bannerHeight={0}>
       <div className="h-full flex flex-col">
@@ -82,6 +96,30 @@ export default function Topics() {
                 </div>
               </div>
             ))}
+
+            {/* 頭脳戦のお題アイデア（サンプル） */}
+            <div className="bg-white/5 rounded-2xl ring-1 ring-white/10 overflow-hidden">
+              {/* ヘッダー（紫のグラデーション背景） */}
+              <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-4 md:p-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 md:w-5 md:h-5 rounded-full bg-white/20"></div>
+                  <h3 className="text-white text-lg md:text-3xl font-semibold">頭脳戦のお題アイデア</h3>
+                </div>
+                <p className="text-white/90 text-sm md:text-xl mt-2">カスタムモード用のサンプルお題</p>
+              </div>
+              
+              {/* お題アイデアリスト */}
+              <div className="p-4 md:p-7 space-y-2 md:space-y-4">
+                {brainstormIdeas.map((idea: string, index: number) => (
+                  <div key={index} className="flex items-start gap-3 md:gap-5 p-3 md:p-6 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
+                    <span className="text-xs md:text-base font-mono px-2 md:px-3 py-1 md:py-1.5 rounded bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <span className="text-slate-200 text-sm md:text-2xl leading-relaxed flex-1">{idea}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
