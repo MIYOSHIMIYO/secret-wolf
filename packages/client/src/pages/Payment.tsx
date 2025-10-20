@@ -1,6 +1,6 @@
 /**
- * 応援ページ（準備中）
- * 外部サイトへのリンク機能
+ * 感想・質問・交流ページ
+ * オフィシャルサイトへのリンク機能
  */
 
 import React, { useState } from 'react';
@@ -9,6 +9,7 @@ import Screen from '@/components/Screen';
 import HeaderBar from '@/components/HeaderBar';
 import Panel from '@/components/Panel';
 import { PrimaryBtn, SecondaryBtn } from '@/components/Buttons';
+import siteImage from '@/assets/website/siteimage.jpg';
 
 export default function Payment() {
   const navigate = useNavigate();
@@ -16,8 +17,8 @@ export default function Payment() {
 
   const handleExternalLink = () => {
     setIsRedirecting(true);
-    // 外部サイトにリダイレクト（実際のURLに変更してください）
-    const externalUrl = 'https://your-homepage.com/support';
+    // オフィシャルサイトにリダイレクト
+    const externalUrl = 'https://miyoshi.bitfan.id/';
     window.open(externalUrl, '_blank');
     
     // 少し待ってからメニューに戻る
@@ -34,8 +35,8 @@ export default function Payment() {
         <div className="p-4 bg-gray-900 border-b border-gray-700 lg:bg-transparent lg:border-none lg:px-8">
           <Panel className="px-5 py-6 lg:px-10 lg:py-8">
             <div className="space-y-4 text-center lg:text-left lg:space-y-3">
-              <h2 className="text-2xl font-bold text-white lg:text-3xl">応援</h2>
-              <p className="text-gray-300 lg:text-base">ゲームの継続的な開発を支援いただけます。</p>
+              <h2 className="text-2xl font-bold text-white lg:text-3xl">感想・質問・交流</h2>
+              <p className="text-gray-300 lg:text-base">ゲームの感想や質問、交流の場をご提供します。</p>
             </div>
           </Panel>
         </div>
@@ -43,24 +44,30 @@ export default function Payment() {
         {/* スクロール可能なコンテンツ */}
         <div className="flex-1 p-4 space-y-6 overflow-y-auto lg:p-8 lg:pt-0 lg:space-y-8 lg:overflow-visible">
           <div className="flex flex-col space-y-6 lg:max-w-2xl lg:mx-auto">
-            {/* 準備中メッセージ */}
+            {/* オフィシャルサイト紹介 */}
             <Panel className="px-5 py-6 lg:px-8 lg:py-8">
               <div className="space-y-6 text-center">
-                {/* 準備中アイコン */}
-                <div className="text-6xl mb-4">🚧</div>
+                {/* サムネイル画像 */}
+                <div className="flex justify-center mb-4">
+                  <img 
+                    src={siteImage} 
+                    alt="ミヨシ ユウダイ のオフィシャルサイト" 
+                    className="w-32 h-32 object-cover rounded-lg shadow-lg"
+                  />
+                </div>
                 
                 {/* タイトル */}
                 <h3 className="text-2xl font-bold text-white mb-2">
-                  準備中です
+                  ミヨシ ユウダイ のオフィシャルサイト
                 </h3>
                 
                 {/* メッセージ */}
                 <div className="space-y-4">
                   <p className="text-gray-300 text-lg">
-                    応援機能は現在準備中です。
+                    ゲームの感想や質問、交流の場としてご利用ください。
                   </p>
                   <p className="text-gray-400">
-                    外部サイトで応援いただけます。
+                    開発者との直接的なコミュニケーションが可能です。
                   </p>
                 </div>
 
@@ -71,20 +78,21 @@ export default function Payment() {
                     disabled={isRedirecting}
                     className="w-full"
                   >
-                    {isRedirecting ? 'リダイレクト中...' : '外部サイトで応援する'}
+                    {isRedirecting ? 'リダイレクト中...' : 'オフィシャルサイトへ'}
                   </PrimaryBtn>
                 </div>
               </div>
             </Panel>
 
-            {/* 注意事項 */}
+            {/* ご利用について */}
             <Panel className="px-5 py-6 lg:px-8 lg:py-8">
               <div className="space-y-4">
-                <h3 className="text-xl font-bold text-white">ご注意</h3>
+                <h3 className="text-xl font-bold text-white">ご利用について</h3>
                 <div className="space-y-3 text-gray-300">
                   <p>• 外部サイトに移動します</p>
-                  <p>• 応援は任意の行為です</p>
+                  <p>• 感想・質問・交流は自由にご利用ください</p>
                   <p>• ゲームの進行に影響はありません</p>
+                  <p>• 開発者との直接的なコミュニケーションが可能です</p>
                 </div>
               </div>
             </Panel>
