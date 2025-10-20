@@ -6,6 +6,12 @@ node_modules/
 dist/
 build/
 
+# TypeScript compiled outputs
+*.js
+*.js.map
+!packages/client/src/main.tsx
+!packages/client/src/vite-env.d.ts
+
 # Environment variables
 .env
 .env.local
