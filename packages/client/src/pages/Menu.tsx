@@ -209,7 +209,7 @@ export default function Menu() {
                 <img
                   src={supportImage}
                   alt="楽しめたら応援"
-                  className="w-full h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[280px] object-contain"
+                  className="w-[90%] h-auto rounded-scale-2xl shadow-lg active:scale-[0.98] transition-transform xl:max-h-[250px] object-contain mx-auto"
                 />
               </Link>
             </div>
