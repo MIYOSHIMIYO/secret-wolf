@@ -243,7 +243,7 @@ export default function CustomTopicCreation() {
               </div>
 
               {/* 説明セクション */}
-              <div className="rounded-2xl bg-gradient-to-br from-blue-900/40 via-blue-800/25 to-indigo-900/15 ring-1 ring-blue-400/25 p-3 md:p-6">
+              <div className="rounded-2xl bg-gradient-to-br from-blue-900/40 via-blue-800/25 to-indigo-900/15 ring-1 ring-blue-400/25 p-3 md:p-6 mb-32 md:mb-0">
                 <h3 className="text-blue-200 font-medium text-sm md:text-2xl mb-2 md:mb-4">
                   カスタムモードのルール
                 </h3>
@@ -259,7 +259,7 @@ export default function CustomTopicCreation() {
           </div>
         </div>
         {/* 末尾スペーサー（小画面での見切れ防止） */}
-        <div className="h-16 md:h-0" />
+        <div className="h-32 md:h-0" />
       </div>
     </Screen>
   );
