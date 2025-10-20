@@ -725,6 +725,16 @@ router.post("/auto", async (req: Request, env: Env) => {
 
 // Stripe関連のAPIエンドポイントは削除済み（外部サイトへのリンクのみ）
 
+// ルートパスのハンドリング
+router.get("/", (req: Request, env: Env) => {
+  const origin = req.headers.get("Origin") || undefined;
+  return withCors(Response.json({ 
+    message: "Secret Werewolf API", 
+    version: "1.0.0",
+    status: "running" 
+  }), env, origin);
+});
+
 router.all("*", (req: Request, env: Env) => {
   const origin = req.headers.get("Origin") || undefined;
   return withCors(new Response("Not Found", { status: 404 }), env, origin);
