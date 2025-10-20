@@ -48,16 +48,6 @@ export default function About() {
                   <hr className="border-yellow-400/30" />
 
                   <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold text-yellow-300">
-                    応援について
-                  </h2>
-                  
-                  <p>
-                    このゲームには応援要素は製作者への投げ銭みたいなものです。最初は広告とか課金要素とか考えて設計していましたが実装が難しく断念しました。制作には費用もかかるのですがとりあえず遊んでもらうことを１番に考えてこのような形にしました。「楽しめたかも」と思えたら是非、ご自由に、といった感じです。
-                  </p>
-
-                  <hr className="border-yellow-400/30" />
-
-                  <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold text-yellow-300">
                     誕生秘話とか意図とか
                   </h2>
                   
