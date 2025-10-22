@@ -22,6 +22,7 @@ export default function Menu() {
   const nav = useNavigate();
   const { isLocked, lockUntil } = useReportStore();
   const [showLockDialog, setShowLockDialog] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   // 日次リセットチェックと通報ステータス同期
   useEffect(() => {
@@ -80,6 +81,34 @@ export default function Menu() {
     const minutes = String(date.getMinutes()).padStart(2, "0");
 
     return `${year}/${month}/${day} ${hours}:${minutes}`;
+  };
+
+  // ゲームを共有する関数
+  const handleShareGame = async () => {
+    const gameUrl = "https://secret-wolf-client.vercel.app/";
+    
+    try {
+      // モダンブラウザのWeb Share APIを使用
+      if (navigator.share) {
+        await navigator.share({
+          title: "秘密人狼 — 誰かの秘密が落ちている",
+          text: "オンライン人狼ゲーム「秘密人狼」で一緒に遊びませんか？",
+          url: gameUrl,
+        });
+      } else {
+        // フォールバック：クリップボードにコピー
+        await navigator.clipboard.writeText(gameUrl);
+        setShowShareDialog(true);
+      }
+    } catch (error) {
+      // エラーの場合はクリップボードにコピー
+      try {
+        await navigator.clipboard.writeText(gameUrl);
+        setShowShareDialog(true);
+      } catch (clipboardError) {
+        console.error("クリップボードへのコピーに失敗しました:", clipboardError);
+      }
+    }
   };
 
   return (
@@ -256,6 +285,16 @@ export default function Menu() {
               </div>
             </Link>
           </div>
+
+          {/* ゲームを共有ボタン（利用規約ボタンの下に配置） */}
+          <div className="px-scale-1 sm:px-2 md:px-3 xl:px-6 mt-scale-1 sm:mt-2 md:mt-2 xl:mt-4">
+            <button onClick={handleShareGame} className="block w-full">
+              <div className="h-scale-6 sm:h-7 md:h-8 xl:h-14 xl:h-16 rounded-scale-xl sm:rounded-xl md:rounded-xl xl:rounded-2xl xl:rounded-2xl text-white font-semibold text-center flex items-center justify-center active:scale-[0.98] transition-transform shadow-lg px-scale-2 sm:px-2 md:px-3 xl:px-5 xl:px-6"
+                   style={{ background: "linear-gradient(135deg, rgba(99,102,241,.9), rgba(139,92,246,.8), rgba(99,102,241,.9))" }}>
+                <div className="text-scale-xs sm:text-[12px] md:text-[13px] xl:text-sm xl:text-base leading-tight">ゲームを共有</div>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -279,6 +318,31 @@ export default function Menu() {
               <button
                 onClick={() => setShowLockDialog(false)}
                 className="px-6 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-xl font-semibold transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 共有確認ダイアログ */}
+      {showShareDialog && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-2xl p-6 max-w-sm mx-4 ring-1 ring-white/10 shadow-2xl">
+            <div className="text-center space-y-4">
+              <div className="text-white text-lg font-medium">
+                リンクをコピーしました
+              </div>
+              <div className="text-white/70 text-sm leading-relaxed">
+                ゲームのリンクがクリップボードにコピーされました。他の人と共有してください。
+              </div>
+              <div className="text-white/60 text-xs bg-slate-700 p-2 rounded-lg font-mono break-all">
+                https://secret-wolf-client.vercel.app/
+              </div>
+              <button
+                onClick={() => setShowShareDialog(false)}
+                className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition-colors"
               >
                 OK
               </button>
