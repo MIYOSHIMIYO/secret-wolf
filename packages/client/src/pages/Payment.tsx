@@ -40,7 +40,7 @@ export default function Payment() {
         </div>
 
         {/* メインコンテンツ - デスクトップでは2列レイアウト */}
-        <div className="flex-1 px-6 lg:px-8 xl:px-12 pb-32 lg:pb-48">
+        <div className="flex-1 px-6 lg:px-8 xl:px-12 pb-48 lg:pb-64">
           <div className="max-w-7xl mx-auto h-full">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12 h-full">
               {/* 左列: メインアクションカード */}
@@ -86,13 +86,10 @@ export default function Payment() {
                   {/* タイトルと説明 - ボタンの下に配置 */}
                   <div className="space-y-4 lg:space-y-6">
                     <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-white">
-                      ミヨシ ユウダイ のオフィシャルサイト
+                      ミヨシユウダイの<br />オフィシャルサイト
                     </h2>
                     <p className="text-gray-200 text-lg lg:text-xl xl:text-2xl leading-relaxed">
                       ゲームの感想や質問、交流の場としてご利用ください
-                    </p>
-                    <p className="text-gray-300 text-base lg:text-lg xl:text-xl">
-                      開発者との直接的なコミュニケーションが可能です
                     </p>
                   </div>
                 </div>
@@ -144,7 +141,7 @@ export default function Payment() {
             <div className="text-center pt-8 lg:pt-12">
               <SecondaryBtn
                 onClick={() => navigate('/menu')}
-                className="px-8 py-3 lg:py-4 xl:py-5 text-lg lg:text-xl xl:text-2xl font-medium rounded-xl hover:bg-white/10 transition-colors duration-300"
+                className="px-8 py-3 lg:py-4 xl:py-5 text-lg lg:text-xl xl:text-2xl font-medium rounded-xl hover:bg-white/10 transition-colors duration-300 flex items-center justify-center"
               >
                 メニューに戻る
               </SecondaryBtn>
