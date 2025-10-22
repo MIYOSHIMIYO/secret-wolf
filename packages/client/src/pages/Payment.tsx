@@ -29,10 +29,7 @@ export default function Payment() {
   };
 
   return (
-    <Screen 
-      className="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900"
-      maxWidth={1200}
-    >
+    <Screen maxWidth={1240} innerClassName="lg:px-12">
       <div className="h-full flex flex-col">
         {/* ヘッダー部分 */}
         <div className="p-6 lg:p-8 xl:p-12">
@@ -43,12 +40,12 @@ export default function Payment() {
         </div>
 
         {/* メインコンテンツ - デスクトップでは2列レイアウト */}
-        <div className="flex-1 px-6 lg:px-8 xl:px-12 pb-20 lg:pb-32">
+        <div className="flex-1 px-6 lg:px-8 xl:px-12 pb-32 lg:pb-48">
           <div className="max-w-7xl mx-auto h-full">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12 h-full">
               {/* 左列: メインアクションカード */}
               <div className="flex flex-col justify-center">
-                <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 lg:p-12 xl:p-16 text-center space-y-8 lg:space-y-12 border border-white/20">
+                <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl p-8 lg:p-12 xl:p-16 text-center space-y-6 lg:space-y-8 shadow-2xl">
                   {/* サムネイル画像 */}
                   <div className="flex justify-center">
                     <div className="relative">
@@ -62,22 +59,9 @@ export default function Payment() {
                       </div>
                     </div>
                   </div>
-                  
-                  {/* タイトルと説明 */}
-                  <div className="space-y-4 lg:space-y-6">
-                    <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-white">
-                      ミヨシ ユウダイ のオフィシャルサイト
-                    </h2>
-                    <p className="text-gray-200 text-lg lg:text-xl xl:text-2xl leading-relaxed">
-                      ゲームの感想や質問、交流の場としてご利用ください
-                    </p>
-                    <p className="text-gray-300 text-base lg:text-lg xl:text-xl">
-                      開発者との直接的なコミュニケーションが可能です
-                    </p>
-                  </div>
 
-                  {/* メインアクションボタン */}
-                  <div className="pt-6 lg:pt-8">
+                  {/* メインアクションボタン - アイコンのすぐ下に配置 */}
+                  <div className="pt-2">
                     <PrimaryBtn
                       onClick={handleExternalLink}
                       disabled={isRedirecting}
@@ -97,6 +81,19 @@ export default function Payment() {
                         </div>
                       )}
                     </PrimaryBtn>
+                  </div>
+                  
+                  {/* タイトルと説明 - ボタンの下に配置 */}
+                  <div className="space-y-4 lg:space-y-6">
+                    <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-white">
+                      ミヨシ ユウダイ のオフィシャルサイト
+                    </h2>
+                    <p className="text-gray-200 text-lg lg:text-xl xl:text-2xl leading-relaxed">
+                      ゲームの感想や質問、交流の場としてご利用ください
+                    </p>
+                    <p className="text-gray-300 text-base lg:text-lg xl:text-xl">
+                      開発者との直接的なコミュニケーションが可能です
+                    </p>
                   </div>
                 </div>
               </div>
