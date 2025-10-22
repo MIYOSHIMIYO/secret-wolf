@@ -155,7 +155,7 @@ export default function Terms() {
           <section>
             <h3 className="text-base font-semibold mb-2">11. お問い合わせ</h3>
             <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>連絡先：<a href="mailto:support@secret-werewolf.com" className="text-blue-600 underline">support@secret-werewolf.com</a></li>
+              <li>連絡先：<a href="https://miyoshi.bitfan.id/" className="text-blue-600 underline">https://miyoshi.bitfan.id/</a></li>
               <li>プライバシーポリシー：<a href="https://miyoshimiyo.github.io/secret-werewolf-legal/privacy/" className="text-blue-600 underline">https://miyoshimiyo.github.io/secret-werewolf-legal/privacy/</a></li>
             </ul>
           </section>
